@@ -2,9 +2,11 @@
 name: "\U0001F9E0 Spike (Research Task)"
 about: Request a time-boxed research task to investigate a technical question or implementation
   approach
-title: "[SPIKE] <Research Topic>"
-labels: ''
+title: '"[SPIKE] <Research Topic>"'
+labels: spike
 assignees: ''
+
+---
 
 ---
 
