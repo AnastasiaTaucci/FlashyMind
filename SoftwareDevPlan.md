@@ -141,7 +141,7 @@ FlashyMind enables users to study any topic through custom-created flashcards or
 
 ## 📁 GitHub Project
 
-* **Project Board:** [https://github.com/users/AnastasiaTaucci/projects/1](https://github.com/users/AnastasiaTaucci/projects/1)
+* **Project Board:** [https://github.com/users/AnastasiaTaucci/projects/2](https://github.com/users/AnastasiaTaucci/projects/2)
 
 ## 🧰 Tools & Libraries
 
