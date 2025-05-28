@@ -1,128 +1,258 @@
-# FlashyMind Software Development Plan
+# \[SAMPLE] Software Development Plan
 
----
-
-**Project Title:** FlashyMind – Custom & Pre-Made Flashcards App
+**Team Name:** Proof of Concept Mobile Application
+**Project:** FlashyMind
 **Platform:** React Native with Expo
-**Repository:** [https://github.com/AnastasiaTaucci/FlashyMind.git](https://github.com/AnastasiaTaucci/FlashyMind.git)
+**Timeline:** 5 Weeks
+**Team Members:** Ahmet (Backend), Joshua (Frontend), Anastasia (UI/UX)
 
 ---
 
-## 🎯 Core Idea
+## 📌 Project Overview
 
-FlashyMind is a mobile flashcard application that allows users to study any topic using either custom-created decks or curated pre-made sets. The app supports a variety of subjects such as Biology and Software Development. It features Study Mode for sequential review and Quiz Mode for testing knowledge.
+This project aims to develop a proof-of-concept mobile application using React Native and Expo. The goal is to demonstrate core functionality, technical feasibility, and a user-friendly experience for flashcard-based learning.
 
----
-
-## 🔢 Core Features
-
-* Create flashcards and decks using a simple form
-* Study flashcards with an interactive card-flipping interface
-* User authentication using Supabase
-* *(Optional)* Quiz Mode: Multiple-choice quizzes based on flashcards
-* *(Optional)* Explore & import pre-made decks from various subjects
+FlashyMind enables users to study any topic through custom-created flashcards or curated pre-made decks. It includes features like Study Mode and an optional Quiz Mode to support multiple learning strategies. Supabase is used for authentication and backend storage.
 
 ---
 
-## 📱 App Screens
+## 🎯 Objectives
 
-| Screen                        | Description                                                           |
-| ----------------------------- | --------------------------------------------------------------------- |
-| 🔐 Sign In / Sign Up          | Email/password login via Supabase for personalized content            |
-| 🏠 Home                       | Lists all flashcard sets with options to edit, delete, study, or quiz |
-| 📂 Create/Edit Deck           | Form to create or update deck name and manage flashcards              |
-| 📂 Create/Edit Flashcard      | Form to add or edit a card (front = question, back = answer)          |
-| 📚 Study Mode                 | Flip through flashcards one-by-one for review                         |
-| ❓ Quiz Mode *(Optional)*      | Match questions and answers in a randomized quiz format               |
-| 🏰 Explore Decks *(Optional)* | Browse and import pre-made decks                                      |
+* Develop a mobile app with core flashcard-based learning features
+* Implement intuitive navigation and a clean UI
+* Include at least:
 
----
-
-## ✏️ Input Forms
-
-| Form                  | Fields                                      |
-| --------------------- | ------------------------------------------- |
-| Sign In / Sign Up     | Email, Password                             |
-| Create/Edit Deck      | Deck name, ability to add/remove flashcards |
-| Create/Edit Flashcard | Front (question), Back (answer), Validation |
+  * 4 Screens
+  * 2 Forms with validation
+  * Remote data storage
+  * Real-time data fetching and updates
+* Validate app viability through testing and user feedback
+* Demonstrate technical understanding of mobile dev principles, project management, and collaboration
 
 ---
 
-## 🗓️ 5-Week Timeline
+## 📆 Week-by-Week Plan
 
-| Week | Focus                  | Tasks & Deliverables                                             |
-| ---- | ---------------------- | ---------------------------------------------------------------- |
-| 1    | Planning & Setup       | Define scope, create wireframes, set up GitHub & Expo            |
-| 2    | Home + Deck Management | Build Home screen, login form, backend integration with Supabase |
-| 3    | Study & Explore UI     | Build Study screen, Add/Edit Deck/Card UI, Explore screen        |
-| 4    | Quiz Mode + Polish     | Implement Quiz Mode, backend refinements, UI polish              |
-| 5    | Testing & Presentation | Final testing, bug fixes, UX improvements, presentation prep     |
+### Week 1: Planning and Setup
+
+* Define project scope and goals
+* Research target users and competitors
+* Assign team roles and responsibilities
+* Create wireframes and user flows
+* Set up project repository and base folders
+* Choose libraries and backend services (Supabase, Express, etc.)
+
+**Deliverables:**
+
+* Project proposal document
+* Wireframes and flowcharts
+* GitHub repo with starter project
+
+### Week 2: Home Screen, Login, Backend Setup
+
+* Build login screen with Supabase Auth
+* Create Home screen showing deck list
+* Set up backend API and connect with Supabase
+
+**Deliverables:**
+
+* Ahmet – Backend API setup and Supabase connection
+* Joshua – Login screen and authentication form
+* Anastasia – Home screen UI and deck previews
+
+### Week 3: Study Mode, Explore Decks, Add/Edit Deck/Card
+
+* Build Study Mode screen with flip animation
+* Implement Add/Edit Deck and Flashcard forms
+* Explore Decks screen for browsing public decks
+
+**Deliverables:**
+
+* Ahmet – Explore Decks screen (data fetching)
+* Joshua – Add/Edit Deck & Flashcard forms
+* Anastasia – Study Mode screen UI/UX
+
+### Week 4: Quiz Mode and Final Polish
+
+* Build Quiz Mode logic (optional)
+* Complete backend endpoints
+* Visual polish and design consistency
+
+**Deliverables:**
+
+* Ahmet – Quiz Mode logic and backend refinements
+* Joshua – Bug fixes and final touch-ups
+* Anastasia – Final visual polish and consistency
+
+### Week 5: Testing and Presentation
+
+* Fix outstanding bugs
+* Finalize all features
+* Prepare project documentation
+* Record and deliver final demo presentation
+
+**Deliverables:**
+
+* Fully functional proof-of-concept app
+* README with installation/setup instructions
+* Team presentation/demo
 
 ---
 
-## 🚀 Objectives
+## ✅ Sprint-by-Sprint Breakdown
 
-* Build a mobile app for flashcard-based learning
-* Implement at least 4 core screens and 2 validated forms
-* Store and fetch data using Supabase backend
-* Support custom and pre-made flashcard sets
-* Validate viability through testing and user feedback
+### 🗓️ Sprint 1: Planning & Setup
+
+**Goals:**
+
+* Define overall project goals and scope.
+* Set up the development environment and repositories.
+* Assign team roles.
+
+**Tasks:**
+
+* Create wireframes and user flows.
+* Initialize GitHub repo and project structure (frontend/backend).
+* Select tech stack: Expo, Supabase, ExpressJS, etc.
+
+**Deliverables:**
+
+* Wireframes and flowcharts
+* Project proposal document
+* GitHub repository with base structure
+
+### 🗓️ Sprint 2: Authentication & Deck Management
+
+**Goals:**
+
+* Implement authentication and deck management basics.
+
+**Tasks:**
+
+* Build Sign In / Sign Up screen with Supabase Auth
+* Create Home screen with deck list
+* Backend setup and database schema (users, decks, flashcards)
+
+**Deliverables:**
+
+* Auth screen with working login
+* Home screen listing decks
+* Backend with initial Supabase integration
+
+### 🗓️ Sprint 3: Study & Explore
+
+**Goals:**
+
+* Enable studying and exploring flashcard content.
+
+**Tasks:**
+
+* Create Study Mode screen with flip interaction
+* Add/Edit Deck and Flashcard forms (with validation)
+* Explore Decks screen (fetch from Supabase or local JSON)
+
+**Deliverables:**
+
+* Fully functional Study screen
+* Deck and Flashcard creation forms
+* Browseable Explore screen
+
+### 🗓️ Sprint 4: Quiz Mode & Polish
+
+**Goals:**
+
+* Add interactive Quiz Mode and improve UI consistency.
+
+**Tasks:**
+
+* Develop Quiz Mode functionality (randomized Q\&A matching)
+* Refactor backend as needed
+* Apply final design polish and improvements
+
+**Deliverables:**
+
+* Quiz Mode screen
+* Backend endpoint refinements
+* UI/UX enhancements
+
+### 🗓️ Sprint 5: Testing & Presentation
+
+**Goals:**
+
+* Finalize features and deliver a polished, working demo.
+
+**Tasks:**
+
+* Fix bugs and test all features on multiple devices
+* Write README and setup documentation
+* Record or present final demo
+
+**Deliverables:**
+
+* Fully working FlashyMind mobile app
+* Final team presentation/demo
+* Complete project documentation
+
+---
+
+## ✅ Success Criteria
+
+| Criteria               | Measurement Method                          |
+| ---------------------- | ------------------------------------------- |
+| Consistent Design      | Visual consistency across all screens       |
+| 20% Unit Test Coverage | Core components tested with Jest            |
+| Intuitive Navigation   | User tests show smooth navigation flow      |
+| Functional Features    | Add/Edit/Study/Quiz decks work as expected  |
+| Working Backend        | Flashcards & user data stored and retrieved |
+
+---
+
+## 📁 GitHub Project
+
+* **Project Board:** [https://github.com/users/AnastasiaTaucci/projects/1](https://github.com/users/AnastasiaTaucci/projects/1)
+
+## 🧰 Tools & Libraries
+
+* React Native + Expo – Mobile development
+* Supabase – Auth and DB
+* ExpressJS – Custom backend API
+* GitHub Projects – Task management
+* React Navigation – App routing
+* Formik / React Hook Form – Forms with validation
+
+---
+
+## 🔄 Sprint Planning & Team Meetings
+
+* **Sprint Duration:** 1 Week
+* **Kickoff Meeting:** Thursdays at 1 PM – Review goals and assign tasks
+* **Stand-Ups:** Daily 15-minute updates (async via Discord)
+* **Midweek Sync:** Optional working session
+* **Sprint Review:** Wednesdays in class – Feature demos and feedback
+* **Task Management:** GitHub Projects with clear task descriptions, deadlines, and owners
+* **Communication:** Discord for real-time updates
 
 ---
 
 ## 👥 Team Roles
 
-| Role               | Name         |
-| ------------------ | ------------ |
-| Project Manager    | Anastasia  |
-| Frontend Developer | Anastasia, Shuyu, Ahmet |
-| Backend Developer  | Ahmet        |
-| QA / Testing       | Everybody writes test for their own feature |
-| UI/UX Designer     | Anastasia    |
+| Role                  | Assigned Members |
+| --------------------- | ---------------- |
+| Project Manager       | Anastasia  |
+| Frontend Developer(s) | Joshua           |
+| Backend Integrator    | Ahmet            |
+| QA / Tester           | Each team member responsible for their own testing script  |
+| UI/UX Designer        | Anastasia        |
 
 ---
 
-## 🔧 Tools & Libraries
+## 🧪 Version Control Workflow
 
-* React Native with Expo
-* Supabase (Authentication & Database)
-* ExpressJS (API backend)
-* GitHub Projects (Task and issue tracking)
-* React Navigation
-* React Hook Form or Formik (for form handling)
+* **Main Branch:** Stable releases
 
----
+  * [https://github.com/AnastasiaTaucci/FlashyMind.git](https://github.com/AnastasiaTaucci/FlashyMind.git)
+* **Dev Branch:** Ongoing development
+* **Feature Branches:** One per task/feature
 
-## ⚖️ Success Criteria
-
-| Criteria                | How It's Measured                              |
-| ----------------------- | ---------------------------------------------- |
-| Consistent Design       | All screens align with wireframes              |
-| 20% Unit Test Coverage  | Coverage via Jest and testing-library          |
-| Intuitive Navigation    | Minimal confusion observed in user testing     |
-| Core Feature Completion | Create/edit/study/quiz features are functional |
-| Backend Integration     | Data persists and syncs correctly via Supabase |
-
----
-
-## 🧰 Sprint Planning & Team Meetings
-
-* **Sprint Duration:** 1 week
-* **Kickoff Meeting:** Every Thursday at 1 PM (plan goals, assign tasks)
-* **Daily Standups:** 15-minute check-ins (async via Discord)
-* **Midweek Sync:** Optional check-in/work session
-* **Sprint Review:** Every Wednesday in class (demo and feedback)
-* **Task Management:** Managed through GitHub Projects with assigned issues and deadlines
-
----
-
-## 🔄 Version Control Workflow
-
-* `main`: Stable release branch
-* `dev`: Active development branch
-* `feature/*`: One feature per branch using format:
-  `FEAT<ISSUE#>_<ShortDescription>_<Creator>`
-  *Example: `FEAT13_ExpressINIT_DegerAhmet`*
-* All changes merged into `dev` via pull requests after code review
-
----
+  * Naming convention: `FEAT<ISSUE#>_<ShortDescription>_<YourName>`
+* **Pull Requests:** Required for merging into `dev` after review and testing
