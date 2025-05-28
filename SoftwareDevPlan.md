@@ -171,7 +171,7 @@ FlashyMind enables users to study any topic through custom-created flashcards or
 | Role                  | Assigned Members |
 | --------------------- | ---------------- |
 | Project Manager       | Anastasia  |
-| Frontend Developer(s) | Joshua           |
+| Frontend Developer(s) | Joshua, Anastasia, Ahmet         |
 | Backend Integrator    | Ahmet            |
 | QA / Tester           | Each team member responsible for their own testing script  |
 | UI/UX Designer        | Anastasia        |
