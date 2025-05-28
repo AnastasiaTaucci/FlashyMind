@@ -184,6 +184,7 @@ FlashyMind enables users to study any topic through custom-created flashcards or
 
   * [https://github.com/AnastasiaTaucci/FlashyMind.git](https://github.com/AnastasiaTaucci/FlashyMind.git)
 * **Dev Branch:** Ongoing development
+    * [https://github.com/AnastasiaTaucci/FlashyMind/tree/develop](https://github.com/AnastasiaTaucci/FlashyMind/tree/develop)
 * **Feature Branches:** One per task/feature
 
   * Naming convention: `FEAT<ISSUE#>_<ShortDescription>_<YourName>`
