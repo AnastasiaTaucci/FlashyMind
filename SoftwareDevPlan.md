@@ -1,4 +1,4 @@
-# \[SAMPLE] Software Development Plan
+# Software Development Plan
 
 **Team Name:** Proof of Concept Mobile Application
 **Project:** FlashyMind
