@@ -49,9 +49,9 @@ FlashyMind enables users to study any topic through custom-created flashcards or
 
 **Deliverables:**
 
-* Wireframes and flowcharts
-* Project proposal document
-* GitHub repository with base structure
+* Wireframes and flowcharts - Anastasia
+* Project proposal document - Ahmet
+* GitHub repository with base structure - Joshua
 
 ### 🗓️ Sprint 2: Authentication & Deck Management
 
@@ -62,14 +62,14 @@ FlashyMind enables users to study any topic through custom-created flashcards or
 **Tasks:**
 
 * Build Sign In / Sign Up screen with Supabase Auth
-* Create Home screen with deck list
-* Backend setup and database schema (users, decks, flashcards)
+* Create Home screen with deck list - Anastasia
+* Backend setup and database schema (users, decks, flashcards) - Ahmet
 
 **Deliverables:**
 
-* Auth screen with working login
-* Home screen listing decks
-* Backend with initial Supabase integration
+* Auth screen with working login - Joshua
+* Home screen listing decks - Anastasia
+* Backend with initial Supabase integration - Ahmet
 
 ### 🗓️ Sprint 3: Study & Explore
 
@@ -85,9 +85,9 @@ FlashyMind enables users to study any topic through custom-created flashcards or
 
 **Deliverables:**
 
-* Fully functional Study screen
-* Deck and Flashcard creation forms
-* Browseable Explore screen
+* Fully functional Study screen - Anastasia
+* Deck and Flashcard creation forms - Joshua
+* Browseable Explore screen - Ahmet
 
 ### 🗓️ Sprint 4: Quiz Mode & Polish
 
@@ -103,9 +103,9 @@ FlashyMind enables users to study any topic through custom-created flashcards or
 
 **Deliverables:**
 
-* Quiz Mode screen
-* Backend endpoint refinements
-* UI/UX enhancements
+* Quiz Mode screen - Ahmet
+* Backend endpoint refinements - Ahmet
+* UI/UX enhancements - - Anastasia, Joshua
 
 ### 🗓️ Sprint 5: Testing & Presentation
 
