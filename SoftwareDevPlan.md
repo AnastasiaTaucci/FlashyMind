@@ -226,11 +226,11 @@ FlashyMind enables users to study any topic through custom-created flashcards or
 
 * **Sprint Duration:** 1 Week
 * **Kickoff Meeting:** Thursdays at 1 PM – Review goals and assign tasks
-* **Stand-Ups:** Daily 15-minute updates (async via Discord)
+* **Stand-Ups:** Daily 15-minute updates (async via Teams)
 * **Midweek Sync:** Optional working session
 * **Sprint Review:** Wednesdays in class – Feature demos and feedback
 * **Task Management:** GitHub Projects with clear task descriptions, deadlines, and owners
-* **Communication:** Discord for real-time updates
+* **Communication:** Teams for real-time updates
 
 ---
 
