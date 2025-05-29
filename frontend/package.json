@@ -68,5 +68,12 @@
 		"react-test-renderer": "^19.0.0",
 		"typescript": "~5.8.3"
 	},
+	"lint-staged": {
+		"*.{js,jsx,ts,tsx}": [
+			"node remove_console.js",
+			"prettier --write",
+			"eslint --fix"
+		]
+	},
 	"private": true
 }
