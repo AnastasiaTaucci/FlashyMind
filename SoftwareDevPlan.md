@@ -49,9 +49,9 @@ FlashyMind enables users to study any topic through custom-created flashcards or
 
 **Deliverables:**
 
-* Wireframes and flowcharts
-* Project proposal document
-* GitHub repository with base structure
+* Wireframes and flowcharts - Anastasia
+* Project proposal document - Ahmet
+* GitHub repository with base structure - Joshua
 
 ### 🗓️ Sprint 2: Authentication & Deck Management
 
@@ -61,33 +61,39 @@ FlashyMind enables users to study any topic through custom-created flashcards or
 
 **Tasks:**
 
-* Build Sign In / Sign Up screen with Supabase Auth
-* Create Home screen with deck list
-* Backend setup and database schema (users, decks, flashcards)
+* Build Sign In / Sign Up screen with Supabase Auth - Joshua
+* Set up ESlint, Prettier and Jest - Joshua
+* Create Home screen with deck list - Anastasia
+* Initial Application Structure - Anastasia
+* Backend setup and database schema (users, decks, flashcards) - Ahmet
+* Create Geck Add/Edit screen - Ahmet
 
 **Deliverables:**
 
-* Auth screen with working login
-* Home screen listing decks
-* Backend with initial Supabase integration
+* Auth screen with working login - Joshua
+* Configured ESLint, Prettier and Jest - Joshua
+* Home screen listing decks - Anastasia
+* Initial folder layout, screens - Anastasia
+* Backend with initial Supabase integration - Ahmet
+* Deck Add/Edit screen - Ahmet
 
 ### 🗓️ Sprint 3: Study & Explore
 
 **Goals:**
 
-* Enable studying and exploring flashcard content.
+* Adding studying and quiz modes, enable Add/Edit Flashcard
 
 **Tasks:**
 
 * Create Study Mode screen with flip interaction
-* Add/Edit Deck and Flashcard forms (with validation)
-* Explore Decks screen (fetch from Supabase or local JSON)
+* Add/Edit Flashcard forms (with validation)
+* Develop Quiz Mode functionality (randomized Q\&A matching)
 
 **Deliverables:**
 
-* Fully functional Study screen
-* Deck and Flashcard creation forms
-* Browseable Explore screen
+* Fully functional Study screen - Anastasia
+* Deck and Flashcard creation forms - Joshua
+* Quiz Mode screen - Ahmet
 
 ### 🗓️ Sprint 4: Quiz Mode & Polish
 
@@ -97,15 +103,15 @@ FlashyMind enables users to study any topic through custom-created flashcards or
 
 **Tasks:**
 
-* Develop Quiz Mode functionality (randomized Q\&A matching)
+* Explore Decks screen (fetch from Supabase or local JSON)
 * Refactor backend as needed
 * Apply final design polish and improvements
 
 **Deliverables:**
 
-* Quiz Mode screen
-* Backend endpoint refinements
-* UI/UX enhancements
+* Browseable Explore screen - Ahmet
+* Backend endpoint refinements - Ahmet
+* UI/UX enhancements - - Anastasia, Joshua
 
 ### 🗓️ Sprint 5: Testing & Presentation
 
@@ -168,13 +174,13 @@ FlashyMind enables users to study any topic through custom-created flashcards or
 
 ## 👥 Team Roles
 
-| Role                  | Assigned Members |
-| --------------------- | ---------------- |
-| Project Manager       | Anastasia  |
-| Frontend Developer(s) | Joshua, Anastasia, Ahmet         |
-| Backend Integrator    | Ahmet            |
+| Role                  | Assigned Members                                           |
+| --------------------- | ---------------------------------------------------------- |
+| Project Manager       | Anastasia                                                  |
+| Frontend Developer(s) | Joshua, Anastasia, Ahmet                                   |
+| Backend Integrator    | Ahmet                                                      |  
 | QA / Tester           | Each team member responsible for their own testing script  |
-| UI/UX Designer        | Anastasia        |
+| UI/UX Designer        | Anastasia                                                  |
 
 ---
 
