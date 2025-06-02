@@ -10,7 +10,6 @@ export default function LoginScreen() {
   const { login } = useAuth();
 
   const validateEmail = (email: string) => {
-    // Allow letters, numbers, underscores before and after @ symbol
     const emailRegex = /^[a-zA-Z0-9_]+@[a-zA-Z0-9_]+\.[a-zA-Z]{2,}$/;
     return emailRegex.test(email);
   };
