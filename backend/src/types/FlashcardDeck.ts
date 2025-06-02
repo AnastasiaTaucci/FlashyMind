@@ -11,7 +11,6 @@ export interface FlashcardDeck {
   updatedAt?: Date;
 }
 
-
 export interface AddDeckRequestBody {
   title: string;
   subject: string;
