@@ -1,20 +1,13 @@
-import React, { useState } from "react";
-import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  StyleSheet,
-  Alert,
-} from "react-native";
-import { router } from "expo-router";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { useAuth } from "../../context/AuthContext";
+import React, { useState } from 'react';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import { router } from 'expo-router';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useAuth } from '../../context/AuthContext';
 
 export default function SignUpScreen() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const { signup } = useAuth();
 
   const validateEmail = (email: string) => {
@@ -24,33 +17,30 @@ export default function SignUpScreen() {
 
   const handleSignUp = async () => {
     if (!email.trim() || !password.trim() || !confirmPassword.trim()) {
-      Alert.alert("Error", "Please fill in all fields");
+      Alert.alert('Error', 'Please fill in all fields');
       return;
     }
 
     if (!validateEmail(email)) {
-      Alert.alert("Error", "Please enter a valid email address");
+      Alert.alert('Error', 'Please enter a valid email address');
       return;
     }
 
     if (password !== confirmPassword) {
-      Alert.alert("Error", "Passwords do not match");
+      Alert.alert('Error', 'Passwords do not match');
       return;
     }
 
     if (password.length < 6) {
-      Alert.alert("Error", "Password must be at least 6 characters long");
+      Alert.alert('Error', 'Password must be at least 6 characters long');
       return;
     }
 
     try {
       await signup(email, password);
-      router.replace("../(tabs)");
+      router.replace('../(tabs)');
     } catch (error: any) {
-      Alert.alert(
-        "Error",
-        error.message || "Failed to sign up. Please try again.",
-      );
+      Alert.alert('Error', error.message || 'Failed to sign up. Please try again.');
     }
   };
 
@@ -95,8 +85,7 @@ export default function SignUpScreen() {
         <TouchableOpacity
           style={[
             styles.button,
-            (!email.trim() || !password.trim() || !confirmPassword.trim()) &&
-            styles.buttonDisabled,
+            (!email.trim() || !password.trim() || !confirmPassword.trim()) && styles.buttonDisabled,
           ]}
           onPress={handleSignUp}
         >
@@ -117,24 +106,24 @@ export default function SignUpScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: '#fff',
   },
   formContainer: {
     flex: 1,
     padding: 20,
-    justifyContent: "center",
+    justifyContent: 'center',
   },
   title: {
     fontSize: 32,
-    fontWeight: "bold",
+    fontWeight: 'bold',
     marginBottom: 8,
-    textAlign: "center",
+    textAlign: 'center',
   },
   subtitle: {
     fontSize: 16,
-    color: "#666",
+    color: '#666',
     marginBottom: 32,
-    textAlign: "center",
+    textAlign: 'center',
   },
   inputContainer: {
     gap: 16,
@@ -143,40 +132,40 @@ const styles = StyleSheet.create({
   input: {
     height: 48,
     borderWidth: 1,
-    borderColor: "#ddd",
+    borderColor: '#ddd',
     borderRadius: 8,
     paddingHorizontal: 16,
     fontSize: 16,
   },
   button: {
-    backgroundColor: "#007AFF",
+    backgroundColor: '#007AFF',
     height: 48,
     borderRadius: 8,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   buttonDisabled: {
-    backgroundColor: "#007AFF80",
+    backgroundColor: '#007AFF80',
   },
   buttonText: {
-    color: "#fff",
+    color: '#fff',
     fontSize: 16,
-    fontWeight: "600",
+    fontWeight: '600',
   },
   loginContainer: {
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
     marginTop: 16,
     gap: 8,
   },
   loginText: {
-    color: "#666",
+    color: '#666',
     fontSize: 14,
   },
   loginButton: {
-    color: "#007AFF",
+    color: '#007AFF',
     fontSize: 14,
-    fontWeight: "600",
+    fontWeight: '600',
   },
 });

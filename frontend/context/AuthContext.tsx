@@ -1,6 +1,6 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
-import { supabase } from "@/utils/supabase";
-import { Session } from "@supabase/supabase-js";
+import React, { createContext, useContext, useState, useEffect } from 'react';
+import { supabase } from '@/utils/supabase';
+import { Session } from '@supabase/supabase-js';
 
 type AuthContextType = {
   isAuthenticated: boolean;
@@ -84,7 +84,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 export function useAuth() {
   const context = useContext(AuthContext);
   if (context === undefined) {
-    throw new Error("useAuth must be used within an AuthProvider");
+    throw new Error('useAuth must be used within an AuthProvider');
   }
   return context;
 }
