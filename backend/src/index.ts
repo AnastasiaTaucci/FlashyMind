@@ -1,9 +1,8 @@
 import express from 'express';
-import { router as flashcardsRouter } from './routes/flashcards';
 import authRouter from './routes/auth';
-import './utils/dbConnect'; // Importing the module will execute the connection logic
-import swaggerUi from 'swagger-ui-express';
 import swaggerJsdoc from 'swagger-jsdoc';
+import flashcardDecksRoutes from './routes/flashcardDecksRoutes';
+import paginationMiddleware from './middlewares/pagination';
 
 
 const app = express();
@@ -24,12 +23,15 @@ const swaggerOptions = {
   apis: ['./src/controllers/*.ts'],
 };
 const swaggerSpec = swaggerJsdoc(swaggerOptions);
-app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
+import { setupSwaggerDocs } from './utils/swagger';
+
+setupSwaggerDocs(app, Number(3000));
 
 
-app.use('/api', flashcardsRouter);
 
 app.use('/api/auth', authRouter)
+app.use('/api/flashcard-decks', paginationMiddleware, flashcardDecksRoutes);
 
 
 app.get('/', (req, res) => {
@@ -37,6 +39,6 @@ app.get('/', (req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
-  console.log(`Swagger docs available at http://localhost:${PORT}/api/docs`);
 });
+
+export default app;

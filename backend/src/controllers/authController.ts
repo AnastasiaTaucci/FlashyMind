@@ -27,11 +27,9 @@ import supabase from '../utils/supabaseClient';
  *               email:
  *                 type: string
  *                 format: email
- *                 example: user@example.com
  *               password:
  *                 type: string
  *                 format: password
- *                 example: MySecret123!
  *     responses:
  *       201:
  *         description: User created successfully
@@ -47,15 +45,12 @@ import supabase from '../utils/supabaseClient';
  *                       type: string
  *                     email:
  *                       type: string
+ *                 access_token:
+ *                   type: string
+ *                 refresh_token:
+ *                   type: string
  *       400:
  *         description: Invalid input or user already exists
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 error:
- *                   type: string
  */
 
 /**
@@ -77,11 +72,9 @@ import supabase from '../utils/supabaseClient';
  *               email:
  *                 type: string
  *                 format: email
- *                 example: user@example.com
  *               password:
  *                 type: string
  *                 format: password
- *                 example: MySecret123!
  *     responses:
  *       200:
  *         description: Login successful
@@ -90,13 +83,6 @@ import supabase from '../utils/supabaseClient';
  *             schema:
  *               type: object
  *               properties:
- *                 session:
- *                   type: object
- *                   properties:
- *                     token:
- *                       type: string
- *                     expires_in:
- *                       type: integer
  *                 user:
  *                   type: object
  *                   properties:
@@ -104,48 +90,60 @@ import supabase from '../utils/supabaseClient';
  *                       type: string
  *                     email:
  *                       type: string
+ *                 access_token:
+ *                   type: string
+ *                 refresh_token:
+ *                   type: string
  *       400:
  *         description: Missing email or password
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 error:
- *                   type: string
  *       401:
- *         description: Invalid login credentials
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 error:
- *                   type: string
+ *         description: Invalid credentials
  */
 
-// POST /auth/signup
+// POST /api/auth/signup
 export const signup = async (req: Request, res: Response): Promise<void> => {
   const { email, password } = req.body;
+
   const { data, error } = await supabase.auth.signUp({ email, password });
-  if (error) {
-    res.status(400).json({ error: error.message });
+
+  if (error || !data.user || !data.session) {
+    res.status(400).json({ error: error?.message || 'User creation failed' });
     return;
   }
-  res.status(201).json({ user: data.user });
+
+  res.status(201).json({
+    user: {
+      id: data.user.id,
+      email: data.user.email
+    },
+    access_token: data.session.access_token,
+    refresh_token: data.session.refresh_token
+  });
 };
 
-// POST /auth/login
+// POST /api/auth/login
 export const login = async (req: Request, res: Response): Promise<void> => {
   const { email, password } = req.body;
+
   if (!email || !password) {
     res.status(400).json({ error: 'Email and password are required.' });
     return;
   }
+
   const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-  if (error) {
-    res.status(401).json({ error: error.message });
+
+  if (error || !data.user || !data.session) {
+    res.status(401).json({ error: error?.message || 'Invalid login credentials' });
     return;
   }
-  res.status(200).json({ session: data.session, user: data.user });
+
+  res.status(200).json({
+    user: {
+      id: data.user.id,
+      email: data.user.email
+    },
+    access_token: data.session.access_token,
+    refresh_token: data.session.refresh_token
+  });
 };
+
