@@ -6,9 +6,9 @@ export const createFlashcardSet = async (req: Request, res: Response) => {
   try {
     const { title, subject, description, flashcards, createdBy } = req.body;
     const newSet = await FlashcardSet.create({ title, subject, description, flashcards, createdBy });
-    res.status(201).json(newSet);
+    return res.status(201).json(newSet);
   } catch (error) {
-    res.status(500).json({ error: 'Failed to create flashcard set', details: error });
+    return res.status(500).json({ error: 'Failed to create flashcard set', details: error });
   }
 };
 
