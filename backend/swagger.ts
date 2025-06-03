@@ -29,7 +29,7 @@ const options = {
             flashcards: {
               type: 'array',
               items: {
-                $ref: 'controllers/flashcards/flashcardController.ts',
+                $ref: '#/components/schemas/Flashcard',
               },
             },
             createdBy: { type: 'string' },
