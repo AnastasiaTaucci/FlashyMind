@@ -1,0 +1,31 @@
+[
+  {
+    "id": "01",
+    "title": "Intro to Biology",
+    "subject": "Biology",
+    "description": "Basics of cell biology and proteins.",
+    "flashcards": [
+      "bio-001",
+      "bio-002"
+    ]
+  },
+  {
+    "id": "02",
+    "title": "Psych & Philosophy",
+    "subject": "Mixed",
+    "description": "Cards on learning and ethics.",
+    "flashcards": [
+      "psy-001",
+      "phi-001"
+    ]
+  },
+  {
+    "id": "03",
+    "title": "Climate Basics",
+    "subject": "Environmental Science",
+    "description": "Understanding the greenhouse effect.",
+    "flashcards": [
+      "env-001"
+    ]
+  }
+]

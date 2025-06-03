@@ -1,0 +1,38 @@
+[
+    {
+      "id": "bio-001",
+      "subject": "Biology",
+      "topic": "Cell Biology",
+      "question": "What is the function of the mitochondria?",
+      "answer": "It produces energy (ATP) through cellular respiration."
+    },
+    {
+      "id": "bio-002",
+      "subject": "Biology",
+      "topic": "Proteins",
+      "question": "What are the building blocks of proteins?",
+      "answer": "Amino acids."
+    },
+    {
+      "id": "psy-001",
+      "subject": "Psychology",
+      "topic": "Learning",
+      "question": "What is classical conditioning?",
+      "answer": "A learning process that pairs a neutral stimulus with a stimulus that elicits a response."
+    },
+    {
+      "id": "phi-001",
+      "subject": "Philosophy",
+      "topic": "Ethics",
+      "question": "What is utilitarianism?",
+      "answer": "The ethical theory that actions are right if they benefit the majority."
+    },
+    {
+      "id": "env-001",
+      "subject": "Environmental Science",
+      "topic": "Climate",
+      "question": "What is the greenhouse effect?",
+      "answer": "The trapping of heat in Earth's atmosphere by greenhouse gases like CO₂ and methane."
+    }
+  ]
+  
