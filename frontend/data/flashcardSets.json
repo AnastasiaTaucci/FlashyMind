@@ -21,6 +21,16 @@
   },
   {
     "id": "03",
+    "title": "Psych & Philosophy",
+    "subject": "Mixed",
+    "description": "Cards on learning and ethics.",
+    "flashcards": [
+      "psy-001",
+      "phi-001"
+    ]
+  },
+  {
+    "id": "04",
     "title": "Climate Basics",
     "subject": "Environmental Science",
     "description": "Understanding the greenhouse effect.",

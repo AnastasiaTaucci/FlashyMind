@@ -1,66 +1,53 @@
-import { Text, Button, StyleSheet, FlatList, View, TouchableOpacity } from 'react-native';
+import { Text, StyleSheet, FlatList, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useFlashcardSetStore } from '@/store/deck-card-store';
-import { Fab, FabIcon } from '@/components/ui/fab';
-import { AddIcon } from '@/components/ui/icon';
 import { Heading } from '@/components/ui/heading';
+import { Button, ButtonText } from '@/components/ui/button';
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import { HStack } from '@/components/ui/hstack';
+import { VStack } from '@/components/ui/vstack';
+import FlashcardSetCard from '@/components/FlashcardSetCard';
 
 export default function HomeScreen() {
   const router = useRouter();
   const flashcardSets = useFlashcardSetStore((state) => state.flashcardSets);
-  const deleteFlashcardSet = useFlashcardSetStore((state) => state.deleteFlashcardSet);
-
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <Heading style={styles.title}>Your Flashcard Sets</Heading>
-        <TouchableOpacity
-          style={styles.logoutButton}
-          onPress={() => {
-            /* Add logout logic later */
-          }}
-        >
-          <Text style={styles.logoutText}>Logout</Text>
-        </TouchableOpacity>
-      </View>
+      <VStack style={styles.pageWrapper}>
+        <HStack style={styles.logoutWrapper}>
+          <Button
+            style={styles.logoutButton}
+            hitSlop={25}
+            onPress={() => {
+              /* Add logout logic later */
+            }}
+          >
+            <ButtonText style={styles.logoutText}>Logout</ButtonText>
+            <MaterialIcons name="logout" size={20} color="#fff" />
+          </Button>
+        </HStack>
 
-      <FlatList
-        data={flashcardSets}
-        keyExtractor={(item) => item.id}
-        contentContainerStyle={styles.listContent}
-        renderItem={({ item }) => (
-          <View style={styles.card}>
-            <Text style={styles.cardTitle}>{item.title}</Text>
-            <Text style={styles.cardSubtitle}>{item.subject}</Text>
-            <Text style={styles.cardDescription}>{item.description}</Text>
-            <Text style={styles.cardCount}>Cards: {item.flashcards?.length || 0}</Text>
+        <Heading style={styles.heading}>Your Flashcard Sets</Heading>
+        <HStack style={styles.addDeckWrapper}>
+          <Button style={styles.addDeckButton} onPress={() => router.navigate('./addDeck')}>
+            <ButtonText style={styles.addDeckText}>+ New Set</ButtonText>
+          </Button>
+        </HStack>
 
-            <View style={styles.buttonRow}>
-              <Button
-                title="Edit"
-                onPress={() => router.push({ pathname: './addDeck', params: { id: item.id } })}
-              />
-              <Button
-                title="Study"
-                onPress={() => router.push({ pathname: './study', params: { id: item.id } })}
-              />
-              <Button
-                title="Quiz"
-                onPress={() => router.push({ pathname: './(quiz)/quiz', params: { id: item.id } })}
-              />
-              <Button title="Delete Deck" color="red" onPress={() => deleteFlashcardSet(item.id)} />
+        <FlatList
+          data={flashcardSets}
+          keyExtractor={(item) => item.id}
+          contentContainerStyle={styles.listContent}
+          renderItem={({ item }) => <FlashcardSetCard item={item} />}
+          ListEmptyComponent={
+            <View style={styles.emptyWrapper}>
+              <Text style={styles.emptyText}>
+                You have no sets yet. Tap “+ New Set” to get started!
+              </Text>
             </View>
-          </View>
-        )}
-      />
-      <Fab
-        size="lg"
-        className="bottom-20 bg-sky-700"
-        onPress={() => router.navigate('./addDeck')}
-        hitSlop={25}
-      >
-        <FabIcon as={AddIcon} color="white" />
-      </Fab>
+          }
+        />
+      </VStack>
     </View>
   );
 }
@@ -68,59 +55,72 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
-    backgroundColor: '#fff',
+    backgroundColor: '#fffafc',
+    paddingBottom: 15,
+    width: '100%',
   },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 20,
+  pageWrapper: {
+    flex: 1,
+    marginTop: 25,
+  },
+  logoutWrapper: {
+    justifyContent: 'flex-end',
+    marginRight: 15,
+    marginVertical: 10,
   },
   logoutButton: {
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    backgroundColor: '#ddd',
-    borderRadius: 6,
+    width: '27%',
+    backgroundColor: '#ef4444',
+    borderRadius: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 14,
   },
   logoutText: {
     fontWeight: 'bold',
-    color: '#333',
+    color: '#fff',
+    marginLeft: 6,
   },
-  title: {
-    fontSize: 24,
+  heading: {
+    fontSize: 30,
     fontWeight: 'bold',
+    marginTop: 20,
+    marginBottom: 16,
+    marginLeft: 16,
+    color: '1f2937',
+    lineHeight: 30,
+  },
+  addDeckWrapper: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    marginRight: 20,
+    marginBottom: 12,
+  },
+  addDeckButton: {
+    width: '80%',
+    backgroundColor: '#ffdd54',
+    borderRadius: 8,
+    paddingHorizontal: 14,
+  },
+  addDeckText: {
+    color: '#5e2606',
+    fontWeight: '700',
+    fontSize: 20,
   },
   listContent: {
-    paddingBottom: 100,
+    paddingHorizontal: 20,
+    paddingVertical: 10,
   },
-  card: {
-    backgroundColor: '#f2f2f2',
-    padding: 16,
-    borderRadius: 12,
-    marginBottom: 16,
+  emptyWrapper: {
+    marginTop: 50,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 20,
   },
-  cardTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
-  cardSubtitle: {
-    fontSize: 14,
-    color: 'gray',
-  },
-  cardDescription: {
-    marginTop: 4,
-  },
-  cardCount: {
-    marginTop: 6,
-    fontStyle: 'italic',
-    color: 'gray',
-  },
-  buttonRow: {
-    marginTop: 10,
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
-    gap: 8,
+  emptyText: {
+    fontSize: 16,
+    color: '#6b7280',
+    textAlign: 'center',
+    lineHeight: 22,
   },
 });
