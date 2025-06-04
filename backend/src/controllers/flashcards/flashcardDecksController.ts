@@ -1,4 +1,5 @@
-import { Request, Response, NextFunction, application, json } from 'express';
+import { Response, NextFunction } from 'express';
+import { CustomRequest } from '../../types/express';
 import {
   getFlashcardDecks,
   addFlashcardDeck,
@@ -37,7 +38,7 @@ import {
  *                 $ref: '#/components/schemas/FlashcardDeck'
 */
 export const getDecks = async (
-  req: Request,
+  req: CustomRequest,
   res: Response,
   next: NextFunction
 ): Promise<void> => {
@@ -47,7 +48,8 @@ export const getDecks = async (
       res.status(401).json({ error: 'Unauthorized' });
       return;
     }
-    const decks = await getFlashcardDecks(userId);
+    // const { page = 1, limit = 10 } = req.pagination || {}; // Pagination can be added when service supports it
+    const decks = await getFlashcardDecks(userId); // Reverted to original signature
     res.status(200).json(decks);
   } catch (error) {
     next(error);
@@ -72,7 +74,7 @@ export const getDecks = async (
  *         description: Flashcard deck created
  */
 export const addDeck = async (
-  req: Request<{}, {}, AddDeckRequestBody>,
+  req: CustomRequest,
   res: Response,
   next: NextFunction
 ): Promise<void> => {
@@ -95,7 +97,7 @@ export const addDeck = async (
       message: 'Flashcard deck created successfully',
       data: deck
     });
-    
+
   } catch (error) {
     next(error);
   }
@@ -120,7 +122,7 @@ export const addDeck = async (
  *         description: Flashcard deck updated
  */
 export const updateDeck = async (
-  req: Request<{}, {}, UpdateDeckRequestBody>,
+  req: CustomRequest,
   res: Response,
   next: NextFunction
 ): Promise<void> => {
@@ -160,7 +162,7 @@ export const updateDeck = async (
  *         description: Flashcard deck deleted
  */
 export const deleteDeck = async (
-  req: Request<{}, {}, DeleteDeckRequestBody>,
+  req: CustomRequest,
   res: Response,
   next: NextFunction
 ): Promise<void> => {
