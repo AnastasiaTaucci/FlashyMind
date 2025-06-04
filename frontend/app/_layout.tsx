@@ -1,11 +1,10 @@
-import "@/global.css";
-import { GluestackUIProvider } from "@/components/ui/gluestack-ui-provider";
+import '@/global.css';
+import { GluestackUIProvider } from '@/components/ui/gluestack-ui-provider';
 import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import 'react-native-reanimated';
 import { AuthProvider } from '../context/AuthContext'; // Custom auth context
-
 
 export default function RootLayout() {
   const [loaded] = useFonts({
@@ -19,13 +18,13 @@ export default function RootLayout() {
 
   return (
     <GluestackUIProvider>
-          <AuthProvider>
-            <Stack screenOptions={{ headerShown: false }}>
-              <Stack.Screen name="index" />
-              <Stack.Screen name="+not-found" />
-            </Stack>
-            <StatusBar style="auto" />
-          </AuthProvider>
-</GluestackUIProvider>
+      <AuthProvider>
+        <Stack screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="index" />
+          <Stack.Screen name="+not-found" />
+        </Stack>
+        <StatusBar style="auto" />
+      </AuthProvider>
+    </GluestackUIProvider>
   );
 }

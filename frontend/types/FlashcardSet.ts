@@ -1,5 +1,3 @@
-import { Flashcard } from './Flashcard';
-
 export interface FlashcardSet {
   id: string;
   title: string; // e.g., "Intro to Cell Biology"
