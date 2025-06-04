@@ -95,7 +95,6 @@ export const addDeck = async (
       message: 'Flashcard deck created successfully',
       data: deck
     });
-    next();
     
   } catch (error) {
     next(error);

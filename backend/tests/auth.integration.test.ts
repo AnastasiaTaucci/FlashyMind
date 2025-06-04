@@ -15,7 +15,10 @@ describe('Auth Integration Tests', () => {
     // Clean up test user if exists
     const { data: { users } } = await admin.listUsers();
     if (users && users.length > 0) {
-      await admin.deleteUser(users[0].id);
+      const testUser = users.find(user => user.email === testEmail);
+      if (testUser) {
+        await admin.deleteUser(testUser.id);
+      }
     }
   });
 
