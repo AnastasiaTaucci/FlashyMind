@@ -1,20 +1,16 @@
 import { Text, StyleSheet, FlatList, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useFlashcardSetStore } from '@/store/deck-card-store';
-import { EditIcon, TrashIcon } from '@/components/ui/icon';
 import { Heading } from '@/components/ui/heading';
-import { Button, ButtonIcon, ButtonText } from '@/components/ui/button';
+import { Button, ButtonText } from '@/components/ui/button';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
-import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { HStack } from '@/components/ui/hstack';
 import { VStack } from '@/components/ui/vstack';
-import { Box } from '@/components/ui/box';
+import FlashcardSetCard from '@/components/FlashcardSetCard';
 
 export default function HomeScreen() {
   const router = useRouter();
   const flashcardSets = useFlashcardSetStore((state) => state.flashcardSets);
-  const deleteFlashcardSet = useFlashcardSetStore((state) => state.deleteFlashcardSet);
-
   return (
     <View style={styles.container}>
       <VStack style={styles.pageWrapper}>
@@ -42,50 +38,14 @@ export default function HomeScreen() {
           data={flashcardSets}
           keyExtractor={(item) => item.id}
           contentContainerStyle={styles.listContent}
-          renderItem={({ item }) => (
-            <Box style={styles.card}>
-              <VStack style={styles.cardContent}>
-                <Text style={styles.cardTitle}>{item.title}</Text>
-                <Text style={styles.cardSubtitle}>{item.subject}</Text>
-                <Text style={styles.cardDescription}>{item.description}</Text>
-                <Text style={styles.cardCount}>Cards: {item.flashcards?.length || 0}</Text>
-
-                <HStack style={styles.actionRow}>
-                  <Button
-                    style={[styles.actionButton, styles.studyButton]}
-                    onPress={() => router.push({ pathname: './study', params: { id: item.id } })}
-                  >
-                    <ButtonText style={styles.buttonText}>Study</ButtonText>
-                    <MaterialCommunityIcons name="head-flash" size={24} color="white" />
-                  </Button>
-                  <Button
-                    style={[styles.actionButton, styles.quizButton]}
-                    onPress={() =>
-                      router.push({ pathname: './(quiz)/quiz', params: { id: item.id } })
-                    }
-                  >
-                    <ButtonText style={styles.buttonText}>Quiz</ButtonText>
-                    <MaterialIcons name="quiz" size={24} color="white" />
-                  </Button>
-                </HStack>
-              </VStack>
-
-              <VStack style={styles.iconColumn}>
-                <Button
-                  style={styles.iconButton}
-                  onPress={() => router.push({ pathname: './addDeck', params: { id: item.id } })}
-                >
-                  <ButtonIcon as={EditIcon} />
-                </Button>
-                <Button
-                  style={[styles.iconButton, styles.deleteButton]}
-                  onPress={() => deleteFlashcardSet(item.id)}
-                >
-                  <ButtonIcon as={TrashIcon} />
-                </Button>
-              </VStack>
-            </Box>
-          )}
+          renderItem={({ item }) => <FlashcardSetCard item={item} />}
+          ListEmptyComponent={
+            <View style={styles.emptyWrapper}>
+              <Text style={styles.emptyText}>
+                You have no sets yet. Tap “+ New Set” to get started!
+              </Text>
+            </View>
+          }
         />
       </VStack>
     </View>
@@ -151,77 +111,16 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 10,
   },
-  card: {
-    backgroundColor: '#fef3c7',
-    padding: 16,
-    borderRadius: 20,
-    marginBottom: 20,
-    shadowColor: '#000',
-    shadowOpacity: 0.08,
-    shadowRadius: 6,
-    shadowOffset: { width: 0, height: 2 },
-    elevation: 4,
-  },
-  cardContent: {
-    paddingRight: 60,
-  },
-  cardTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#b45309',
-  },
-  cardSubtitle: {
-    fontSize: 14,
-    color: '#78350f',
-    marginTop: 2,
-  },
-  cardDescription: {
-    marginTop: 6,
-    fontSize: 14,
-    color: '#444',
-  },
-  cardCount: {
-    marginTop: 8,
-    fontSize: 13,
-    fontStyle: 'italic',
-    color: '#6b7280',
-  },
-  actionRow: {
-    marginTop: 12,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    gap: 8,
-  },
-  actionButton: {
-    flex: 1,
-    borderRadius: 10,
-    flexDirection: 'row',
+  emptyWrapper: {
+    marginTop: 50,
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 8,
+    paddingHorizontal: 20,
   },
-  studyButton: {
-    backgroundColor: '#2563eb',
-  },
-  quizButton: {
-    backgroundColor: '#b854ff',
-  },
-  buttonText: {
-    color: 'white',
-    fontWeight: '600',
-  },
-  iconColumn: {
-    position: 'absolute',
-    right: 10,
-    top: 16,
-    gap: 12,
-  },
-  iconButton: {
-    padding: 8,
-    backgroundColor: '#5492f7',
-    borderRadius: 10,
-  },
-  deleteButton: {
-    backgroundColor: '#ef4444',
+  emptyText: {
+    fontSize: 16,
+    color: '#6b7280',
+    textAlign: 'center',
+    lineHeight: 22,
   },
 });
