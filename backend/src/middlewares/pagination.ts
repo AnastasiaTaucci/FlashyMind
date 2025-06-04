@@ -1,11 +1,10 @@
 import { Request, Response, NextFunction } from 'express';
 
 const paginationMiddleware = (req: Request, res: Response, next: NextFunction) => {
-
   const page = parseInt(req.query.page as string, 10) || 1;
   const limit = parseInt(req.query.limit as string, 10) || 10;
 
-  (req as any).pagination = {
+  req.pagination = {
     page,
     limit,
   };
@@ -13,4 +12,4 @@ const paginationMiddleware = (req: Request, res: Response, next: NextFunction) =
   next();
 };
 
-export default paginationMiddleware; 
+export default paginationMiddleware;
