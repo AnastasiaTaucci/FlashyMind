@@ -7,10 +7,13 @@ import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { HStack } from '@/components/ui/hstack';
 import { VStack } from '@/components/ui/vstack';
 import FlashcardSetCard from '@/components/FlashcardSetCard';
+import { useAuth } from '@/context/AuthContext';
 
 export default function HomeScreen() {
   const router = useRouter();
   const flashcardSets = useFlashcardSetStore((state) => state.flashcardSets);
+  const { logout } = useAuth();
+
   return (
     <View style={styles.container}>
       <VStack style={styles.pageWrapper}>
@@ -18,8 +21,13 @@ export default function HomeScreen() {
           <Button
             style={styles.logoutButton}
             hitSlop={25}
-            onPress={() => {
-              /* Add logout logic later */
+            onPress={async () => {
+              try {
+                await logout();
+                router.replace('/login');
+              } catch (error: any) {
+                console.error('Logout failed:', error.message);
+              }
             }}
           >
             <ButtonText style={styles.logoutText}>Logout</ButtonText>

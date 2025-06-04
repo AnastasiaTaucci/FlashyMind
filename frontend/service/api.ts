@@ -31,3 +31,19 @@ export async function login(email: string, password: string) {
 
   return result;
 }
+
+export async function logout() {
+  const response = await fetch(`${API_BASE_URL}/auth/logout`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+  });
+
+  const result = await response.json();
+
+  if (!response.ok) {
+    throw new Error(result.error || 'Logout failed');
+  }
+
+  return result;
+}
+
