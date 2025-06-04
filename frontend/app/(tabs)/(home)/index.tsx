@@ -1,9 +1,14 @@
-import { Text, Button, StyleSheet, FlatList, View, TouchableOpacity } from 'react-native';
+import { Text, StyleSheet, FlatList, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { useFlashcardSetStore } from '@/store/deck-card-store';
 import { Fab, FabIcon } from '@/components/ui/fab';
-import { AddIcon } from '@/components/ui/icon';
+import { AddIcon, EditIcon, TrashIcon } from '@/components/ui/icon';
 import { Heading } from '@/components/ui/heading';
+import { Button, ButtonIcon, ButtonText } from '@/components/ui/button';
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+
 
 export default function HomeScreen() {
   const router = useRouter();
@@ -11,18 +16,21 @@ export default function HomeScreen() {
   const deleteFlashcardSet = useFlashcardSetStore((state) => state.deleteFlashcardSet);
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <Heading style={styles.title}>Your Flashcard Sets</Heading>
-        <TouchableOpacity
+        <Button
           style={styles.logoutButton}
+          hitSlop={25}
           onPress={() => {
             /* Add logout logic later */
           }}
         >
-          <Text style={styles.logoutText}>Logout</Text>
-        </TouchableOpacity>
+          <ButtonText style={styles.logoutText}>Logout</ButtonText>
+          <MaterialIcons name="logout" size={20} color="#333" />
+        </Button>
       </View>
+      <Heading style={styles.title}>Your Flashcard Sets</Heading>
+
 
       <FlatList
         data={flashcardSets}
@@ -34,71 +42,94 @@ export default function HomeScreen() {
             <Text style={styles.cardSubtitle}>{item.subject}</Text>
             <Text style={styles.cardDescription}>{item.description}</Text>
             <Text style={styles.cardCount}>Cards: {item.flashcards?.length || 0}</Text>
-
+ 
             <View style={styles.buttonRow}>
               <Button
-                title="Edit"
-                onPress={() => router.push({ pathname: './addDeck', params: { id: item.id } })}
-              />
-              <Button
-                title="Study"
                 onPress={() => router.push({ pathname: './study', params: { id: item.id } })}
-              />
+              >
+                <ButtonText>Study</ButtonText>
+                <MaterialCommunityIcons name="head-flash" size={24} color="white" />
+              </Button>
               <Button
-                title="Quiz"
-                onPress={() => router.push({ pathname: './(quiz)/quiz', params: { id: item.id } })}
-              />
-              <Button title="Delete Deck" color="red" onPress={() => deleteFlashcardSet(item.id)} />
+                onPress={() =>
+                  router.push({ pathname: './(quiz)/quiz', params: { id: item.id } })
+                }
+              >
+                <ButtonText>Quiz</ButtonText>
+                <MaterialIcons name="quiz" size={24} color="white" />
+              </Button>
+              <Button
+                onPress={() => router.push({ pathname: './addDeck', params: { id: item.id } })}
+              >
+                <ButtonIcon as={EditIcon} />
+              </Button>
+              <Button onPress={() => deleteFlashcardSet(item.id)}>
+                <ButtonIcon as={TrashIcon} />
+              </Button>
             </View>
           </View>
         )}
       />
       <Fab
         size="lg"
-        className="bottom-20 bg-sky-700"
+        className="bottom-20 bg-blue-600"
+        style={{
+          shadowColor: '#000',
+          shadowOpacity: 0.2,
+          shadowRadius: 6,
+          shadowOffset: { width: 0, height: 3 },
+          elevation: 5,
+        }}
         onPress={() => router.navigate('./addDeck')}
         hitSlop={25}
       >
         <FabIcon as={AddIcon} color="white" />
       </Fab>
-    </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
-    backgroundColor: '#fff',
+    backgroundColor: '#fefefe',
   },
   header: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 20,
+    justifyContent: 'flex-end',
+    paddingHorizontal: 20,
+    paddingTop: 20,
   },
   logoutButton: {
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    backgroundColor: '#ddd',
-    borderRadius: 6,
+    backgroundColor: '#fca874',
+    borderRadius: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   logoutText: {
     fontWeight: 'bold',
     color: '#333',
   },
   title: {
-    fontSize: 24,
+    fontSize: 26,
     fontWeight: 'bold',
+    paddingHorizontal: 20,
+    marginBottom: 16,
+    marginTop: 25,
   },
   listContent: {
-    paddingBottom: 100,
+    paddingHorizontal: '4%',
   },
   card: {
     backgroundColor: '#f2f2f2',
     padding: 16,
-    borderRadius: 12,
+    borderRadius: 16,
     marginBottom: 16,
+    shadowColor: '#000',
+    shadowOpacity: 0.05,
+    shadowRadius: 4,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 3,
   },
   cardTitle: {
     fontSize: 18,
@@ -106,18 +137,22 @@ const styles = StyleSheet.create({
   },
   cardSubtitle: {
     fontSize: 14,
-    color: 'gray',
+    color: '#666',
+    marginTop: 2,
   },
   cardDescription: {
-    marginTop: 4,
+    marginTop: 6,
+    fontSize: 14,
+    color: '#444',
   },
   cardCount: {
-    marginTop: 6,
+    marginTop: 8,
+    fontSize: 13,
     fontStyle: 'italic',
-    color: 'gray',
+    color: '#888',
   },
   buttonRow: {
-    marginTop: 10,
+    marginTop: 12,
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-between',
