@@ -1,5 +1,5 @@
-import React, { createContext, useContext, useState } from "react";
-import * as api from "@/service/api";
+import React, { createContext, useContext, useState } from 'react';
+import * as api from '@/service/api';
 
 type AuthContextType = {
   isAuthenticated: boolean;
@@ -23,7 +23,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     } catch (error: any) {
       setIsAuthenticated(false);
       setSession(null);
-      throw new Error(error.message || "Login failed");
+      throw new Error(error.message || 'Login failed');
     }
   };
 
@@ -35,7 +35,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     } catch (error: any) {
       setIsAuthenticated(false);
       setSession(null);
-      throw new Error(error.message || "Signup failed");
+      throw new Error(error.message || 'Signup failed');
     }
   };
 
