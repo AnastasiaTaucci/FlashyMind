@@ -1,5 +1,9 @@
+<<<<<<< Updated upstream
 import { Response, NextFunction } from 'express';
 import { CustomRequest } from '../../types/express';
+=======
+import { Request, Response, NextFunction } from 'express';
+>>>>>>> Stashed changes
 import {
   getFlashcardDecks,
   addFlashcardDeck,
@@ -11,7 +15,9 @@ import {
   UpdateDeckRequestBody,
   DeleteDeckRequestBody
 } from '../../types/FlashcardDeck';
+import { wrapAsync } from '../../utils/wrapAsync';
 
+<<<<<<< Updated upstream
 
 
 
@@ -39,6 +45,10 @@ import {
 */
 export const getDecks = async (
   req: CustomRequest,
+=======
+export const getDecks = wrapAsync(async (
+  req: Request,
+>>>>>>> Stashed changes
   res: Response,
   next: NextFunction
 ): Promise<void> => {
@@ -51,11 +61,14 @@ export const getDecks = async (
     // const { page = 1, limit = 10 } = req.pagination || {}; // Pagination can be added when service supports it
     const decks = await getFlashcardDecks(userId); // Reverted to original signature
     res.status(200).json(decks);
+    return;
   } catch (error) {
     next(error);
+    return;
   }
-};
+  });
 
+<<<<<<< Updated upstream
 /**
  * @swagger
  * /api/flashcard-decks/add:
@@ -75,6 +88,10 @@ export const getDecks = async (
  */
 export const addDeck = async (
   req: CustomRequest,
+=======
+export const addDeck = wrapAsync(async (
+  req: Request<{}, {}, AddDeckRequestBody>,
+>>>>>>> Stashed changes
   res: Response,
   next: NextFunction
 ): Promise<void> => {
@@ -85,24 +102,26 @@ export const addDeck = async (
       return;
     }
 
-    const data = {
-      title: req.body.title,
-      subject: req.body.subject,
-      description: req.body.description,
-      created_by: userId,
-    }
-    const deck = await addFlashcardDeck(userId, data.title, data.subject, data.description);
+    const { title, subject, description } = req.body;
+    const deck = await addFlashcardDeck(userId, title, subject, description);
+
     res.status(201).json({
       success: true,
       message: 'Flashcard deck created successfully',
       data: deck
     });
+<<<<<<< Updated upstream
 
+=======
+    return;
+>>>>>>> Stashed changes
   } catch (error) {
     next(error);
+    return;
   }
-};
+});
 
+<<<<<<< Updated upstream
 
 /**
  * @swagger
@@ -123,6 +142,10 @@ export const addDeck = async (
  */
 export const updateDeck = async (
   req: CustomRequest,
+=======
+export const updateDeck = wrapAsync(async (
+  req: Request<{}, {}, UpdateDeckRequestBody>,
+>>>>>>> Stashed changes
   res: Response,
   next: NextFunction
 ): Promise<void> => {
@@ -132,18 +155,23 @@ export const updateDeck = async (
       res.status(401).json({ error: 'Unauthorized' });
       return;
     }
+
     const { id, title, subject, description } = req.body;
     const deck = await updateFlashcardDeck(userId, id, title, subject, description);
+
     res.status(201).json({
       success: true,
       message: 'Flashcard deck updated successfully',
       data: deck
     });
+    return;
   } catch (error) {
     next(error);
+    return;
   }
-};
+});
 
+<<<<<<< Updated upstream
 /**
  * @swagger
  * /api/flashcard-decks/delete:
@@ -163,6 +191,10 @@ export const updateDeck = async (
  */
 export const deleteDeck = async (
   req: CustomRequest,
+=======
+export const deleteDeck = wrapAsync(async (
+  req: Request<{}, {}, DeleteDeckRequestBody>,
+>>>>>>> Stashed changes
   res: Response,
   next: NextFunction
 ): Promise<void> => {
@@ -172,10 +204,13 @@ export const deleteDeck = async (
       res.status(401).json({ error: 'Unauthorized' });
       return;
     }
+
     const { id } = req.body;
     const deck = await deleteFlashcardDeck(userId, id);
     res.status(200).json(deck);
+    return;
   } catch (error) {
     next(error);
+    return;
   }
-};
+});
