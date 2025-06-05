@@ -71,7 +71,7 @@ Create a `.env` file in both `frontend/` and `backend/` directories and configur
 
 ```
 SUPABASE_URL=your_supabase_url
-SUPABASE_KEY=your_supabase_key
+SUPABASE_ANON_KEY=your_supabase_key
 ```
 
 ---
