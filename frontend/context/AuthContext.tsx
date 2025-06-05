@@ -7,6 +7,7 @@ type AuthContextType = {
   signup: (email: string, password: string) => Promise<void>;
   logout: () => void;
   session: any;
+
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -39,10 +40,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const logout = () => {
-    // Call API logout here
-    setIsAuthenticated(false);
-    setSession(null);
+
+  const logout = async () => {
+    try {
+      await api.logout();
+      setIsAuthenticated(false);
+      setSession(null);
+    } catch (error: any) {
+      console.error('Logout failed:', error.message || error);
+
+    }
   };
 
   return (

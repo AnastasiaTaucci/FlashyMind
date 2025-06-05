@@ -1,4 +1,21 @@
-const API_BASE_URL = 'http://localhost:3000/api';
+import { Platform } from 'react-native';
+import Constants from 'expo-constants';
+
+export function getApiBaseUrl(): string {
+  if (__DEV__) {
+    const localhost = Constants.expoConfig?.hostUri?.split(':')[0];
+
+    if (Platform.OS === 'android') {
+      return `http://10.0.2.2:3000/api`;
+    }
+    return `http://${localhost}:3000/api`;
+  }
+
+  return 'https://api.flashymind.com/api';
+}
+
+
+export const API_BASE_URL = getApiBaseUrl();
 
 export async function signup(email: string, password: string) {
   const response = await fetch(`${API_BASE_URL}/auth/signup`, {
@@ -31,3 +48,19 @@ export async function login(email: string, password: string) {
 
   return result;
 }
+
+export async function logout() {
+  const response = await fetch(`${API_BASE_URL}/auth/logout`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+  });
+
+  const result = await response.json();
+
+  if (!response.ok) {
+    throw new Error(result.error || 'Logout failed');
+  }
+
+  return result;
+}
+
