@@ -1,4 +1,4 @@
-
+{
   "dependencies": {
     "@supabase/supabase-js": "^2.49.8",
     "bcryptjs": "^3.0.2",
@@ -38,3 +38,4 @@
     "ts-node": "^10.9.2",
     "typescript": "^5.8.3"
   }
+}
