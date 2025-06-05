@@ -1,4 +1,5 @@
-import { Request, Response, NextFunction } from 'express';
+import { Response, NextFunction } from 'express';
+import { CustomRequest } from '../../types/express';
 import {
   getFlashcardDecks,
   addFlashcardDeck,
@@ -10,10 +11,29 @@ import {
   UpdateDeckRequestBody,
   DeleteDeckRequestBody
 } from '../../types/FlashcardDeck';
-import { wrapAsync } from '../../utils/wrapAsync';
 
-export const getDecks = wrapAsync(async (
-  req: Request,
+
+
+
+/**
+ * @swagger
+ * /api/flashcard-decks:
+ *   get:
+ *     summary: Get all flashcard decks
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: A list of flashcard decks
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/FlashcardDeck'
+*/
+export const getDecks = async (
+  req: CustomRequest,
   res: Response,
   next: NextFunction
 ): Promise<void> => {
@@ -26,15 +46,30 @@ export const getDecks = wrapAsync(async (
     // const { page = 1, limit = 10 } = req.pagination || {}; // Pagination can be added when service supports it
     const decks = await getFlashcardDecks(userId); // Reverted to original signature
     res.status(200).json(decks);
-    return;
   } catch (error) {
     next(error);
-    return;
   }
-  });
+};
 
-export const addDeck = wrapAsync(async (
-  req: Request<{}, {}, AddDeckRequestBody>,
+/**
+ * @swagger
+ * /api/flashcard-decks/add:
+ *   post:
+ *     summary: Add a new flashcard deck
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/AddDeckRequestBody'
+ *     responses:
+ *       201:
+ *         description: Flashcard deck created
+ */
+export const addDeck = async (
+  req: CustomRequest,
   res: Response,
   next: NextFunction
 ): Promise<void> => {
@@ -45,23 +80,44 @@ export const addDeck = wrapAsync(async (
       return;
     }
 
-    const { title, subject, description } = req.body;
-    const deck = await addFlashcardDeck(userId, title, subject, description);
-
+    const data = {
+      title: req.body.title,
+      subject: req.body.subject,
+      description: req.body.description,
+      created_by: userId,
+    }
+    const deck = await addFlashcardDeck(userId, data.title, data.subject, data.description);
     res.status(201).json({
       success: true,
       message: 'Flashcard deck created successfully',
       data: deck
     });
-    return;
+
   } catch (error) {
     next(error);
-    return;
   }
-});
+};
 
-export const updateDeck = wrapAsync(async (
-  req: Request<{}, {}, UpdateDeckRequestBody>,
+
+/**
+ * @swagger
+ * /api/flashcard-decks/update:
+ *   patch:
+ *     summary: Update a flashcard deck
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/UpdateDeckRequestBody'
+ *     responses:
+ *       200:
+ *         description: Flashcard deck updated
+ */
+export const updateDeck = async (
+  req: CustomRequest,
   res: Response,
   next: NextFunction
 ): Promise<void> => {
@@ -71,24 +127,37 @@ export const updateDeck = wrapAsync(async (
       res.status(401).json({ error: 'Unauthorized' });
       return;
     }
-
     const { id, title, subject, description } = req.body;
     const deck = await updateFlashcardDeck(userId, id, title, subject, description);
-
     res.status(201).json({
       success: true,
       message: 'Flashcard deck updated successfully',
       data: deck
     });
-    return;
   } catch (error) {
     next(error);
-    return;
   }
-});
+};
 
-export const deleteDeck = wrapAsync(async (
-  req: Request<{}, {}, DeleteDeckRequestBody>,
+/**
+ * @swagger
+ * /api/flashcard-decks/delete:
+ *   delete:
+ *     summary: Delete a flashcard deck
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/DeleteDeckRequestBody'
+ *     responses:
+ *       200:
+ *         description: Flashcard deck deleted
+ */
+export const deleteDeck = async (
+  req: CustomRequest,
   res: Response,
   next: NextFunction
 ): Promise<void> => {
@@ -98,13 +167,10 @@ export const deleteDeck = wrapAsync(async (
       res.status(401).json({ error: 'Unauthorized' });
       return;
     }
-
     const { id } = req.body;
     const deck = await deleteFlashcardDeck(userId, id);
     res.status(200).json(deck);
-    return;
   } catch (error) {
     next(error);
-    return;
   }
-});
+};
