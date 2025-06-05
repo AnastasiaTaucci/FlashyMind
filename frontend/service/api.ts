@@ -41,6 +41,7 @@ export async function login(email: string, password: string) {
   });
 
   const result = await response.json();
+  console.log('Login API response:', result);
 
   if (!response.ok) {
     throw new Error(result.error || 'Login failed');

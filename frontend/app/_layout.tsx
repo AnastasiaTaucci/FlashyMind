@@ -4,7 +4,7 @@ import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import 'react-native-reanimated';
-import { AuthProvider } from '../context/AuthContext'; // Custom auth context
+import { AuthProvider } from '../context/AuthContext';
 
 export default function RootLayout() {
   const [loaded] = useFonts({
@@ -12,7 +12,6 @@ export default function RootLayout() {
   });
 
   if (!loaded) {
-    // Async font loading only occurs in development.
     return null;
   }
 

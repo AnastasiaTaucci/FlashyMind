@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, ActivityIndicator } from 'react-native';
 import { router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAuth } from '../../context/AuthContext';
@@ -8,10 +8,17 @@ export default function LoginScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const { login } = useAuth();
+  const [loading, setLoading] = useState(false);
 
   const validateEmail = (email: string) => {
-    const emailRegex = /^[a-zA-Z0-9_]+@[a-zA-Z0-9_]+\.[a-zA-Z]{2,}$/;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
+  };
+  const getErrorMessage = (error: any) => {
+    if (typeof error === 'string') return error;
+    if (error?.message) return error.message;
+    if (error?.response?.data?.message) return error.response.data.message;
+    return 'Failed to login. Please try again.';
   };
 
   const handleLogin = async () => {
@@ -19,22 +26,19 @@ export default function LoginScreen() {
       Alert.alert('Error', 'Please enter both email and password');
       return;
     }
-
     if (!validateEmail(email)) {
       Alert.alert('Error', 'Please enter a valid email address');
       return;
     }
 
+    setLoading(true);
     try {
       await login(email, password);
       router.replace('../(tabs)');
     } catch (error: any) {
-      Alert.alert(
-        'Error',
-        error.message === 'Invalid login credentials'
-          ? 'Invalid email or password'
-          : error.message || 'Failed to login. Please try again.'
-      );
+      Alert.alert('Error', getErrorMessage(error));
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -69,10 +73,17 @@ export default function LoginScreen() {
         </View>
 
         <TouchableOpacity
-          style={[styles.button, (!email.trim() || !password.trim()) && styles.buttonDisabled]}
+          style={[styles.button, (!email.trim() || !password.trim() || loading) && styles.buttonDisabled]}
           onPress={handleLogin}
+          disabled={loading || !email.trim() || !password.trim()}
+          accessibilityRole="button"
+          accessibilityLabel="Sign In button"
         >
-          <Text style={styles.buttonText}>Sign In</Text>
+          {loading ? (
+            <ActivityIndicator color="#fff" />
+          ) : (
+            <Text style={styles.buttonText}>Sign In</Text>
+          )}
         </TouchableOpacity>
 
         <View style={styles.signupContainer}>
