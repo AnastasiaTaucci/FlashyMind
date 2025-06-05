@@ -74,6 +74,18 @@ const options = {
           },
           required: ['id'],
         },
+        FlashcardRequestBody: {
+          type: 'object',
+          properties: {
+            subject: { type: 'string' },
+            topic: { type: 'string' },
+            question: { type: 'string' },
+            answer: { type: 'string' },
+            deck_id: { type: 'string' },
+            created_by: { type: 'string' },
+          },
+          required: ['subject', 'topic', 'question', 'answer', 'deck_id', 'created_by'],
+        },
       },
     },
     security: [{ bearerAuth: [] }],
