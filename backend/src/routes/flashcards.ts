@@ -5,12 +5,18 @@ import { authenticateUser } from '../middlewares/authMiddleware';
 const router = Router();
 /**
  * @swagger
- * /api/flashcards:
+ * /api/flashcards/{deck_id}:
  *   get:
  *     summary: Get all flashcards
  *     tags: [Flashcards]
  *     security:
  *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: deck_id
+ *         required: true
+ *         schema:
+ *           type: string
  *     responses:
  *       200:
  *         description: A list of flashcards
@@ -20,20 +26,38 @@ const router = Router();
  *               type: array
  *               items:
  *                 $ref: '#/components/schemas/Flashcard'
- *   post:
- *     summary: Create a new flashcard
+ * /api/flashcards/add:
+ *   post:  
+ *     summary: Create a flashcard
  *     tags: [Flashcards]
- *     security:
- *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/Flashcard'
+ *             type: object
+ *             properties:
+ *               subject:
+ *                 type: string
+ *               topic:
+ *                 type: string
+ *               question:
+ *                 type: string
+ *               answer:
+ *                 type: string
+ *               deck_id:
+ *                 type: string
  *     responses:
  *       201:
- *         description: Flashcard created
+ *         description: Flashcard created successfully
+ *       400:
+ *         description: Missing required fields or flashcard already exists
+ *       401:
+ *         description: Unauthorized
+ *       404:
+ *         description: Deck not found
+ *       500:
+ *         description: Failed to create flashcard
  * 
  * /api/flashcards/{id}:
  *   delete:
@@ -72,9 +96,9 @@ const router = Router();
  *         description: Flashcard updated
  */
 
-router.get('/', getFlashcards);
-router.post('/add', createFlashcard);
-router.delete('/delete/:id', deleteFlashcard);
-router.put('/update/:id', updateFlashcard);
+router.get('/:deck_id', authenticateUser, getFlashcards);
+router.post('/add', authenticateUser, createFlashcard);
+router.delete('/delete/:id', authenticateUser, deleteFlashcard);
+router.put('/update/:id', authenticateUser, updateFlashcard);
 
 export default router;  

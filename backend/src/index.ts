@@ -4,6 +4,7 @@ import swaggerJsdoc from 'swagger-jsdoc';
 import flashcardDecksRoutes from './routes/flashcardDecksRoutes';
 import paginationMiddleware from './middlewares/pagination';
 import cors from 'cors';
+import flashcardRoutes from './routes/flashcards';
 
 const app = express();
 app.use(express.json());
@@ -32,7 +33,7 @@ setupSwaggerDocs(app, Number(3000));
 app.use(cors());
 app.use('/api/auth', authRouter)
 app.use('/api/flashcard-decks', paginationMiddleware, flashcardDecksRoutes);
-
+app.use('/api/flashcards', flashcardRoutes);
 
 app.get('/', (req, res) => {
   res.send('Hello, Express with TypeScript!');

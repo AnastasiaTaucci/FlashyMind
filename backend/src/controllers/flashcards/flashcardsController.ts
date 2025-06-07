@@ -64,12 +64,14 @@ export const createFlashcard = async (req: Request, res: Response): Promise<void
 };
 
 
-// GET /flashcards
+// GET /flashcards/:deck_id
 export const getFlashcards = async (req: Request, res: Response): Promise<void> => {
   try {
     const userId = req.user?.id; // Assuming req.user is set by the auth middleware
-    if (!userId) {
-      res.status(401).json({ error: 'Unauthorized' });
+    const { deck_id } = req.params;
+
+    if (!deck_id) {
+      res.status(400).json({ error: 'Missing deck_id in URL parameters' });
       return;
     }
 
@@ -77,6 +79,7 @@ export const getFlashcards = async (req: Request, res: Response): Promise<void> 
       .from('flashcards')
       .select('*')
       .eq('created_by', userId)
+      .eq('deck_id', deck_id)
       .order('created_at', { ascending: false });
 
     if (error) throw new Error(error.message);
@@ -103,11 +106,18 @@ export const deleteFlashcard = async (req: Request, res: Response): Promise<void
     }
 
     const { id } = req.params;
+    const { deck_id } = req.body;
+    if (!deck_id) {
+      res.status(400).json({ error: 'Missing deck_id in request body' });
+      return;
+    }
+
     const { error } = await supabase
       .from('flashcards')
       .delete()
       .eq('id', id)
-      .eq('created_by', userId);
+      .eq('created_by', userId)
+      .eq('deck_id', deck_id);
 
     if (error) throw new Error(error.message);
 
@@ -142,5 +152,67 @@ export const updateFlashcard = async (req: Request, res: Response): Promise<void
   } catch (error) {
     console.error('Error updating flashcard:', error);
     res.status(500).json({ error: 'Failed to update flashcard', details: error });
+  }
+};
+
+// POST /api/flashcards/add
+export const addFlashcard = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const userId = req.user?.id;
+    if (!userId) {
+      res.status(401).json({ error: 'Unauthorized' });
+      return;
+    }
+
+    if (!req.body || Object.keys(req.body).length === 0) {
+      res.status(400).json({ error: 'Request body is empty' });
+      return;
+    }
+    
+    const { subject, topic, question, answer, deck_id } = req.body;
+    
+    if (!deck_id || !subject || !topic || !question || !answer) {
+      res.status(400).json({ error: 'Missing required fields' });
+      return;
+    }
+
+    // Check if deck exists
+    const { data: deck, error: deckError } = await supabase
+      .from('flashcard_decks')
+      .select('*')
+      .eq('id', deck_id)
+      .eq('created_by', userId);
+
+    if (deckError) throw new Error(deckError.message);
+    if (!deck || deck.length === 0) {
+      res.status(404).json({ error: 'Deck not found' });
+      return;
+    }
+
+    // Check if flashcard already exists (optional logic depending on your rules)
+    const { data: existingFlashcard, error: flashcardError } = await supabase
+      .from('flashcards')
+      .select('*')
+      .eq('deck_id', deck_id)
+      .eq('created_by', userId)
+      .eq('question', question);
+
+    if (flashcardError) throw new Error(flashcardError.message);
+    if (existingFlashcard && existingFlashcard.length > 0) {
+      res.status(400).json({ error: 'Flashcard already exists with the same question' });
+      return;
+    }
+
+    const { data, error } = await supabase
+      .from('flashcards')
+      .insert([{ subject, topic, question, answer, deck_id, created_by: userId }])
+      .select('*');
+
+    if (error) throw new Error(error.message);
+
+    res.status(201).json(data[0]);
+  } catch (error) {
+    console.error('Error creating flashcard:', error);
+    res.status(500).json({ error: 'Failed to create flashcard', details: error });
   }
 };

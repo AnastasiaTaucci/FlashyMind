@@ -1,5 +1,20 @@
 import { Platform } from 'react-native';
 import Constants from 'expo-constants';
+import { useUserSessionStore } from '@/store/userSessionStore';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+const STORAGE_KEY = '@user_session';
+
+export async function getAccessToken() {
+  const storedSession = await AsyncStorage.getItem(STORAGE_KEY);
+  if (storedSession) {
+    const parsedSession = JSON.parse(storedSession);
+    const accessToken = parsedSession.access_token;
+    return accessToken;
+  } else {
+    throw new Error('No access token found');
+  }
+}
 
 export function getApiBaseUrl(): string {
   if (__DEV__) {
@@ -14,8 +29,9 @@ export function getApiBaseUrl(): string {
   return 'https://api.flashymind.com/api';
 }
 
-
 export const API_BASE_URL = getApiBaseUrl();
+
+
 
 export async function signup(email: string, password: string) {
   const response = await fetch(`${API_BASE_URL}/auth/signup`, {
@@ -41,7 +57,6 @@ export async function login(email: string, password: string) {
   });
 
   const result = await response.json();
-  console.log('Login API response:', result);
 
   if (!response.ok) {
     throw new Error(result.error || 'Login failed');
@@ -66,9 +81,13 @@ export async function logout() {
 }
 
 export async function getDecks() {
+  const accessToken = await getAccessToken();
   const response = await fetch(`${API_BASE_URL}/flashcard-decks`, {
     method: 'GET',
-    headers: { 'Content-Type': 'application/json' },
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${accessToken}`,
+    },
   });
 
   const result = await response.json();
@@ -80,10 +99,33 @@ export async function getDecks() {
   return result;
 }
 
+export async function getDeck(id: string) {
+  const accessToken = await getAccessToken();
+  const response = await fetch(`${API_BASE_URL}/flashcard-decks/${id}`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+
+  const result = await response.json();
+
+  if (!response.ok) {
+    throw new Error(result.error || 'Failed to fetch deck');
+  }
+
+  return result;
+}
+
 export async function addDeck(deck: { title: string; subject: string; description?: string }) {
+  const accessToken = await getAccessToken();
   const response = await fetch(`${API_BASE_URL}/flashcard-decks/add`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${accessToken}`,
+    },
     body: JSON.stringify(deck),
   });
 
@@ -100,9 +142,13 @@ export async function updateDeck(
   id: string,
   deck: { title: string; subject: string; description?: string }
 ) {
+  const accessToken = await getAccessToken();
   const response = await fetch(`${API_BASE_URL}/flashcard-decks/update/${id}`, {
     method: 'PATCH',
-    headers: { 'Content-Type': 'application/json' },
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${accessToken}`,
+    },
     body: JSON.stringify(deck),
   });
 
@@ -116,9 +162,13 @@ export async function updateDeck(
 }
 
 export async function deleteDeck(id: string) {
+  const accessToken = await getAccessToken();
   const response = await fetch(`${API_BASE_URL}/flashcard-decks/delete/${id}`, {
     method: 'DELETE',
-    headers: { 'Content-Type': 'application/json' },
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${accessToken}`,
+    },
   });
 
   const result = await response.json();
@@ -130,3 +180,19 @@ export async function deleteDeck(id: string) {
   return result;
 }
 
+export async function fetchCards(id: string) {
+  const accessToken = await getAccessToken();
+
+  const response = await fetch(`${API_BASE_URL}/flashcards/${id}`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+  const result = await response.json();
+  if (!response.ok) {
+    throw new Error(result.error || 'Failed to fetch cards');
+  }
+  return result.data;
+}

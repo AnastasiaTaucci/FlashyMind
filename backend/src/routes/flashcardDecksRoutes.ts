@@ -3,10 +3,11 @@ import {
   getDecks,
   addDeck,
   updateDeck,
-  deleteDeck
+  deleteDeck,
+  getDeck
 } from '../controllers/flashcards/flashcardDecksController';
 
-import paginationMiddleware from '../middlewares/pagination';
+import { authenticateUser } from '../middlewares/authMiddleware';
 
 const router = express.Router();
 
@@ -22,7 +23,7 @@ const router = express.Router();
  *       200:
  *         description: A list of flashcard decks
  */
-router.get('/', paginationMiddleware, getDecks);
+router.get('/', authenticateUser, getDecks);
 
 /**
  * @swagger
@@ -42,7 +43,23 @@ router.get('/', paginationMiddleware, getDecks);
  *       201:
  *         description: Flashcard deck created
  */
-  router.post('/add', addDeck);
+  router.post('/add', authenticateUser, addDeck);
+
+
+/**
+ * @swagger
+ * /api/flashcard-decks/{id}:
+ *   get:
+ *     summary: Get a flashcard deck by ID
+ *     tags: [FlashcardDecks]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Flashcard deck retrieved
+ */
+router.get('/:id', authenticateUser, getDeck);
+
 
 /**
  * @swagger
@@ -62,7 +79,7 @@ router.get('/', paginationMiddleware, getDecks);
  *       200:
  *         description: Flashcard deck updated
  */
-router.patch('/update/:id', updateDeck);
+router.patch('/update/:id', authenticateUser, updateDeck);
 
 /**
  * @swagger
@@ -82,6 +99,6 @@ router.patch('/update/:id', updateDeck);
  *       200:
  *         description: Flashcard deck deleted
  */
-router.delete('/delete/:id', deleteDeck);
+router.delete('/delete/:id', authenticateUser, deleteDeck);
 
 export default router;

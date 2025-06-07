@@ -10,6 +10,18 @@ export const getFlashcardDecks = async (userId: string) => {
   return data;
 };
 
+export const getFlashcardDeck = async (userId: string, id: string) => {
+  const { data, error } = await supabase
+    .from('flashcard_decks')
+    .select('*')
+    .eq('id', id)
+    .eq('created_by', userId);
+
+  if (error) throw new Error(error.message);
+  return data;
+};
+
+
 export const addFlashcardDeck = async (
   userId: string,
   title: string,

@@ -4,7 +4,8 @@ import {
   getFlashcardDecks,
   addFlashcardDeck,
   updateFlashcardDeck,
-  deleteFlashcardDeck
+  deleteFlashcardDeck,
+  getFlashcardDeck
 } from '../../services/flashcardDecksService';
 import {
   AddDeckRequestBody,
@@ -46,6 +47,50 @@ export const getDecks = async (
     // const { page = 1, limit = 10 } = req.pagination || {}; // Pagination can be added when service supports it
     const decks = await getFlashcardDecks(userId); // Reverted to original signature
     res.status(200).json(decks);
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * @swagger
+ * /api/flashcard-decks/{id}:
+ *   get:
+ *     summary: Get a flashcard deck by ID
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         description: The ID of the flashcard deck to retrieve
+ *         schema:
+ *           type: string 
+ *     responses:
+ *       200:
+ *         description: Flashcard deck retrieved
+ */
+export const getDeck = async (
+  req: CustomRequest,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const userId = req.user?.id;
+    if (!userId) {
+      res.status(401).json({ error: 'Unauthorized' });
+      return;
+    }
+    const { id } = req.params;
+    const deck = await getFlashcardDeck(userId, id);
+
+    const deckData = {  
+      id: deck[0].id,
+      title: deck[0].title,
+      subject: deck[0].subject,
+      description: deck[0].description,
+    }
+    res.status(200).json(deckData);
   } catch (error) {
     next(error);
   }

@@ -23,7 +23,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const restoreSession = async () => {
       try {
         const storedSession = await AsyncStorage.getItem(STORAGE_KEY);
-        console.log('Stored session:', storedSession);
         if (storedSession) {
           const parsedSession = JSON.parse(storedSession);
           setSession(parsedSession);

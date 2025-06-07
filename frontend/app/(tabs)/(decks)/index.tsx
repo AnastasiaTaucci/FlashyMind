@@ -1,56 +1,92 @@
-import React, { useState } from 'react';
-import { View, TextInput, Button, Text } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { TextInput, Button, Text, TouchableOpacity } from 'react-native';
 import { VStack } from '@/components/ui/vstack';
-import { HStack } from '@/components/ui/hstack';
 import { Box } from '@/components/ui/box';
-import Card from '@/components/Card';
 import { Heading } from '@/components/ui/heading';
 import { router } from 'expo-router';
+import { getDecks } from '@/service/api';
+
+interface Deck {
+  id: string;
+  title: string;
+  subject: string;
+  description?: string;
+}
 
 const DeckPage = () => {
   const [search, setSearch] = useState('');
+  const [decks, setDecks] = useState<Deck[]>([]);
+  const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    const loadDecks = async () => {
+      try {
+        setLoading(true);
+        const data = await getDecks();
+        setDecks(data);
+        setLoading(false);
+        } catch (error) {
+        console.error('Error fetching decks:', error);
+      }
+    };
+
+    loadDecks();
+  }, []);
 
   const handleSearch = (text: string) => {
     setSearch(text);
   };
 
-  const cards = [
-    { front: 'Mock Question 1', back: 'Mock Answer 1' },
-    { front: 'Mock Question 2', back: 'Mock Answer 2' },
-  ];
-
-  const filteredCards = cards.filter((card) => {
+  const filteredDecks = decks.filter((deck) => {
     const searchTerms = search.toLowerCase().split(' ');
-    return searchTerms.every((term) => card.front.toLowerCase().includes(term));
+    return searchTerms.every((term) => deck.title?.toLowerCase().includes(term));
   });
 
-
-  const handleAddCard = () => {
-    router.navigate('./addCard');
-  };
-
-  const handleSave = () => {
-    router.navigate('./saveDeck');
+  const handleDeckPress = (deck: Deck) => {
+    router.navigate(`/(tabs)/(decks)/${deck.id}`);
   };
 
   return (
+    <>
+    {loading ? (
+      <Text>Loading...</Text>
+    ) : (
     <VStack space="md">
       <Box style={{ padding: 16, borderWidth: 1, borderRadius: 4 }}>
-        <Heading>Deck Name</Heading>
+        <Heading>Decks</Heading>
         <TextInput
-          placeholder="Search Cards"
+          placeholder="Search Decks"
           style={{ padding: 8, marginBottom: 16, borderWidth: 1, borderRadius: 6 }}
           value={search}
           onChangeText={handleSearch}
         />
-        <Text style={{ fontSize: 24, fontWeight: 'bold' }}>Decks</Text>
-        {filteredCards.map((card) => (
-          <Card key={card.front} front={card.front} back={card.back} />
+        {filteredDecks.map((deck) => (
+          <TouchableOpacity key={deck.title} onPress={() => handleDeckPress(deck)}>
+            <Box
+              style={{
+                padding: 8,
+                borderWidth: 1,
+                borderRadius: 6,
+                marginBottom: 8,
+                borderColor: 'gray',
+                backgroundColor: 'white',
+                shadowColor: '#000',
+                shadowOffset: { width: 0, height: 2 },
+                shadowOpacity: 0.1,
+                shadowRadius: 4,
+                elevation: 2,
+              }}
+            >
+              <Text style={{ fontSize: 18, fontWeight: 'bold' }}>{deck.title}</Text>
+              <Text>{deck.subject}</Text>
+              {deck.description && <Text>{deck.description}</Text>}
+            </Box>
+          </TouchableOpacity>
         ))}
-        <Button title="+ Add New Card" onPress={handleAddCard} />
-        <Button title="Save" onPress={handleSave} color="black" />
+        <Button title="Add New Deck" onPress={() => router.navigate('./addDeck')} />
       </Box>
     </VStack>
+    )}
+    </>
   );
 };
 
