@@ -5,6 +5,7 @@ import { HStack } from '@/components/ui/hstack';
 import { Box } from '@/components/ui/box';
 import Card from '@/components/Card';
 import { Heading } from '@/components/ui/heading';
+import { router } from 'expo-router';
 
 const DeckPage = () => {
   const [search, setSearch] = useState('');
@@ -23,6 +24,15 @@ const DeckPage = () => {
     return searchTerms.every((term) => card.front.toLowerCase().includes(term));
   });
 
+
+  const handleAddCard = () => {
+    router.navigate('./addCard');
+  };
+
+  const handleSave = () => {
+    router.navigate('./saveDeck');
+  };
+
   return (
     <VStack space="md">
       <Box style={{ padding: 16, borderWidth: 1, borderRadius: 4 }}>
@@ -37,8 +47,8 @@ const DeckPage = () => {
         {filteredCards.map((card) => (
           <Card key={card.front} front={card.front} back={card.back} />
         ))}
-        <Button title="+ Add New Card" onPress={() => {}} />
-        <Button title="Save" onPress={() => {}} color="black" />
+        <Button title="+ Add New Card" onPress={handleAddCard} />
+        <Button title="Save" onPress={handleSave} color="black" />
       </Box>
     </VStack>
   );
