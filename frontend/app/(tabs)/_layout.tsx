@@ -3,6 +3,7 @@ import React from 'react';
 import { Platform } from 'react-native';
 
 import { IconSymbol } from '@/components/ui/IconSymbol';
+import { Ionicons } from '@expo/vector-icons';
 
 export default function TabLayout() {
   return (
@@ -33,6 +34,14 @@ export default function TabLayout() {
           tabBarIcon: ({ color }) => <IconSymbol size={30} name="paperplane.fill" color={color} />,
         }}
       />
+      <Tabs.Screen
+        name="(decks)"
+        options={{
+          title: 'Decks',
+          tabBarIcon: ({ color }) => <Ionicons size={30} name="book" color={color} />,
+        }}
+      />
+      
     </Tabs>
   );
 }
