@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { createFlashcard, getFlashcards, deleteFlashcard, updateFlashcard } from '../controllers/flashcards/flashcardsController';
+import { createFlashcard, getFlashcards, deleteFlashcard, updateFlashcard, getFlashcard  } from '../controllers/flashcards/flashcardsController';
 import { authenticateUser } from '../middlewares/authMiddleware';
 
 const router = Router();
@@ -59,7 +59,7 @@ const router = Router();
  *       500:
  *         description: Failed to create flashcard
  * 
- * /api/flashcards/{id}:
+ * /api/flashcards/delete/{id}:
  *   delete:
  *     summary: Delete a flashcard
  *     tags: [Flashcards]
@@ -74,7 +74,8 @@ const router = Router();
  *     responses:
  *       200:
  *         description: Flashcard deleted
- *   put:
+ * 
+ * /api/flashcards/update/{id}:
  *     summary: Update a flashcard
  *     tags: [Flashcards]
  *     security:
@@ -94,11 +95,40 @@ const router = Router();
  *     responses:
  *       200:
  *         description: Flashcard updated
+ *       401:
+ *         description: Unauthorized
+ *       404:
+ *         description: Flashcard not found
+ *       500:
+ *         description: Failed to update flashcard
+ * 
+ * /api/flashcards/get/{id}:
+ *   get:
+ *     summary: Get a flashcard by ID
+ *     tags: [Flashcards]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Flashcard retrieved
+ *       401:
+ *         description: Unauthorized
+ *       404:
+ *         description: Flashcard not found
+ *       500:
+ *         description: Failed to fetch flashcard
  */
 
 router.get('/:deck_id', authenticateUser, getFlashcards);
 router.post('/add', authenticateUser, createFlashcard);
 router.delete('/delete/:id', authenticateUser, deleteFlashcard);
 router.put('/update/:id', authenticateUser, updateFlashcard);
+router.get('/get/:id', authenticateUser, getFlashcard);
 
 export default router;  

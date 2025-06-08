@@ -212,7 +212,7 @@ export const deleteDeck = async (
       res.status(401).json({ error: 'Unauthorized' });
       return;
     }
-    const { id } = req.body;
+    const { id } = req.params;
     const deck = await deleteFlashcardDeck(userId, id);
     res.status(200).json(deck);
   } catch (error) {

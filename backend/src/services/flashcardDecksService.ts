@@ -55,6 +55,15 @@ export const updateFlashcardDeck = async (
 };
 
 export const deleteFlashcardDeck = async (userId: string, id: string) => {
+  // First, delete all flashcards associated with the deck
+  const { error: flashcardsError } = await supabase
+    .from('flashcards')
+    .delete()
+    .eq('deck_id', id);
+
+  if (flashcardsError) throw new Error(flashcardsError.message);
+
+  // Then, delete the deck itself
   const { data, error } = await supabase
     .from('flashcard_decks')
     .delete()

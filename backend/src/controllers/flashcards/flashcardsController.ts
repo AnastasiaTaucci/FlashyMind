@@ -63,6 +63,28 @@ export const createFlashcard = async (req: Request, res: Response): Promise<void
   }
 };
 
+// GET /flashcards/:id
+
+export const getFlashcard = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const userId = req.user?.id;
+    const { id } = req.params;
+
+    const { data, error } = await supabase
+      .from('flashcards')
+      .select('*')
+      .eq('id', id)
+      .eq('created_by', userId);
+
+    if (error) throw new Error(error.message);
+
+    res.status(200).json(data[0]);
+  } catch (error) {
+    console.error('Error fetching flashcard:', error);
+    res.status(500).json({ error: 'Failed to fetch flashcard', details: error });
+  }
+};
+
 
 // GET /flashcards/:deck_id
 export const getFlashcards = async (req: Request, res: Response): Promise<void> => {
@@ -104,20 +126,11 @@ export const deleteFlashcard = async (req: Request, res: Response): Promise<void
       res.status(401).json({ error: 'Unauthorized' });
       return;
     }
-
     const { id } = req.params;
-    const { deck_id } = req.body;
-    if (!deck_id) {
-      res.status(400).json({ error: 'Missing deck_id in request body' });
-      return;
-    }
-
     const { error } = await supabase
       .from('flashcards')
       .delete()
-      .eq('id', id)
-      .eq('created_by', userId)
-      .eq('deck_id', deck_id);
+      .eq('id', id);
 
     if (error) throw new Error(error.message);
 
@@ -148,7 +161,7 @@ export const updateFlashcard = async (req: Request, res: Response): Promise<void
 
     if (error) throw new Error(error.message);
 
-    res.status(200).json(data);
+    res.status(200).json(data[0]);
   } catch (error) {
     console.error('Error updating flashcard:', error);
     res.status(500).json({ error: 'Failed to update flashcard', details: error });
