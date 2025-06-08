@@ -2,14 +2,15 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
+import { deleteFlashcard } from '@/service/api';
 
-const Card = ({ question, answer }: { question: string; answer: string }) => {
+const Card = ({ question, answer, id, deck_id, onDelete }: { question: string; answer: string; id: string; deck_id: string; onDelete: () => void }) => {
   const handleEdit = () => {
-    router.navigate('./editCard');
+    router.navigate(`../../editCard/${id}`);
   };
 
-  const handleDelete = () => {
-    router.navigate('./deleteCard');
+  const handleDelete = async () => {
+    onDelete();
   };
   return (
     <View style={styles.card}>

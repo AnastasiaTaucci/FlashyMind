@@ -196,3 +196,70 @@ export async function fetchCards(id: string) {
   }
   return result.data;
 }
+
+
+export async function getCard(id: string) {
+  const accessToken = await getAccessToken();
+  const response = await fetch(`${API_BASE_URL}/flashcards/get/${id}`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+  const result = await response.json();
+  if (!response.ok) {
+    throw new Error(result.error || 'Failed to fetch card');
+  }
+  return result;
+}
+
+export async function updateCard(id: string, card: { question: string; answer: string; subject: string; topic: string }) {
+  const accessToken = await getAccessToken();
+  const response = await fetch(`${API_BASE_URL}/flashcards/update/${id}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${accessToken}`,
+    },
+    body: JSON.stringify(card),
+  });
+  const result = await response.json();
+  if (!response.ok) {
+    throw new Error(result.error || 'Failed to update card');
+  }
+  return result;
+}
+
+export async function addCard(card: { question: string; answer: string; deck_id: string; subject: string; topic: string }) {
+  const accessToken = await getAccessToken();
+  const response = await fetch(`${API_BASE_URL}/flashcards/add`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${accessToken}`,
+    },
+    body: JSON.stringify(card),
+  });
+  const result = await response.json();
+  if (!response.ok) {
+    throw new Error(result.error || 'Failed to add card');
+  }
+  return result;
+}
+
+export async function deleteFlashcard(id: string) {
+  const accessToken = await getAccessToken();
+  const response = await fetch(`${API_BASE_URL}/flashcards/delete/${id}`, {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+  const result = await response.json();
+  if (!response.ok) {
+    throw new Error(result.error || 'Failed to delete flashcard');
+  }
+  return result;
+}

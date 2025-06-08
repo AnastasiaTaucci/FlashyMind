@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { TextInput, Button, Text, TouchableOpacity } from 'react-native';
+import { TextInput, Button, Text, TouchableOpacity, View } from 'react-native';
 import { VStack } from '@/components/ui/vstack';
 import { Box } from '@/components/ui/box';
 import { Heading } from '@/components/ui/heading';
 import { router } from 'expo-router';
-import { getDecks } from '@/service/api';
+import { deleteDeck, getDecks } from '@/service/api';
+import { MaterialIcons } from '@expo/vector-icons';
+import { useFocusEffect } from '@react-navigation/native';
 
 interface Deck {
   id: string;
@@ -17,20 +19,23 @@ const DeckPage = () => {
   const [search, setSearch] = useState('');
   const [decks, setDecks] = useState<Deck[]>([]);
   const [loading, setLoading] = useState(true);
-  useEffect(() => {
-    const loadDecks = async () => {
-      try {
-        setLoading(true);
-        const data = await getDecks();
-        setDecks(data);
-        setLoading(false);
-        } catch (error) {
-        console.error('Error fetching decks:', error);
-      }
-    };
 
-    loadDecks();
-  }, []);
+  const loadDecks = async () => {
+    try {
+      setLoading(true);
+      const data = await getDecks();
+      setDecks(data);
+      setLoading(false);
+    } catch (error) {
+      console.error('Error fetching decks:', error);
+    }
+  };
+
+  useFocusEffect(
+    React.useCallback(() => {
+      loadDecks();
+    }, [])
+  );
 
   const handleSearch = (text: string) => {
     setSearch(text);
@@ -43,6 +48,19 @@ const DeckPage = () => {
 
   const handleDeckPress = (deck: Deck) => {
     router.navigate(`/(tabs)/(decks)/${deck.id}`);
+  };
+
+  const handleEditDeck = (deck: Deck) => {
+    router.navigate(`./editDeck/${deck.id}`);
+  };
+
+  const handleDeleteDeck = async (deck: Deck) => {
+    const data = await deleteDeck(deck.id);
+    // Handle the response if needed
+    if (data[0].id) {
+      loadDecks();
+      router.navigate(`../(decks)`);
+    }
   };
 
   return (
@@ -79,6 +97,14 @@ const DeckPage = () => {
               <Text style={{ fontSize: 18, fontWeight: 'bold' }}>{deck.title}</Text>
               <Text>{deck.subject}</Text>
               {deck.description && <Text>{deck.description}</Text>}
+              <View style={{ flexDirection: 'row', justifyContent: 'flex-end', marginTop: 8 }}>
+                <TouchableOpacity onPress={() => handleEditDeck(deck)}>
+                  <MaterialIcons name="edit" size={24} color="gray" />
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => handleDeleteDeck(deck)}>
+                  <MaterialIcons name="delete" size={24} color="gray" />
+                </TouchableOpacity>
+              </View>
             </Box>
           </TouchableOpacity>
         ))}
