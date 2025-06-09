@@ -42,17 +42,7 @@ export default function FlashcardSetCard({ item }: { item: FlashcardSet }) {
       </VStack>
 
       <VStack style={styles.iconColumn}>
-        <Button
-          style={[styles.iconButton, styles.deckEditButton]}
-          onPress={() =>
-            router.push({
-              pathname: './addDeck',
-              params: { deckId: item.id },
-            })
-          }
-        >
-          <MaterialIcons name="settings" size={20} color="white" />
-        </Button>
+
         <Button
           style={styles.iconButton}
           onPress={() =>
@@ -146,14 +136,14 @@ const styles = StyleSheet.create({
     backgroundColor: '#5492f7',
     borderRadius: 10,
   },
-  deckEditButton: {
-    backgroundColor: '#059669',
-    shadowColor: '#059669',
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
-    shadowOffset: { width: 0, height: 2 },
-    elevation: 3,
-  },
+  // deckEditButton: {
+  //   backgroundColor: '#059669',
+  //   shadowColor: '#059669',
+  //   shadowOpacity: 0.3,
+  //   shadowRadius: 4,
+  //   shadowOffset: { width: 0, height: 2 },
+  //   elevation: 3,
+  // },
   deleteButton: {
     backgroundColor: '#ef4444',
   },
