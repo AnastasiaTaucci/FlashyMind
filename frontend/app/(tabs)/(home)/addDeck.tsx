@@ -20,7 +20,7 @@ export default function CreateDeckScreen() {
       setTitle('');
       setSubject('');
       setDescription('');
-      router.navigate(`../(decks)`);
+      router.navigate(`../(explore_decks)`);
     }
   };
 
@@ -28,7 +28,7 @@ export default function CreateDeckScreen() {
     <View style={styles.container}>
       <TouchableOpacity
         style={styles.backButton}
-        onPress={() => router.navigate(`../(decks)`)}
+        onPress={() => router.navigate(`../(explore_decks)`)}
       >
         <MaterialIcons name="arrow-back" size={24} color="gray" />
         <Text style={styles.buttonText}>Back to Decks</Text>

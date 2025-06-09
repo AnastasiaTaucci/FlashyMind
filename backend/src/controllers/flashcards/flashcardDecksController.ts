@@ -40,6 +40,7 @@ export const getDecks = async (
 ): Promise<void> => {
   try {
     const userId = req.user?.id;
+    console.log('userId', userId);
     if (!userId) {
       res.status(401).json({ error: 'Unauthorized' });
       return;

@@ -95,7 +95,7 @@ const DeckPage = () => {
     <VStack space="md">
       <TouchableOpacity
             style={styles.backButton}
-            onPress={() => router.navigate(`../(decks)`)}
+              onPress={() => router.navigate(`../(decks)`)}
           >
             <MaterialIcons name="arrow-back" size={24} color="gray" />
             <Text style={styles.buttonText}>Back to Decks</Text>

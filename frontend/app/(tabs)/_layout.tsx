@@ -28,16 +28,9 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="(explore)/explore"
+        name="(explore_decks)"
         options={{
-          title: 'Explore',
-          tabBarIcon: ({ color }) => <IconSymbol size={30} name="paperplane.fill" color={color} />,
-        }}
-      />
-      <Tabs.Screen
-        name="(decks)"
-        options={{
-          title: 'Decks',
+          title: 'Explore Decks',
           tabBarIcon: ({ color }) => <Ionicons size={30} name="book" color={color} />,
         }}
       />
