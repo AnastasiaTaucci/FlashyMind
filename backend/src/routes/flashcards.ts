@@ -72,9 +72,9 @@ const router = Router();
  *         description: Flashcard updated
  */
 
-router.get('/', getFlashcards);
-router.post('/add', createFlashcard);
-router.delete('/delete/:id', deleteFlashcard);
-router.put('/update/:id', updateFlashcard);
+router.get('/:deck_id', authenticateUser, getFlashcards);
+router.post('/add', authenticateUser, createFlashcard);
+router.delete('/delete/:id', authenticateUser, deleteFlashcard);
+router.put('/update/:id', authenticateUser, updateFlashcard);
 
 export default router;  

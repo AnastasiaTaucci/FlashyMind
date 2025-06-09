@@ -44,7 +44,12 @@ export default function FlashcardSetCard({ item }: { item: FlashcardSet }) {
       <VStack style={styles.iconColumn}>
         <Button
           style={styles.iconButton}
-          onPress={() => router.push({ pathname: './addDeck', params: { id: item.id } })}
+          onPress={() =>
+            router.push({
+              pathname: './subjectCards',
+              params: { subject: item.subject, deckId: item.id },
+            })
+          }
         >
           <ButtonIcon as={EditIcon} />
         </Button>
