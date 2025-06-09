@@ -98,7 +98,9 @@ export const useFlashcardStore = create<FlashcardState>((set, get) => ({
         // Update state
         set((state) => ({
           flashcards: state.flashcards.map((card) =>
-            card.id === id ? { ...card, ...updatedCard, updated_at: new Date().toISOString() } : card
+            card.id === id
+              ? { ...card, ...updatedCard, updated_at: new Date().toISOString() }
+              : card
           ),
           isLoading: false,
         }));
@@ -143,7 +145,7 @@ export const useFlashcardStore = create<FlashcardState>((set, get) => ({
   getFlashcardById: (id) => get().flashcards.find((card) => card.id === id),
 }));
 
-// Flashcard Set Store
+// Flashcard Deck Store
 interface FlashcardSetState {
   flashcardSets: FlashcardSet[];
   isLoading: boolean;

@@ -223,7 +223,6 @@ export async function deleteFlashcard(id: string) {
   throw new Error('Delete not implemented yet.');
 }
 
-
 export async function createFlashcardDeck(title: string, subject: string, description?: string) {
   const headers = await getAuthHeaders();
 

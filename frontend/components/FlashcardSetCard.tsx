@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text } from 'react-native';
+import { Alert, StyleSheet, Text } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useFlashcardSetStore } from '@/store/deck-card-store';
 import { Box } from '@/components/ui/box';
@@ -14,6 +14,23 @@ import type { FlashcardSet } from '@/types/FlashcardSet';
 export default function FlashcardSetCard({ item }: { item: FlashcardSet }) {
   const router = useRouter();
   const deleteFlashcardSet = useFlashcardSetStore((state) => state.deleteFlashcardSet);
+
+  const handleDeleteDeck = (deckId: string) => {
+    Alert.alert('Delete Deck', 'Are you sure you want to delete this deck?', [
+      { text: 'Cancel', style: 'cancel' },
+      {
+        text: 'Delete',
+        style: 'destructive',
+        onPress: async () => {
+          try {
+            await deleteFlashcardSet(deckId);
+          } catch (error: any) {
+            Alert.alert('Error', error.message || 'Failed to delete flashcard');
+          }
+        },
+      },
+    ]);
+  };
 
   return (
     <Box style={styles.card}>
@@ -55,7 +72,7 @@ export default function FlashcardSetCard({ item }: { item: FlashcardSet }) {
         </Button>
         <Button
           style={[styles.iconButton, styles.deleteButton]}
-          onPress={() => deleteFlashcardSet(item.id)}
+          onPress={() => handleDeleteDeck(item.id)}
         >
           <ButtonIcon as={TrashIcon} />
         </Button>

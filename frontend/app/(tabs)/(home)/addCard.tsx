@@ -160,14 +160,7 @@ export default function CreateCardScreen() {
 
               <Pressable
                 onPress={() => {
-                  if (subject && deckId) {
-                    router.push({
-                      pathname: '/subjectCards',
-                      params: { subject, deckId },
-                    });
-                  } else {
-                    router.push('/');
-                  }
+                  router.back();
                 }}
                 disabled={isLoading}
                 style={{
@@ -181,7 +174,7 @@ export default function CreateCardScreen() {
                 }}
               >
                 <Text style={{ textAlign: 'center', color: '#4b5563', fontWeight: '500' }}>
-                  {subject ? 'Back to Cards' : 'Return to Home'}
+                  Back to Deck
                 </Text>
               </Pressable>
             </View>
