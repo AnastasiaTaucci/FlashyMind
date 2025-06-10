@@ -40,7 +40,7 @@ export default function FlashcardSetCard({ item }: { item: FlashcardSet }) {
       <VStack style={styles.cardContent}>
         <Text style={styles.cardTitle}>{item.title}</Text>
         <Text style={styles.cardSubtitle}>{item.subject}</Text>
-        <Text style={styles.cardDescription}>{item.description}</Text>
+        <Text style={styles.cardDescription}>{item.description ? item.description : "" }</Text>
         <Text style={styles.cardCount}>Cards: {cardCount}</Text>
 
         <HStack style={styles.actionRow}>
