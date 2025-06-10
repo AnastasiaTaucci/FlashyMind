@@ -40,17 +40,6 @@ export default function SubjectCardsScreen() {
       if (currentDeckId && card.deck_id) {
         return card.deck_id === currentDeckId;
       }
-
-      if (!card.subject || typeof card.subject !== 'string' || !subjectName) {
-        console.warn('Card missing subject or subjectName:', {
-          cardId: card.id,
-          cardSubject: card.subject,
-          subjectName,
-        });
-        return false;
-      }
-
-      return card.subject.toLowerCase() === subjectName.toLowerCase();
     });
 
     console.log('Filtered cards result:', {

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Alert, StyleSheet, Text } from 'react-native';
 import { useRouter } from 'expo-router';
-import { useFlashcardSetStore } from '@/store/deck-card-store';
+import { useFlashcardSetStore, useFlashcardStore } from '@/store/deck-card-store';
 import { Box } from '@/components/ui/box';
 import { VStack } from '@/components/ui/vstack';
 import { HStack } from '@/components/ui/hstack';
@@ -13,7 +13,10 @@ import type { FlashcardSet } from '@/types/FlashcardSet';
 
 export default function FlashcardSetCard({ item }: { item: FlashcardSet }) {
   const router = useRouter();
+  const flashcards = useFlashcardStore((state) => state.flashcards);
   const deleteFlashcardSet = useFlashcardSetStore((state) => state.deleteFlashcardSet);
+
+  const cardCount = flashcards.filter((card) => card.deck_id === item.id).length;
 
   const handleDeleteDeck = (deckId: string) => {
     Alert.alert('Delete Deck', 'Are you sure you want to delete this deck?', [
@@ -38,7 +41,7 @@ export default function FlashcardSetCard({ item }: { item: FlashcardSet }) {
         <Text style={styles.cardTitle}>{item.title}</Text>
         <Text style={styles.cardSubtitle}>{item.subject}</Text>
         <Text style={styles.cardDescription}>{item.description}</Text>
-        <Text style={styles.cardCount}>Cards: {item.flashcards?.length || 0}</Text>
+        <Text style={styles.cardCount}>Cards: {cardCount}</Text>
 
         <HStack style={styles.actionRow}>
           <Button
