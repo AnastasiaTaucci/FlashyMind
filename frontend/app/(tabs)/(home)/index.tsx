@@ -8,6 +8,7 @@ import { HStack } from '@/components/ui/hstack';
 import { VStack } from '@/components/ui/vstack';
 import FlashcardSetCard from '@/components/FlashcardSetCard';
 import { useAuth } from '@/context/AuthContext';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function HomeScreen() {
   const router = useRouter();
@@ -15,7 +16,7 @@ export default function HomeScreen() {
   const { logout } = useAuth();
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <VStack style={styles.pageWrapper}>
         <HStack style={styles.logoutWrapper}>
           <Button
@@ -56,7 +57,7 @@ export default function HomeScreen() {
           }
         />
       </VStack>
-    </View>
+    </SafeAreaView>
   );
 }
 
@@ -64,12 +65,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fffafc',
-    paddingBottom: 15,
+    // paddingBottom: 15,
     width: '100%',
   },
   pageWrapper: {
     flex: 1,
-    marginTop: 25,
+    marginTop: 10,
   },
   logoutWrapper: {
     justifyContent: 'flex-end',
@@ -77,7 +78,7 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
   logoutButton: {
-    width: '27%',
+    maxWidth: 200,
     backgroundColor: '#ef4444',
     borderRadius: 12,
     flexDirection: 'row',
@@ -103,9 +104,10 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
     marginRight: 20,
     marginBottom: 12,
+    
   },
   addDeckButton: {
-    width: '80%',
+    width: '60%',
     backgroundColor: '#ffdd54',
     borderRadius: 8,
     paddingHorizontal: 14,

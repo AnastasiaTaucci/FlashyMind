@@ -104,11 +104,12 @@ const styles = StyleSheet.create({
   actionRow: {
     marginTop: 12,
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'flex-start',
     gap: 8,
   },
   actionButton: {
     flex: 1,
+    maxWidth: 150,
     borderRadius: 10,
     flexDirection: 'row',
     alignItems: 'center',
