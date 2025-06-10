@@ -160,7 +160,14 @@ export default function CreateCardScreen() {
 
               <Pressable
                 onPress={() => {
-                  router.back();
+                  if (subject && deckId) {
+                    router.push({
+                      pathname: '/subjectCards',
+                      params: { subject, deckId },
+                    });
+                  } else {
+                    router.push('/');
+                  }
                 }}
                 disabled={isLoading}
                 style={{

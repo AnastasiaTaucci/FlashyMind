@@ -62,7 +62,6 @@ export default function FlashcardSetCard({ item }: { item: FlashcardSet }) {
       </VStack>
 
       <VStack style={styles.iconColumn}>
-
         <Button
           style={styles.iconButton}
           onPress={() =>

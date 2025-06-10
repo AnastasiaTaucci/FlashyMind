@@ -1,9 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, ScrollView, Pressable, ActivityIndicator, Alert, StyleSheet } from 'react-native';
+import {
+  View,
+  Text,
+  ScrollView,
+  Pressable,
+  ActivityIndicator,
+  Alert,
+  StyleSheet,
+} from 'react-native';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { useRouter, useLocalSearchParams } from 'expo-router';
-import { useFlashcardStore } from '../../../store/deck-card-store';
-import { useFlashcardSetStore } from '../../../store/deck-card-store';
+import { useFlashcardStore, useFlashcardSetStore } from '../../../store/deck-card-store';
+
 import { Flashcard } from '../../../types/Flashcard';
 
 export default function SubjectCardsScreen() {
@@ -12,45 +20,45 @@ export default function SubjectCardsScreen() {
   const subjectName = typeof subject === 'string' ? subject : 'Unknown Subject';
   const currentDeckId = typeof deckId === 'string' ? deckId : '';
 
-    const { flashcards, fetchFlashcards, deleteFlashcard, isLoading, error } = useFlashcardStore();
-    const { flashcardSets, fetchFlashcardSets, getFlashcardSetById } = useFlashcardSetStore();
+  const { flashcards, fetchFlashcards, deleteFlashcard, isLoading, error } = useFlashcardStore();
+  const { flashcardSets, fetchFlashcardSets, getFlashcardSetById } = useFlashcardSetStore();
 
-    const [subjectCards, setSubjectCards] = useState<Flashcard[]>([]);
-    const [subjectDescription, setSubjectDescription] = useState<string>('');
+  const [subjectCards, setSubjectCards] = useState<Flashcard[]>([]);
+  const [subjectDescription, setSubjectDescription] = useState<string>('');
 
-    useEffect(() => {
-        fetchFlashcards();
-        fetchFlashcardSets();
-    }, [fetchFlashcards, fetchFlashcardSets]);
+  useEffect(() => {
+    fetchFlashcards();
+    fetchFlashcardSets();
+  }, [fetchFlashcards, fetchFlashcardSets]);
 
-    useEffect(() => {
-        if (currentDeckId && flashcardSets.length > 0) {
-            const deck = getFlashcardSetById(currentDeckId);
-            if (deck && deck.description) {
-                setSubjectDescription(deck.description);
-            } else {
-                setSubjectDescription('');
-            }
-        } else {
-            const matchingDeck = flashcardSets.find(
-                deck => deck.subject.toLowerCase() === subjectName.toLowerCase()
-            );
-            if (matchingDeck && matchingDeck.description) {
-                setSubjectDescription(matchingDeck.description);
-            } else {
-                setSubjectDescription('');
-            }
-        }
-    }, [currentDeckId, subjectName, flashcardSets, getFlashcardSetById]);
+  useEffect(() => {
+    if (currentDeckId && flashcardSets.length > 0) {
+      const deck = getFlashcardSetById(currentDeckId);
+      if (deck && deck.description) {
+        setSubjectDescription(deck.description);
+      } else {
+        setSubjectDescription('');
+      }
+    } else {
+      const matchingDeck = flashcardSets.find(
+        (deck) => deck.subject.toLowerCase() === subjectName.toLowerCase()
+      );
+      if (matchingDeck && matchingDeck.description) {
+        setSubjectDescription(matchingDeck.description);
+      } else {
+        setSubjectDescription('');
+      }
+    }
+  }, [currentDeckId, subjectName, flashcardSets, getFlashcardSetById]);
 
-    useEffect(() => {
-        console.log('Filtering flashcards:', {
-            totalCards: flashcards?.length || 0,
-            currentDeckId,
-            subjectName,
-            subjectDescription,
-            flashcardsData: flashcards?.slice(0, 2)
-        });
+  useEffect(() => {
+    console.log('Filtering flashcards:', {
+      totalCards: flashcards?.length || 0,
+      currentDeckId,
+      subjectName,
+      subjectDescription,
+      flashcardsData: flashcards?.slice(0, 2),
+    });
 
     if (!flashcards || flashcards.length === 0) {
       setSubjectCards([]);
@@ -66,7 +74,19 @@ export default function SubjectCardsScreen() {
       if (currentDeckId && card.deck_id) {
         return card.deck_id === currentDeckId;
       }
+
+      if (!card.subject || typeof card.subject !== 'string' || !subjectName) {
+                console.warn('Missing subject or subjectName:', {
+                    cardId: card.id,
+                    cardSubject: card.subject,
+                    subjectName
     });
+                    return false;
+            }
+
+            return card.subject.toLowerCase() === subjectName.toLowerCase();
+
+          });
 
     console.log('Filtered cards result:', {
       filteredCount: filteredCards.length,
@@ -141,77 +161,76 @@ export default function SubjectCardsScreen() {
           <Text style={{ color: 'white', fontSize: 16 }}>← Back</Text>
         </Pressable>
 
-                {/* Title and Settings Button Row */}
-                <View
-                    style={{
-                        flexDirection: 'row',
-                        alignItems: 'flex-start',
-                        justifyContent: 'space-between',
-                        marginBottom: 12,
-                    }}
-                >
-                    <Text
-                        style={{
-                            fontSize: 28,
-                            fontWeight: 'bold',
-                            color: 'white',
-                            flex: 1,
-                        }}
-                    >
-                        {subjectName} Cards
-                    </Text>
+        {/* Title and Settings Button Row */}
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'flex-start',
+            justifyContent: 'space-between',
+            marginBottom: 12,
+          }}
+        >
+          <Text
+            style={{
+              fontSize: 28,
+              fontWeight: 'bold',
+              color: 'white',
+              flex: 1,
+            }}
+          >
+            {subjectName} Cards
+          </Text>
 
-                    <Pressable
-                        style={{
-                            width: 40,
-                            height: 40,
-                            backgroundColor: '#059669',
-                            borderRadius: 20,
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            shadowColor: '#059669',
-                            shadowOpacity: 0.3,
-                            shadowRadius: 4,
-                            shadowOffset: { width: 0, height: 2 },
-                            elevation: 3,
-                        }}
-                        onPress={() =>
-                            router.push({
-                                pathname: '/addDeck',
-                                params: { deckId: currentDeckId },
-                            })
-                        }
-                    >
-                        <MaterialIcons name="settings" size={24} color="white" />
-                    </Pressable>
-                </View>
+          <Pressable
+            style={{
+              width: 40,
+              height: 40,
+              backgroundColor: '#059669',
+              borderRadius: 20,
+              alignItems: 'center',
+              justifyContent: 'center',
+              shadowColor: '#059669',
+              shadowOpacity: 0.3,
+              shadowRadius: 4,
+              shadowOffset: { width: 0, height: 2 },
+              elevation: 3,
+            }}
+            onPress={() =>
+              router.push({
+                pathname: '/addDeck',
+                params: { deckId: currentDeckId },
+              })
+            }
+          >
+            <MaterialIcons name="settings" size={24} color="white" />
+          </Pressable>
+        </View>
 
-                {/* Description */}
-                {subjectDescription && subjectDescription !== '' && (
-                    <Text
-                        style={{
-                            fontSize: 16,
-                            color: '#fbbf24',
-                            marginBottom: 12,
-                            lineHeight: 22,
-                            opacity: 0.9,
-                        }}
-                    >
-                        {subjectDescription}
-                    </Text>
-                )}
+        {/* Description */}
+        {subjectDescription && subjectDescription !== '' && (
+          <Text
+            style={{
+              fontSize: 16,
+              color: '#fbbf24',
+              marginBottom: 12,
+              lineHeight: 22,
+              opacity: 0.9,
+            }}
+          >
+            {subjectDescription}
+          </Text>
+        )}
 
-                {/* Card Count */}
-                <Text
-                    style={{
-                        fontSize: 16,
-                        color: '#fbbf24',
-                    }}
-                >
-                    {subjectCards.length} {subjectCards.length === 1 ? 'card' : 'cards'}
-                </Text>
-
-            </View>
+        {/* Card Count */}
+        <Text
+          style={{
+            fontSize: 16,
+            color: '#fbbf24',
+          }}
+        >
+          {subjectCards.length} {subjectCards.length === 1 ? 'card' : 'cards'}
+        </Text>
+      </View>
 
       {/* Create Button */}
       <View style={{ padding: 20 }}>
