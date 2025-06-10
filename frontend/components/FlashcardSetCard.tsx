@@ -71,7 +71,7 @@ export default function FlashcardSetCard({ item }: { item: FlashcardSet }) {
             })
           }
         >
-          <ButtonIcon as={EditIcon} />
+          <ButtonText>Open</ButtonText>
         </Button>
         <Button
           style={[styles.iconButton, styles.deleteButton]}
