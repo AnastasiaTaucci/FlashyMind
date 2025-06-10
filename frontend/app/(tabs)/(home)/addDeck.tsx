@@ -8,8 +8,8 @@ export default function HomeScreen() {
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.title}>Deck Create/edit screen</Text>
 
-      <Button title="Create Deck" onPress={() => router.push('/(tabs)/(home)/addDeck')} />
-      <Button title="Edit Deck" onPress={() => router.push('/(tabs)/(home)/addDeck')} />
+      <Button title="Save Deck" onPress={() => router.push('/(tabs)/(home)/subjectCards')} />
+      <Button title="Cancel" onPress={() => router.back()} />
     </ScrollView>
   );
 }

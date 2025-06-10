@@ -181,7 +181,7 @@ export default function CreateCardScreen() {
                 }}
               >
                 <Text style={{ textAlign: 'center', color: '#4b5563', fontWeight: '500' }}>
-                  {subject ? 'Back to Cards' : 'Return to Home'}
+                  Back to Deck
                 </Text>
               </Pressable>
             </View>
