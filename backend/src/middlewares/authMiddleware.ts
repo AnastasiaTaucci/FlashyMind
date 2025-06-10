@@ -23,7 +23,7 @@ export const authenticateUser = async (req: Request, res: Response, next: NextFu
       return;
     }
 
-    req.user = data.user; // ✅ make user available to controllers
+    req.user = data.user;
     next();
   } catch (err) {
     console.error('Auth middleware error:', err);

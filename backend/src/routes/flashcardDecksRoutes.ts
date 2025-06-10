@@ -7,6 +7,7 @@ import {
   getDeck
 } from '../controllers/flashcards/flashcardDecksController';
 
+import paginationMiddleware from '../middlewares/pagination';
 import { authenticateUser } from '../middlewares/authMiddleware';
 
 const router = express.Router();
@@ -23,7 +24,7 @@ const router = express.Router();
  *       200:
  *         description: A list of flashcard decks
  */
-router.get('/', authenticateUser, getDecks);
+router.get('/', paginationMiddleware, getDecks);
 
 /**
  * @swagger
@@ -43,23 +44,7 @@ router.get('/', authenticateUser, getDecks);
  *       201:
  *         description: Flashcard deck created
  */
-  router.post('/add', authenticateUser, addDeck);
-
-
-/**
- * @swagger
- * /api/flashcard-decks/{id}:
- *   get:
- *     summary: Get a flashcard deck by ID
- *     tags: [FlashcardDecks]
- *     security:
- *       - bearerAuth: []
- *     responses:
- *       200:
- *         description: Flashcard deck retrieved
- */
-router.get('/:id', authenticateUser, getDeck);
-
+  router.post('/add', addDeck);
 
 /**
  * @swagger

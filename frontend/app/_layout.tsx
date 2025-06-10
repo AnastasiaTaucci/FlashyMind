@@ -5,6 +5,7 @@ import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import 'react-native-reanimated';
 import { AuthProvider } from '../context/AuthContext';
+import Toast from 'react-native-toast-message';
 
 export default function RootLayout() {
   const [loaded] = useFonts({
@@ -23,6 +24,7 @@ export default function RootLayout() {
           <Stack.Screen name="+not-found" />
         </Stack>
         <StatusBar style="auto" />
+        <Toast />
       </AuthProvider>
     </GluestackUIProvider>
   );

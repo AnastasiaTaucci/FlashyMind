@@ -35,12 +35,18 @@ export default function CreateDeckScreen() {
       </TouchableOpacity>
       <Text style={styles.title}>Add New Deck</Text>
 
+<<<<<<< HEAD
       <TextInput placeholder="Title" style={styles.input} value={title} onChangeText={setTitle} />
       <TextInput placeholder="Subject" style={styles.input} value={subject} onChangeText={setSubject} />
       <TextInput placeholder="Description" style={styles.input} value={description} onChangeText={setDescription} />
 
       <Button title="Save Deck" onPress={handleSaveDeck} />
     </View>
+=======
+      <Button title="Create Deck" onPress={() => router.push('/(tabs)/(home)/addDeck')} />
+      <Button title="Edit Deck" onPress={() => router.push('/(tabs)/(home)/addDeck')} />
+    </ScrollView>
+>>>>>>> upstream/develop
   );
 }
 

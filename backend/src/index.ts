@@ -4,7 +4,6 @@ import swaggerJsdoc from 'swagger-jsdoc';
 import flashcardDecksRoutes from './routes/flashcardDecksRoutes';
 import paginationMiddleware from './middlewares/pagination';
 import cors from 'cors';
-import flashcardRoutes from './routes/flashcards';
 
 const app = express();
 app.use(express.json());
@@ -33,18 +32,15 @@ setupSwaggerDocs(app, Number(3000));
 app.use(cors());
 app.use('/api/auth', authRouter)
 app.use('/api/flashcard-decks', paginationMiddleware, flashcardDecksRoutes);
-app.use('/api/flashcards', flashcardRoutes);
+
 
 app.get('/', (req, res) => {
   res.send('Hello, Express with TypeScript!');
 });
 
-// app.listen(PORT, () => {
-//   console.log(`🚀 Server is running on port ${PORT}`);
-//   console.log(`📚 API documentation available at http://localhost:${PORT}/api-docs`);
-// });
 
 app.listen(PORT, '0.0.0.0', () => {
-  console.log(`Server is running on http://0.0.0.0:${PORT}`);
+  console.log(`🚀 Server is running on http://0.0.0.0:${PORT}`);
+  console.log(`📚 API documentation available at http://localhost:${PORT}/api-docs`);
 });
 export default app;
