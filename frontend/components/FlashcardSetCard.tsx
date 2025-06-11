@@ -55,14 +55,14 @@ export default function FlashcardSetCard({ item }: { item: FlashcardSet }) {
         <HStack style={styles.actionRow}>
           <Button
             style={[styles.actionButton, styles.studyButton]}
-            onPress={() => router.push({ pathname: './study', params: { id: item.id } })}
+            onPress={() => router.push({ pathname: './study', params: { deckId: item.id } })}
           >
             <ButtonText style={styles.buttonText}>Study</ButtonText>
             <MaterialCommunityIcons name="head-flash" size={24} color="white" />
           </Button>
           <Button
             style={[styles.actionButton, styles.quizButton]}
-            onPress={() => router.push({ pathname: './(quiz)/quiz', params: { id: item.id } })}
+            onPress={() => router.push({ pathname: './(quiz)/quiz', params: { deckId: item.id } })}
           >
             <ButtonText style={styles.buttonText}>Quiz</ButtonText>
             <MaterialIcons name="quiz" size={24} color="white" />
