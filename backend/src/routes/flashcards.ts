@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { createFlashcard, getFlashcards, deleteFlashcard, updateFlashcard } from '../controllers/flashcards/flashcardsController';
+import { createFlashcard, getFlashcards, getFlashcardsByDeckId, deleteFlashcard, updateFlashcard } from '../controllers/flashcards/flashcardsController';
 import { authenticateUser } from '../middlewares/authMiddleware';
 
 const router = Router();
@@ -72,7 +72,8 @@ const router = Router();
  *         description: Flashcard updated
  */
 
-router.get('/:deck_id', authenticateUser, getFlashcards);
+router.get('/', authenticateUser, getFlashcards);
+router.get('/:deck_id', authenticateUser, getFlashcardsByDeckId);
 router.post('/add', authenticateUser, createFlashcard);
 router.delete('/delete/:id', authenticateUser, deleteFlashcard);
 router.put('/update/:id', authenticateUser, updateFlashcard);

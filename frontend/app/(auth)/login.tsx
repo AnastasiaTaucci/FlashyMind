@@ -60,7 +60,7 @@ export default function LoginScreen() {
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
       <SafeAreaView style={styles.container}>
         <View style={styles.formContainer}>
-          <Text style={styles.title}>Welcome Back</Text>
+          <Text style={styles.title}>Flashy Mind</Text>
           <Text style={styles.subtitle}>Sign in to continue</Text>
 
           <View style={styles.inputContainer}>

@@ -20,7 +20,7 @@ export const addFlashcardDeck = async (
     .from('flashcard_decks')
     .insert([{ title, subject, description, created_by: userId }])
     .select('*');
-  
+
   if (error) throw new Error(error.message);
   return data;
 };
@@ -36,6 +36,7 @@ export const updateFlashcardDeck = async (
     .from('flashcard_decks')
     .update({ title, subject, description })
     .eq('id', id)
+    .eq('created_by', userId)
     .select('*');
 
   if (error) throw new Error(error.message);
@@ -43,6 +44,21 @@ export const updateFlashcardDeck = async (
 };
 
 export const deleteFlashcardDeck = async (userId: string, id: string) => {
+  const { data: flashcards, error: flashcardsCheckError } = await supabase
+    .from('flashcards')
+    .select('id')
+    .eq('deck_id', id)
+    .eq('created_by', userId);
+
+  if (flashcardsCheckError) throw new Error(`Failed to check flashcards: ${flashcardsCheckError.message}`);
+
+  if (flashcards && flashcards.length > 0) {
+    return {
+      success: false,
+      error: `Cannot delete deck: This deck contains ${flashcards.length} flashcard(s). Please delete all flashcards first.`
+    };
+  }
+
   const { data, error } = await supabase
     .from('flashcard_decks')
     .delete()
@@ -50,6 +66,10 @@ export const deleteFlashcardDeck = async (userId: string, id: string) => {
     .eq('created_by', userId)
     .select('*');
 
-  if (error) throw new Error(error.message);
-  return data;
+  if (error) throw new Error(`Failed to delete deck: ${error.message}`);
+
+  return {
+    success: true,
+    data
+  };
 };

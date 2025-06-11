@@ -21,71 +21,97 @@ export function getApiBaseUrl(): string {
 async function getAuthHeaders() {
   try {
     const session = await AsyncStorage.getItem(STORAGE_KEY);
-    console.log('Raw session from storage:', session);
 
     if (!session) {
       throw new Error('No authentication session found');
     }
 
     const parsedSession = JSON.parse(session);
-    console.log('Parsed session:', parsedSession);
-
-    const token = parsedSession.access_token || parsedSession.token;
-    console.log('Extracted token:', token ? `${token.substring(0, 20)}...` : 'No token found');
+    let token = parsedSession.access_token || parsedSession.token;
+    const refreshToken = parsedSession.refresh_token;
 
     if (!token) {
       throw new Error('No access token found');
     }
 
-    const headers = {
+    if (refreshToken && shouldRefreshToken(parsedSession)) {
+      try {
+        const refreshResponse = await fetch(`${API_BASE_URL}/auth/refresh`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ refresh_token: refreshToken }),
+        });
+
+        if (refreshResponse.ok) {
+          const newSession = await refreshResponse.json();
+          token = newSession.access_token;
+
+          const updatedSession = {
+            ...parsedSession,
+            access_token: newSession.access_token,
+            refresh_token: newSession.refresh_token || refreshToken,
+            token_refreshed_at: Date.now(),
+          };
+
+          await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(updatedSession));
+        }
+      } catch (refreshError) {
+        // Continue with existing token
+      }
+    }
+
+    return {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${token}`,
     };
-
-    console.log('Auth headers being sent:', {
-      'Content-Type': headers['Content-Type'],
-      Authorization: `Bearer ${token.substring(0, 20)}...`,
-    });
-
-    return headers;
   } catch (error) {
     console.error('Auth header error:', error);
     throw new Error('Authentication required');
   }
 }
 
+function shouldRefreshToken(session: any): boolean {
+  const lastRefresh = session.token_refreshed_at || session.created_at || 0;
+  const now = Date.now();
+  const fiftyMinutes = 50 * 60 * 1000;
+
+  return (now - lastRefresh) > fiftyMinutes;
+}
+
 async function handleResponse(response: Response) {
-  const text = await response.text();
-
-  console.log('API Response:', {
-    status: response.status,
-    statusText: response.statusText,
-    url: response.url,
-    text: text.substring(0, 200),
-  });
-
   if (!response.ok) {
-    let errorMessage;
+    const errorData = await response.text();
+    let errorMessage = 'Something went wrong. Please try again.';
+
     try {
-      const errorData = JSON.parse(text);
-      errorMessage =
-        errorData.error || errorData.message || `HTTP ${response.status}: ${response.statusText}`;
+      const parsedError = JSON.parse(errorData);
+      errorMessage = parsedError.error || parsedError.message || errorMessage;
     } catch {
-      errorMessage = text.includes('<')
-        ? `Server returned HTML instead of JSON. Status: ${response.status}`
-        : text || `HTTP ${response.status}: ${response.statusText}`;
+      console.error('Server error:', errorData);
+      errorMessage = `Server error (${response.status}). Please try again later.`;
     }
+
+    if (response.status === 401 && errorMessage.includes('Invalid or expired token')) {
+      await AsyncStorage.removeItem(STORAGE_KEY);
+      throw new Error('SESSION_EXPIRED');
+    }
+
     throw new Error(errorMessage);
   }
 
-  try {
-    return JSON.parse(text);
-  } catch {
-    throw new Error('Invalid JSON response from server');
+  const contentType = response.headers.get('content-type');
+  if (contentType && contentType.includes('application/json')) {
+    return response.json();
   }
+
+  return response.text();
 }
 
 export const API_BASE_URL = getApiBaseUrl();
+
+// ===================
+// Auth API functions
+// ===================
 
 export async function signup(email: string, password: string) {
   const response = await fetch(`${API_BASE_URL}/auth/signup`, {
@@ -104,9 +130,7 @@ export async function login(email: string, password: string) {
     body: JSON.stringify({ email, password }),
   });
 
-  const result = await handleResponse(response);
-  console.log('Login API response:', result);
-  return result;
+  return handleResponse(response);
 }
 
 export async function logout() {
@@ -118,115 +142,80 @@ export async function logout() {
   return handleResponse(response);
 }
 
-export async function createFlashcardLocal(
-  card: Omit<Flashcard, 'id' | 'created_at' | 'updated_at' | 'created_by'>
-) {
-  try {
-    const existingCards = await AsyncStorage.getItem('@local_flashcards');
-    const cards = existingCards ? JSON.parse(existingCards) : [];
-
-    const newCard = {
-      id: Date.now().toString(),
-      ...card,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-      created_by: 'local_user',
-    };
-
-    cards.unshift(newCard);
-    await AsyncStorage.setItem('@local_flashcards', JSON.stringify(cards));
-
-    console.log('Card saved locally:', newCard);
-    return newCard;
-  } catch (error) {
-    console.error('Error saving card locally:', error);
-    throw error;
-  }
-}
-
-export async function getFlashcardsLocal() {
-  try {
-    const existingCards = await AsyncStorage.getItem('@local_flashcards');
-    return existingCards ? JSON.parse(existingCards) : [];
-  } catch (error) {
-    console.error('Error getting local cards:', error);
-    return [];
-  }
-}
-
-export async function updateFlashcardsLocal(cards: Flashcard[]) {
-  try {
-    await AsyncStorage.setItem('@local_flashcards', JSON.stringify(cards));
-    console.log('Local flashcards updated:', cards.length);
-  } catch (error) {
-    console.error('Error updating local cards:', error);
-    throw error;
-  }
-}
+// ========================
+// Flashcard API functions
+// ========================
 
 export async function createFlashcard(
   card: Omit<Flashcard, 'id' | 'created_at' | 'updated_at' | 'created_by'>,
   deckId?: string
 ) {
-  throw new Error('Backend createFlashcard will be implemented');
+  const headers = await getAuthHeaders();
+
+  const response = await fetch(`${API_BASE_URL}/flashcards/add`, {
+    method: 'POST',
+    headers,
+    body: JSON.stringify({ ...card, deck_id: deckId }),
+  });
+
+  return handleResponse(response);
 }
 
 export async function getFlashcards() {
   const headers = await getAuthHeaders();
 
-  try {
-    const response = await fetch(`${API_BASE_URL}/flashcard-decks/`, {
-      method: 'GET',
-      headers,
-    });
+  const response = await fetch(`${API_BASE_URL}/flashcards/`, {
+    method: 'GET',
+    headers,
+  });
 
-    const decks = await handleResponse(response);
+  const result = await handleResponse(response);
+  return result?.data || result || [];
+}
 
-    const flashcards = decks
-      .filter((deck: any) => {
-        try {
-          const desc = JSON.parse(deck.description || '{}');
-          return desc.type === 'flashcard';
-        } catch {
-          return false;
-        }
-      })
-      .map((deck: any) => {
-        const cardData = JSON.parse(deck.description);
-        return {
-          id: deck.id,
-          subject: deck.subject,
-          topic: cardData.topic,
-          question: cardData.question,
-          answer: cardData.answer,
-          created_at: deck.created_at,
-          updated_at: deck.updated_at,
-          created_by: deck.created_by,
-        };
-      });
+export async function getFlashcardsByDeckId(deckId: string) {
+  const headers = await getAuthHeaders();
 
-    return flashcards;
-  } catch (error) {
-    console.error('Backend API failed, falling back to local storage:', error);
+  const response = await fetch(`${API_BASE_URL}/flashcards/${deckId}`, {
+    method: 'GET',
+    headers,
+  });
 
-    return await getFlashcardsLocal();
-  }
+  const result = await handleResponse(response);
+  return result?.data || result || [];
 }
 
 export async function updateFlashcard(id: string, updatedCard: Partial<Flashcard>) {
-  // deck update endpoint
-  throw new Error('Update not implemented yet.');
+  const headers = await getAuthHeaders();
+
+  const response = await fetch(`${API_BASE_URL}/flashcards/update/${id}`, {
+    method: 'PUT',
+    headers,
+    body: JSON.stringify(updatedCard),
+  });
+
+  return handleResponse(response);
 }
 
 export async function deleteFlashcard(id: string) {
-  // deck delete endpoint
-  throw new Error('Delete not implemented yet.');
+  const headers = await getAuthHeaders();
+
+  const response = await fetch(`${API_BASE_URL}/flashcards/delete/${id}`, {
+    method: 'DELETE',
+    headers,
+  });
+
+  return handleResponse(response);
 }
+
+// =============================
+// Flashcard Deck API functions
+// =============================
 
 export async function createFlashcardDeck(title: string, subject: string, description?: string) {
   const headers = await getAuthHeaders();
 
-  const response = await fetch(`${API_BASE_URL}/flashcard-decks/add`, {
+  const response = await fetch(`${API_BASE_URL}/flashcard-decks/`, {
     method: 'POST',
     headers,
     body: JSON.stringify({ title, subject, description }),
@@ -240,6 +229,29 @@ export async function getFlashcardDecks() {
 
   const response = await fetch(`${API_BASE_URL}/flashcard-decks/`, {
     method: 'GET',
+    headers,
+  });
+
+  return handleResponse(response);
+}
+
+export async function updateFlashcardDeck(id: string, title: string, subject: string, description?: string) {
+  const headers = await getAuthHeaders();
+
+  const response = await fetch(`${API_BASE_URL}/flashcard-decks/${id}`, {
+    method: 'PUT',
+    headers,
+    body: JSON.stringify({ title, subject, description }),
+  });
+
+  return handleResponse(response);
+}
+
+export async function deleteFlashcardDeck(id: string) {
+  const headers = await getAuthHeaders();
+
+  const response = await fetch(`${API_BASE_URL}/flashcard-decks/${id}`, {
+    method: 'DELETE',
     headers,
   });
 

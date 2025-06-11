@@ -1,38 +1,47 @@
 import React from 'react';
-import { Alert, StyleSheet, Text } from 'react-native';
+import { StyleSheet, Text, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useFlashcardSetStore, useFlashcardStore } from '@/store/deck-card-store';
 import { Box } from '@/components/ui/box';
 import { VStack } from '@/components/ui/vstack';
 import { HStack } from '@/components/ui/hstack';
-import { Button, ButtonIcon, ButtonText } from '@/components/ui/button';
-import { EditIcon, TrashIcon } from '@/components/ui/icon';
+import { Button, ButtonText } from '@/components/ui/button';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import type { FlashcardSet } from '@/types/FlashcardSet';
 
 export default function FlashcardSetCard({ item }: { item: FlashcardSet }) {
   const router = useRouter();
-  const flashcards = useFlashcardStore((state) => state.flashcards);
-  const deleteFlashcardSet = useFlashcardSetStore((state) => state.deleteFlashcardSet);
+  const { deleteFlashcardSet, fetchFlashcardSets } = useFlashcardSetStore();
+  const { flashcards } = useFlashcardStore();
 
-  const cardCount = flashcards.filter((card) => card.deck_id === item.id).length;
+  const cardCount = flashcards.filter(card => card.deck_id === item.id).length;
 
-  const handleDeleteDeck = (deckId: string) => {
-    Alert.alert('Delete Deck', 'Are you sure you want to delete this deck?', [
-      { text: 'Cancel', style: 'cancel' },
-      {
-        text: 'Delete',
-        style: 'destructive',
-        onPress: async () => {
-          try {
-            await deleteFlashcardSet(deckId);
-          } catch (error: any) {
-            Alert.alert('Error', error.message || 'Failed to delete flashcard');
-          }
+  const handleDeleteDeck = () => {
+    Alert.alert(
+      'Delete Deck',
+      `Are you sure you want to delete "${item.title}"? This will also delete all flashcards in this deck.`,
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Delete',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              await deleteFlashcardSet(item.id);
+              await fetchFlashcardSets();
+              Alert.alert('Success', 'Deck deleted successfully!');
+            } catch (error: any) {
+              Alert.alert(
+                'Cannot Delete Deck',
+                error.message || 'Failed to delete deck. Please try again.',
+                [{ text: 'OK', style: 'default' }]
+              );
+            }
+          },
         },
-      },
-    ]);
+      ]
+    );
   };
 
   return (
@@ -63,7 +72,7 @@ export default function FlashcardSetCard({ item }: { item: FlashcardSet }) {
 
       <VStack style={styles.iconColumn}>
         <Button
-          style={styles.iconButton}
+          style={[styles.iconButton, styles.cardsButton]}
           onPress={() =>
             router.push({
               pathname: './subjectCards',
@@ -71,13 +80,14 @@ export default function FlashcardSetCard({ item }: { item: FlashcardSet }) {
             })
           }
         >
-          <ButtonText>Open</ButtonText>
+          <MaterialIcons name="style" size={20} color="white" />
         </Button>
+
         <Button
           style={[styles.iconButton, styles.deleteButton]}
-          onPress={() => handleDeleteDeck(item.id)}
+          onPress={handleDeleteDeck}
         >
-          <ButtonIcon as={TrashIcon} />
+          <MaterialIcons name="delete" size={20} color="white" />
         </Button>
       </VStack>
     </Box>
@@ -156,14 +166,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#5492f7',
     borderRadius: 10,
   },
-  // deckEditButton: {
-  //   backgroundColor: '#059669',
-  //   shadowColor: '#059669',
-  //   shadowOpacity: 0.3,
-  //   shadowRadius: 4,
-  //   shadowOffset: { width: 0, height: 2 },
-  //   elevation: 3,
-  // },
+  cardsButton: {
+    backgroundColor: '#059669',
+  },
   deleteButton: {
     backgroundColor: '#ef4444',
   },
