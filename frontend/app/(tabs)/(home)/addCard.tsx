@@ -18,8 +18,15 @@ export default function CreateCardScreen() {
   const router = useRouter();
   const { cardId, deckId, subject } = useLocalSearchParams();
 
-  const { getFlashcardById, addFlashcard, updateFlashcard, isLoading, error, fetchFlashcards, flashcards } =
-    useFlashcardStore();
+  const {
+    getFlashcardById,
+    addFlashcard,
+    updateFlashcard,
+    isLoading,
+    error,
+    fetchFlashcards,
+    flashcards,
+  } = useFlashcardStore();
 
   const cardIdNumber = typeof cardId === 'string' && cardId ? parseInt(cardId, 10) : undefined;
   const deckIdNumber = typeof deckId === 'string' && deckId ? parseInt(deckId, 10) : undefined;

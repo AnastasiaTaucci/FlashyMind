@@ -1,7 +1,6 @@
-import { Text, StyleSheet, FlatList, View, Pressable, Alert, RefreshControl } from 'react-native';
+import { Text, StyleSheet, FlatList, View, RefreshControl } from 'react-native';
 import { useRouter, useFocusEffect } from 'expo-router';
-import { useFlashcardSetStore } from '@/store/deck-card-store';
-import { useFlashcardStore } from '@/store/deck-card-store';
+import { useFlashcardSetStore, useFlashcardStore } from '@/store/deck-card-store';
 import { Heading } from '@/components/ui/heading';
 import { Button, ButtonText } from '@/components/ui/button';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
@@ -62,7 +61,6 @@ export default function HomeScreen() {
             <ButtonText style={styles.logoutText}>Logout</ButtonText>
             <MaterialIcons name="logout" size={20} color="#fff" />
           </Button>
-
         </HStack>
 
         <Heading style={styles.heading}>Your Flashcard Sets</Heading>
@@ -87,7 +85,7 @@ export default function HomeScreen() {
 
         <FlatList
           data={flashcardSets}
-          keyExtractor={(item, index) => item.id ? item.id.toString() : `deck-${index}`}
+          keyExtractor={(item, index) => (item.id ? item.id.toString() : `deck-${index}`)}
           contentContainerStyle={styles.listContent}
           renderItem={({ item }) => <FlashcardSetCard item={item} />}
           refreshControl={
