@@ -1,12 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import {
-  View,
-  Text,
-  ScrollView,
-  Pressable,
-  ActivityIndicator,
-  Alert,
-} from 'react-native';
+import { View, Text, ScrollView, Pressable, ActivityIndicator, Alert } from 'react-native';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { useRouter, useLocalSearchParams, useFocusEffect } from 'expo-router';
 import { useFlashcardStore, useFlashcardSetStore } from '../../../store/deck-card-store';

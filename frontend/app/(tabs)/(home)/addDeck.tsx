@@ -20,13 +20,8 @@ export default function AddDeckScreen() {
   const { deckId } = useLocalSearchParams();
   const [isLoading, setIsLoading] = useState(false);
 
-  const {
-    getFlashcardSetById,
-    addFlashcardSet,
-    updateFlashcardSet,
-    fetchFlashcardSets,
-    error,
-  } = useFlashcardSetStore();
+  const { getFlashcardSetById, addFlashcardSet, updateFlashcardSet, fetchFlashcardSets, error } =
+    useFlashcardSetStore();
 
   const deckIdString = Array.isArray(deckId) ? deckId[0] : deckId;
   const deckIdNumber = deckIdString ? parseInt(deckIdString, 10) : undefined;
@@ -72,7 +67,6 @@ export default function AddDeckScreen() {
       setIsLoading(false);
     }
   }
-
 
   return (
     <KeyboardAvoidingView
