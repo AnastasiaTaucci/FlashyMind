@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -26,7 +26,7 @@ export default function AddDeckScreen() {
     updateFlashcardSet,
     deleteFlashcardSet,
     fetchFlashcardSets,
-    error
+    error,
   } = useFlashcardSetStore();
 
   const deckIdString = Array.isArray(deckId) ? deckId[0] : deckId;
@@ -35,7 +35,9 @@ export default function AddDeckScreen() {
 
   const validationSchema = Yup.object().shape({
     title: Yup.string().required('Title is required').min(2, 'Title must be at least 2 characters'),
-    subject: Yup.string().required('Subject is required').min(2, 'Subject must be at least 2 characters'),
+    subject: Yup.string()
+      .required('Subject is required')
+      .min(2, 'Subject must be at least 2 characters'),
     description: Yup.string().max(500, 'Description must be less than 500 characters'),
   });
 
@@ -52,13 +54,13 @@ export default function AddDeckScreen() {
       if (isEditMode && existingDeck) {
         await updateFlashcardSet(existingDeck.id, values);
         Alert.alert('Success', 'Deck updated successfully!', [
-          { text: 'OK', onPress: () => router.back() }
+          { text: 'OK', onPress: () => router.back() },
         ]);
       } else {
         const deckData = { ...values, flashcards: [] };
         await addFlashcardSet(deckData);
         Alert.alert('Success', 'Deck created successfully!', [
-          { text: 'OK', onPress: () => router.back() }
+          { text: 'OK', onPress: () => router.back() },
         ]);
       }
 
@@ -89,7 +91,7 @@ export default function AddDeckScreen() {
               await deleteFlashcardSet(existingDeck.id);
               await fetchFlashcardSets();
               Alert.alert('Success', 'Deck deleted successfully!', [
-                { text: 'OK', onPress: () => router.replace('/') }
+                { text: 'OK', onPress: () => router.replace('/') },
               ]);
             } catch (error: any) {
               console.error('Error deleting deck:', error);
@@ -97,8 +99,8 @@ export default function AddDeckScreen() {
             } finally {
               setIsLoading(false);
             }
-          }
-        }
+          },
+        },
       ]
     );
   }
@@ -141,7 +143,9 @@ export default function AddDeckScreen() {
             opacity: 0.9,
           }}
         >
-          {isEditMode ? 'Update your flashcard deck details' : 'Add a new flashcard deck to your collection'}
+          {isEditMode
+            ? 'Update your flashcard deck details'
+            : 'Add a new flashcard deck to your collection'}
         </Text>
       </View>
 

@@ -18,8 +18,15 @@ export default function CreateCardScreen() {
   const router = useRouter();
   const { cardId, deckId, subject } = useLocalSearchParams();
 
-  const { getFlashcardById, addFlashcard, updateFlashcard, isLoading, error, fetchFlashcards, flashcards } =
-    useFlashcardStore();
+  const {
+    getFlashcardById,
+    addFlashcard,
+    updateFlashcard,
+    isLoading,
+    error,
+    fetchFlashcards,
+    flashcards,
+  } = useFlashcardStore();
 
   const [existingCard, setExistingCard] = useState(
     typeof cardId === 'string' ? getFlashcardById(cardId) : null

@@ -15,7 +15,7 @@ export default function FlashcardSetCard({ item }: { item: FlashcardSet }) {
   const { deleteFlashcardSet, fetchFlashcardSets } = useFlashcardSetStore();
   const { flashcards } = useFlashcardStore();
 
-  const cardCount = flashcards.filter(card => card.deck_id === item.id).length;
+  const cardCount = flashcards.filter((card) => card.deck_id === item.id).length;
 
   const handleDeleteDeck = () => {
     Alert.alert(
@@ -49,7 +49,7 @@ export default function FlashcardSetCard({ item }: { item: FlashcardSet }) {
       <VStack style={styles.cardContent}>
         <Text style={styles.cardTitle}>{item.title}</Text>
         <Text style={styles.cardSubtitle}>{item.subject}</Text>
-        <Text style={styles.cardDescription}>{item.description ? item.description : "" }</Text>
+        <Text style={styles.cardDescription}>{item.description ? item.description : ''}</Text>
         <Text style={styles.cardCount}>Cards: {cardCount}</Text>
 
         <HStack style={styles.actionRow}>
@@ -83,10 +83,7 @@ export default function FlashcardSetCard({ item }: { item: FlashcardSet }) {
           <MaterialIcons name="style" size={20} color="white" />
         </Button>
 
-        <Button
-          style={[styles.iconButton, styles.deleteButton]}
-          onPress={handleDeleteDeck}
-        >
+        <Button style={[styles.iconButton, styles.deleteButton]} onPress={handleDeleteDeck}>
           <MaterialIcons name="delete" size={20} color="white" />
         </Button>
       </VStack>
