@@ -1,12 +1,8 @@
 import { create } from 'zustand';
 import { Flashcard } from '../types/Flashcard';
 import { FlashcardSet } from '../types/FlashcardSet';
-import flashcardsData from '../data/flashcards.json';
-import flashcardSetsData from '../data/flashcardSets.json';
 import * as api from '../service/api';
-
-// Configuration flag
-const USE_LOCAL_STORAGE_ONLY = true;
+import { router } from 'expo-router';
 
 // Flashcard Store
 interface FlashcardState {
@@ -22,12 +18,13 @@ interface FlashcardState {
   deleteFlashcard: (id: string) => Promise<void>;
   getFlashcardById: (id: string) => Flashcard | undefined;
   fetchFlashcards: () => Promise<void>;
+  fetchFlashcardsByDeckId: (deckId: string) => Promise<void>;
   setLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
 }
 
 export const useFlashcardStore = create<FlashcardState>((set, get) => ({
-  flashcards: flashcardsData,
+  flashcards: [],
   isLoading: false,
   error: null,
 
@@ -39,20 +36,61 @@ export const useFlashcardStore = create<FlashcardState>((set, get) => ({
     try {
       set({ isLoading: true, error: null });
 
-      if (USE_LOCAL_STORAGE_ONLY) {
-        console.log('Fetching flashcards from LOCAL STORAGE ONLY');
-        const localCards = await api.getFlashcardsLocal();
-        const hardcodedCards = Array.isArray(flashcardsData) ? flashcardsData : [];
-        const combinedCards = localCards.concat(hardcodedCards);
-        set({ flashcards: combinedCards, isLoading: false });
-      } else {
-        console.log('🌐 Fetching flashcards from BACKEND with fallback');
-        const data = await api.getFlashcards();
-        set({ flashcards: data, isLoading: false });
+      const data = await api.getFlashcards();
+
+      const transformedData =
+        data?.map((card: any) => ({
+          id: card.id,
+          question: card.question,
+          answer: card.answer,
+          topic: card.topic,
+          subject: card.subject,
+          deck_id: card.deck_id,
+          created_by: card.created_by,
+          created_at: card.created_at,
+          updated_at: card.updated_at,
+        })) || [];
+
+      set({ flashcards: transformedData, isLoading: false });
+    } catch (error: any) {
+      if (error.message === 'SESSION_EXPIRED') {
+        // Redirect to login
+        router.replace('/login');
+        return;
       }
+
+      set({
+        error: error.message || 'Failed to fetch flashcards',
+        flashcards: [],
+        isLoading: false,
+      });
+    }
+  },
+
+  fetchFlashcardsByDeckId: async (deckId) => {
+    try {
+      set({ isLoading: true, error: null });
+
+      const data = await api.getFlashcardsByDeckId(deckId);
+
+      const transformedData =
+        data?.map((card: any) => ({
+          id: card.id,
+          question: card.question,
+          answer: card.answer,
+          topic: card.topic,
+          subject: card.subject,
+          deck_id: card.deck_id,
+          created_by: card.created_by,
+          created_at: card.created_at,
+          updated_at: card.updated_at,
+        })) || [];
+
+      set({ flashcards: transformedData, isLoading: false });
     } catch (error: any) {
       set({
         error: error.message || 'Failed to fetch flashcards',
+        flashcards: [],
         isLoading: false,
       });
     }
@@ -62,19 +100,27 @@ export const useFlashcardStore = create<FlashcardState>((set, get) => ({
     try {
       set({ isLoading: true, error: null });
 
-      if (USE_LOCAL_STORAGE_ONLY) {
-        console.log('Adding flashcard to LOCAL STORAGE ONLY');
-        const newCard = await api.createFlashcardLocal(card);
-        set((state) => ({
-          flashcards: [newCard, ...state.flashcards],
-          isLoading: false,
-        }));
-      } else {
-        throw new Error('Backend add card not implemented yet');
-      }
+      const data = await api.createFlashcard(card, deckId);
+
+      const transformedData = {
+        id: data.id,
+        question: data.question,
+        answer: data.answer,
+        topic: data.topic,
+        subject: data.subject,
+        deck_id: data.deck_id,
+        created_by: data.created_by,
+        created_at: data.created_at,
+        updated_at: data.updated_at,
+      };
+
+      set((state) => ({
+        flashcards: [transformedData, ...state.flashcards],
+        isLoading: false,
+      }));
     } catch (error: any) {
       set({
-        error: error.message || 'Failed to add flashcard',
+        error: error.message || 'Failed to create flashcard',
         isLoading: false,
       });
       throw error;
@@ -85,26 +131,26 @@ export const useFlashcardStore = create<FlashcardState>((set, get) => ({
     try {
       set({ isLoading: true, error: null });
 
-      if (USE_LOCAL_STORAGE_ONLY) {
-        console.log('Updating flashcard in LOCAL STORAGE ONLY');
+      const data = await api.updateFlashcard(id, updatedCard);
 
-        // Update local storage first
-        const existingCards = await api.getFlashcardsLocal();
-        const updatedCards = existingCards.map((card: Flashcard) =>
-          card.id === id ? { ...card, ...updatedCard, updated_at: new Date().toISOString() } : card
-        );
-        await api.updateFlashcardsLocal(updatedCards);
+      const transformedData = {
+        id: data.id,
+        question: data.question,
+        answer: data.answer,
+        topic: data.topic,
+        subject: data.subject,
+        deck_id: data.deck_id,
+        created_by: data.created_by,
+        created_at: data.created_at,
+        updated_at: data.updated_at,
+      };
 
-        // Update state
-        set((state) => ({
-          flashcards: state.flashcards.map((card) =>
-            card.id === id ? { ...card, ...updatedCard, updated_at: new Date().toISOString() } : card
-          ),
-          isLoading: false,
-        }));
-      } else {
-        throw new Error('Backend update not implemented yet');
-      }
+      set((state) => ({
+        flashcards: state.flashcards.map((card) =>
+          card.id === id ? transformedData : card
+        ),
+        isLoading: false,
+      }));
     } catch (error: any) {
       set({
         error: error.message || 'Failed to update flashcard',
@@ -118,19 +164,12 @@ export const useFlashcardStore = create<FlashcardState>((set, get) => ({
     try {
       set({ isLoading: true, error: null });
 
-      if (USE_LOCAL_STORAGE_ONLY) {
-        console.log('Deleting flashcard from LOCAL STORAGE ONLY');
-        const existingCards = await api.getFlashcardsLocal();
-        const updatedCards = existingCards.filter((card: Flashcard) => card.id !== id);
-        await api.updateFlashcardsLocal(updatedCards);
+      await api.deleteFlashcard(id);
 
-        set((state) => ({
-          flashcards: state.flashcards.filter((card) => card.id !== id),
-          isLoading: false,
-        }));
-      } else {
-        throw new Error('Backend delete not implemented yet');
-      }
+      set((state) => ({
+        flashcards: state.flashcards.filter((card) => card.id !== id),
+        isLoading: false,
+      }));
     } catch (error: any) {
       set({
         error: error.message || 'Failed to delete flashcard',
@@ -143,7 +182,6 @@ export const useFlashcardStore = create<FlashcardState>((set, get) => ({
   getFlashcardById: (id) => get().flashcards.find((card) => card.id === id),
 }));
 
-// Flashcard Set Store
 interface FlashcardSetState {
   flashcardSets: FlashcardSet[];
   isLoading: boolean;
@@ -154,12 +192,13 @@ interface FlashcardSetState {
   deleteFlashcardSet: (id: string) => Promise<void>;
   getFlashcardSetById: (id: string) => FlashcardSet | undefined;
   fetchFlashcardSets: () => Promise<void>;
+  updateFlashcardCounts: (flashcards: Flashcard[]) => void;
   setLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
 }
 
 export const useFlashcardSetStore = create<FlashcardSetState>((set, get) => ({
-  flashcardSets: flashcardSetsData,
+  flashcardSets: [],
   isLoading: false,
   error: null,
 
@@ -170,32 +209,66 @@ export const useFlashcardSetStore = create<FlashcardSetState>((set, get) => ({
   fetchFlashcardSets: async () => {
     try {
       set({ isLoading: true, error: null });
+
       const data = await api.getFlashcardDecks();
 
       const transformedData =
-        data?.map((deck: any) => ({
-          id: deck.id,
-          title: deck.title,
-          subject: deck.subject,
-          description: deck.description,
-          flashcards: [],
-          createdBy: deck.created_by,
-          createdAt: new Date(deck.created_at),
-          updatedAt: new Date(deck.updated_at),
-        })) || [];
+        data?.map((deck: any) => {
+          return {
+            id: deck.id,
+            title: deck.title,
+            subject: deck.subject,
+            description: deck.description,
+            flashcards: [],
+            createdBy: deck.created_by,
+            createdAt: new Date(deck.created_at),
+            updatedAt: new Date(deck.updated_at),
+          };
+        }) || [];
 
       set({ flashcardSets: transformedData, isLoading: false });
     } catch (error: any) {
+      if (error.message === 'SESSION_EXPIRED') {
+        // Redirect to login
+        router.replace('/login');
+        return;
+      }
+
       set({
         error: error.message || 'Failed to fetch flashcard sets',
+        flashcardSets: [],
         isLoading: false,
       });
     }
   },
 
+  updateFlashcardCounts: (flashcards) => {
+    set((state) => ({
+      flashcardSets: state.flashcardSets.map((deck) => {
+        const matchingFlashcards = flashcards.filter((card) => {
+          if (card.deck_id && deck.id) {
+            return card.deck_id === deck.id;
+          }
+
+          if (card.subject && deck.subject) {
+            return card.subject.toLowerCase() === deck.subject.toLowerCase();
+          }
+
+          return false;
+        });
+
+        return {
+          ...deck,
+          flashcards: matchingFlashcards.map(card => card.id),
+        };
+      }),
+    }));
+  },
+
   addFlashcardSet: async (newSet) => {
     try {
       set({ isLoading: true, error: null });
+
       const data = await api.createFlashcardDeck(newSet.title, newSet.subject, newSet.description);
 
       const transformedData = {
@@ -225,11 +298,28 @@ export const useFlashcardSetStore = create<FlashcardSetState>((set, get) => ({
   updateFlashcardSet: async (id, updatedSet) => {
     try {
       set({ isLoading: true, error: null });
-      // the backend endpoint for updating decks
+
+      const data = await api.updateFlashcardDeck(
+        id,
+        updatedSet.title || '',
+        updatedSet.subject || '',
+        updatedSet.description
+      );
+
+      const transformedData = {
+        id: data.id,
+        title: data.title,
+        subject: data.subject,
+        description: data.description,
+        flashcards: [],
+        createdBy: data.created_by,
+        createdAt: new Date(data.created_at),
+        updatedAt: new Date(data.updated_at),
+      };
 
       set((state) => ({
         flashcardSets: state.flashcardSets.map((setItem) =>
-          setItem.id === id ? { ...setItem, ...updatedSet } : setItem
+          setItem.id === id ? transformedData : setItem
         ),
         isLoading: false,
       }));
@@ -245,7 +335,8 @@ export const useFlashcardSetStore = create<FlashcardSetState>((set, get) => ({
   deleteFlashcardSet: async (id) => {
     try {
       set({ isLoading: true, error: null });
-      // the backend endpoint for deleting decks
+
+      await api.deleteFlashcardDeck(id);
 
       set((state) => ({
         flashcardSets: state.flashcardSets.filter((setItem) => setItem.id !== id),

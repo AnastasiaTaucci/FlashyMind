@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, ScrollView, Pressable, ActivityIndicator, Alert, StyleSheet } from 'react-native';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
-import { useRouter, useLocalSearchParams } from 'expo-router';
+import { useRouter, useLocalSearchParams, useFocusEffect } from 'expo-router';
 import { useFlashcardStore } from '../../../store/deck-card-store';
 import { useFlashcardSetStore } from '../../../store/deck-card-store';
 import { Flashcard } from '../../../types/Flashcard';
@@ -22,6 +22,13 @@ export default function SubjectCardsScreen() {
         fetchFlashcards();
         fetchFlashcardSets();
     }, [fetchFlashcards, fetchFlashcardSets]);
+
+    // Refresh flashcards
+    useFocusEffect(
+        React.useCallback(() => {
+            fetchFlashcards();
+        }, [fetchFlashcards])
+    );
 
     useEffect(() => {
         if (currentDeckId && flashcardSets.length > 0) {
@@ -44,47 +51,33 @@ export default function SubjectCardsScreen() {
     }, [currentDeckId, subjectName, flashcardSets, getFlashcardSetById]);
 
     useEffect(() => {
-        console.log('Filtering flashcards:', {
-            totalCards: flashcards?.length || 0,
-            currentDeckId,
-            subjectName,
-            subjectDescription,
-            flashcardsData: flashcards?.slice(0, 2)
-        });
-
         if (!flashcards || flashcards.length === 0) {
             setSubjectCards([]);
             return;
         }
 
-        const filteredCards = flashcards.filter((card) => {
-
+        const filteredCards = flashcards.filter((card, index) => {
             if (!card) {
-                console.warn('Found null/undefined card');
                 return false;
+            }
+
+            // Filter by subject
+            if (!card.subject || typeof card.subject !== 'string' || !subjectName) {
+                return false;
+            }
+
+            const subjectMatches = card.subject.toLowerCase() === subjectName.toLowerCase();
+
+            if (subjectMatches) {
+                return true;
             }
 
             if (currentDeckId && card.deck_id) {
-                return card.deck_id === currentDeckId;
+                const deckMatches = card.deck_id === currentDeckId;
+                return deckMatches;
             }
 
-
-            if (!card.subject || typeof card.subject !== 'string' || !subjectName) {
-                console.warn('Missing subject or subjectName:', {
-                    cardId: card.id,
-                    cardSubject: card.subject,
-                    subjectName
-                });
-                return false;
-            }
-
-            return card.subject.toLowerCase() === subjectName.toLowerCase();
-        });
-
-
-        console.log('Filtered cards result:', {
-            filteredCount: filteredCards.length,
-            filteredCards: filteredCards.map(c => ({ id: c.id, subject: c.subject }))
+            return false;
         });
 
         setSubjectCards(filteredCards);
@@ -113,6 +106,7 @@ export default function SubjectCardsScreen() {
                 onPress: async () => {
                     try {
                         await deleteFlashcard(cardId);
+                        await fetchFlashcards();
                         Alert.alert('Success', 'Flashcard deleted successfully!');
                     } catch (error: any) {
                         Alert.alert('Error', error.message || 'Failed to delete flashcard');
@@ -155,7 +149,7 @@ export default function SubjectCardsScreen() {
                     <Text style={{ color: 'white', fontSize: 16 }}>← Back</Text>
                 </Pressable>
 
-                {/* Title and Settings Button Row */}
+                {/* Title and Settings Button */}
                 <View
                     style={{
                         flexDirection: 'row',
@@ -188,6 +182,7 @@ export default function SubjectCardsScreen() {
                             shadowRadius: 4,
                             shadowOffset: { width: 0, height: 2 },
                             elevation: 3,
+                            marginLeft: 8,
                         }}
                         onPress={() =>
                             router.push({
@@ -200,7 +195,6 @@ export default function SubjectCardsScreen() {
                     </Pressable>
                 </View>
 
-                {/* Description */}
                 {subjectDescription && subjectDescription !== '' && (
                     <Text
                         style={{
@@ -215,7 +209,6 @@ export default function SubjectCardsScreen() {
                     </Text>
                 )}
 
-                {/* Card Count */}
                 <Text
                     style={{
                         fontSize: 16,
@@ -227,7 +220,6 @@ export default function SubjectCardsScreen() {
 
             </View>
 
-            {/* Create Button */}
             <View style={{ padding: 20 }}>
                 <Pressable
                     onPress={handleCreateCard}
@@ -289,7 +281,6 @@ export default function SubjectCardsScreen() {
                             shadowOffset: { width: 0, height: 2 },
                         }}
                     >
-                        <Text style={{ fontSize: 48, marginBottom: 16 }}>📚</Text>
                         <Text style={{ fontSize: 18, fontWeight: '600', color: '#b45309', marginBottom: 8 }}>
                             No cards yet
                         </Text>
@@ -325,7 +316,6 @@ export default function SubjectCardsScreen() {
                                 shadowOffset: { width: 0, height: 2 },
                             }}
                         >
-                            {/* Card Header */}
                             <View
                                 style={{
                                     flexDirection: 'row',
@@ -350,7 +340,6 @@ export default function SubjectCardsScreen() {
                                 <Text style={{ fontSize: 12, color: '#78350f' }}>Card #{index + 1}</Text>
                             </View>
 
-                            {/* Question */}
                             <Text
                                 style={{
                                     fontSize: 16,
@@ -362,7 +351,6 @@ export default function SubjectCardsScreen() {
                                 Q: {card.question}
                             </Text>
 
-                            {/* Answer */}
                             <Text
                                 style={{
                                     fontSize: 14,
@@ -374,7 +362,6 @@ export default function SubjectCardsScreen() {
                                 A: {card.answer}
                             </Text>
 
-                            {/* Action Buttons */}
                             <View
                                 style={{
                                     flexDirection: 'row',

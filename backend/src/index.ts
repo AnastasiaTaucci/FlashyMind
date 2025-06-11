@@ -11,7 +11,6 @@ const app = express();
 app.use(express.json());
 const PORT = Number(process.env.PORT) || 3000;
 
-
 // Swagger setup
 const swaggerOptions = {
   definition: {
@@ -30,17 +29,14 @@ import { setupSwaggerDocs } from './utils/swagger';
 
 setupSwaggerDocs(app, Number(3000));
 
-
 app.use(cors());
 app.use('/api/auth', authRouter);
 app.use('/api/flashcard-decks', flashcardDecksRoutes);
 app.use('/api/flashcards', authenticateUser, flashcardsRoutes);
 
-
 app.get('/', (req, res) => {
   res.send('Hello, Express with TypeScript!');
 });
-
 
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`🚀 Server is running on http://0.0.0.0:${PORT}`);

@@ -51,6 +51,11 @@ export default function CreateCardScreen() {
         await addFlashcard(values, targetDeckId);
         Alert.alert('Success', 'Flashcard created successfully!');
       }
+
+      // Refresh the flashcards list to show the new/updated card
+      const { fetchFlashcards } = useFlashcardStore.getState();
+      await fetchFlashcards();
+
       router.back();
     } catch (error: any) {
       Alert.alert('Error', error.message || 'Failed to save flashcard. Please try again.');

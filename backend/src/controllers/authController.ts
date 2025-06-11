@@ -158,3 +158,33 @@ export const logout = async (_req: Request, res: Response): Promise<void> => {
   res.status(200).json({ message: 'Logged out successfully' });
 };
 
+// POST /api/auth/refresh
+export const refreshToken = async (req: Request, res: Response): Promise<void> => {
+  const { refresh_token } = req.body;
+
+  if (!refresh_token) {
+    res.status(400).json({ error: 'Refresh token is required' });
+    return;
+  }
+
+  try {
+    const { data, error } = await supabase.auth.refreshSession({ refresh_token });
+
+    if (error || !data.session) {
+      res.status(401).json({ error: error?.message || 'Invalid refresh token' });
+      return;
+    }
+
+    res.status(200).json({
+      access_token: data.session.access_token,
+      refresh_token: data.session.refresh_token,
+      user: {
+        id: data.user?.id,
+        email: data.user?.email
+      }
+    });
+  } catch (error: any) {
+    res.status(500).json({ error: 'Failed to refresh token' });
+  }
+};
+

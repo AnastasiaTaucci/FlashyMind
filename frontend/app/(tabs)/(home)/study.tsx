@@ -9,8 +9,8 @@ export default function StudyDeckScreen() {
         <Text style={styles.cardText}>¿Cómo estás?</Text>
       </View>
 
-      <Button title="Show Answer" onPress={() => console.log('Answer shown')} />
-      <Button title="Next Card" onPress={() => console.log('Next card')} />
+      <Button title="Show Answer" onPress={() => { }} />
+      <Button title="Next Card" onPress={() => { }} />
     </View>
   );
 }

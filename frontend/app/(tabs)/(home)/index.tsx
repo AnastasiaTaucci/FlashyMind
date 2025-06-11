@@ -1,6 +1,7 @@
-import { Text, StyleSheet, FlatList, View } from 'react-native';
-import { useRouter } from 'expo-router';
+import { Text, StyleSheet, FlatList, View, Pressable, Alert, RefreshControl } from 'react-native';
+import { useRouter, useFocusEffect } from 'expo-router';
 import { useFlashcardSetStore } from '@/store/deck-card-store';
+import { useFlashcardStore } from '@/store/deck-card-store';
 import { Heading } from '@/components/ui/heading';
 import { Button, ButtonText } from '@/components/ui/button';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
@@ -8,11 +9,39 @@ import { HStack } from '@/components/ui/hstack';
 import { VStack } from '@/components/ui/vstack';
 import FlashcardSetCard from '@/components/FlashcardSetCard';
 import { useAuth } from '@/context/AuthContext';
+import { useEffect, useState, useCallback } from 'react';
 
 export default function HomeScreen() {
   const router = useRouter();
-  const flashcardSets = useFlashcardSetStore((state) => state.flashcardSets);
+  const { flashcardSets, fetchFlashcardSets, isLoading, error } = useFlashcardSetStore();
+  const { fetchFlashcards } = useFlashcardStore();
   const { logout } = useAuth();
+  const [refreshing, setRefreshing] = useState(false);
+
+  const refreshData = useCallback(async () => {
+    try {
+      await Promise.all([fetchFlashcardSets(), fetchFlashcards()]);
+    } catch (error) {
+      console.error('Error refreshing data:', error);
+    }
+  }, [fetchFlashcardSets, fetchFlashcards]);
+
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    await refreshData();
+    setRefreshing(false);
+  }, [refreshData]);
+
+  useEffect(() => {
+    refreshData();
+  }, [refreshData]);
+
+  // Automatically refresh when returning to this screen
+  useFocusEffect(
+    useCallback(() => {
+      refreshData();
+    }, [refreshData])
+  );
 
   return (
     <View style={styles.container}>
@@ -36,6 +65,19 @@ export default function HomeScreen() {
         </HStack>
 
         <Heading style={styles.heading}>Your Flashcard Sets</Heading>
+
+        {error && (
+          <View style={{ backgroundColor: '#fee2e2', padding: 12, margin: 16, borderRadius: 8 }}>
+            <Text style={{ color: '#dc2626', fontSize: 14 }}>Error: {error}</Text>
+          </View>
+        )}
+
+        {isLoading && !refreshing && (
+          <View style={{ alignItems: 'center', padding: 20 }}>
+            <Text style={{ color: '#6b7280' }}>Loading flashcard sets...</Text>
+          </View>
+        )}
+
         <HStack style={styles.addDeckWrapper}>
           <Button style={styles.addDeckButton} onPress={() => router.navigate('./addDeck')}>
             <ButtonText style={styles.addDeckText}>+ New Set</ButtonText>
@@ -44,13 +86,21 @@ export default function HomeScreen() {
 
         <FlatList
           data={flashcardSets}
-          keyExtractor={(item) => item.id}
+          keyExtractor={(item, index) => item.id ? item.id.toString() : `deck-${index}`}
           contentContainerStyle={styles.listContent}
           renderItem={({ item }) => <FlashcardSetCard item={item} />}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              colors={['#2563eb']} // Android
+              tintColor="#2563eb" // iOS
+            />
+          }
           ListEmptyComponent={
             <View style={styles.emptyWrapper}>
               <Text style={styles.emptyText}>
-                You have no sets yet. Tap “+ New Set” to get started!
+                You have no sets yet. Tap &ldquo;+ New Set&rdquo; to get started!
               </Text>
             </View>
           }
