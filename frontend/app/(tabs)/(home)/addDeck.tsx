@@ -30,7 +30,8 @@ export default function AddDeckScreen() {
   } = useFlashcardSetStore();
 
   const deckIdString = Array.isArray(deckId) ? deckId[0] : deckId;
-  const existingDeck = deckIdString ? getFlashcardSetById(deckIdString) : null;
+  const deckIdNumber = deckIdString ? parseInt(deckIdString, 10) : undefined;
+  const existingDeck = deckIdNumber ? getFlashcardSetById(deckIdNumber) : null;
   const isEditMode = !!existingDeck;
 
   const validationSchema = Yup.object().shape({
@@ -62,7 +63,6 @@ export default function AddDeckScreen() {
         ]);
       }
 
-      // Refresh the decks list
       await fetchFlashcardSets();
     } catch (error: any) {
       console.error('Error saving deck:', error);

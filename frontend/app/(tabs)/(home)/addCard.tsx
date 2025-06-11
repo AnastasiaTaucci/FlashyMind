@@ -21,22 +21,24 @@ export default function CreateCardScreen() {
   const { getFlashcardById, addFlashcard, updateFlashcard, isLoading, error, fetchFlashcards, flashcards } =
     useFlashcardStore();
 
+  const cardIdNumber = typeof cardId === 'string' && cardId ? parseInt(cardId, 10) : undefined;
+  const deckIdNumber = typeof deckId === 'string' && deckId ? parseInt(deckId, 10) : undefined;
+
   const [existingCard, setExistingCard] = useState(
-    typeof cardId === 'string' ? getFlashcardById(cardId) : null
+    cardIdNumber ? getFlashcardById(cardIdNumber) : null
   );
 
-  // Fetch flashcards when component mounts to ensure we have the latest data
   useEffect(() => {
     fetchFlashcards();
   }, [fetchFlashcards]);
 
-  // Update existingCard when flashcards are loaded or cardId changes
+  // Update existingCard
   useEffect(() => {
-    if (typeof cardId === 'string' && flashcards && flashcards.length > 0) {
-      const card = getFlashcardById(cardId);
+    if (cardIdNumber && flashcards && flashcards.length > 0) {
+      const card = getFlashcardById(cardIdNumber);
       setExistingCard(card);
     }
-  }, [cardId, flashcards, getFlashcardById]);
+  }, [cardIdNumber, flashcards, getFlashcardById]);
 
   const validationSchema = Yup.object().shape({
     subject: Yup.string().required('Subject is required'),
@@ -58,12 +60,11 @@ export default function CreateCardScreen() {
         await updateFlashcard(existingCard.id, values);
         Alert.alert('Success', 'Flashcard updated successfully!');
       } else {
-        const targetDeckId = typeof deckId === 'string' ? deckId : (existingCard as any)?.deck_id;
+        const targetDeckId = deckIdNumber;
         await addFlashcard(values, targetDeckId);
         Alert.alert('Success', 'Flashcard created successfully!');
       }
 
-      // Refresh the flashcards list to show the new/updated card
       const { fetchFlashcards } = useFlashcardStore.getState();
       await fetchFlashcards();
 

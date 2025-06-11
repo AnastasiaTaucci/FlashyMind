@@ -10,7 +10,7 @@ export default function SubjectCardsScreen() {
     const router = useRouter();
     const { subject, deckId } = useLocalSearchParams();
     const subjectName = typeof subject === 'string' ? subject : 'Unknown Subject';
-    const currentDeckId = typeof deckId === 'string' ? deckId : '';
+    const currentDeckId = typeof deckId === 'string' && deckId ? parseInt(deckId, 10) : undefined;
 
     const { flashcards, fetchFlashcards, deleteFlashcard, isLoading, error } = useFlashcardStore();
     const { flashcardSets, fetchFlashcardSets, getFlashcardSetById } = useFlashcardSetStore();
@@ -64,20 +64,12 @@ export default function SubjectCardsScreen() {
                 return false;
             }
 
-            // Filter by subject
-            if (!card.subject || typeof card.subject !== 'string' || !subjectName) {
-                return false;
-            }
-
-            const subjectMatches = card.subject.toLowerCase() === subjectName.toLowerCase();
-
-            if (subjectMatches) {
-                return true;
-            }
-
             if (currentDeckId && card.deck_id) {
-                const deckMatches = card.deck_id === currentDeckId;
-                return deckMatches;
+                return card.deck_id === currentDeckId;
+            }
+
+            if (!currentDeckId && card.subject && typeof card.subject === 'string' && subjectName) {
+                return card.subject.toLowerCase() === subjectName.toLowerCase();
             }
 
             return false;
@@ -93,18 +85,18 @@ export default function SubjectCardsScreen() {
         });
     };
 
-    const handleEditCard = (cardId: string) => {
+    const handleEditCard = (cardId: number) => {
         router.push({
             pathname: '/addCard',
             params: {
-                cardId,
+                cardId: cardId.toString(),
                 deckId: deckId || '',
                 subject: subjectName || ''
             },
         });
     };
 
-    const handleDeleteCard = (cardId: string) => {
+    const handleDeleteCard = (cardId: number) => {
         Alert.alert('Delete Card', 'Are you sure you want to delete this flashcard?', [
             { text: 'Cancel', style: 'cancel' },
             {
@@ -131,7 +123,7 @@ export default function SubjectCardsScreen() {
         if (deckToEdit) {
             router.push({
                 pathname: '/addDeck',
-                params: { deckId: deckToEdit.id },
+                params: { deckId: deckToEdit.id.toString() },
             });
         } else {
             Alert.alert(

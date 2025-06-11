@@ -75,7 +75,7 @@ const router = Router();
 router.get('/', authenticateUser, getFlashcards);
 router.get('/:deck_id', authenticateUser, getFlashcardsByDeckId);
 router.post('/add', authenticateUser, createFlashcard);
-router.delete('/delete/:id', authenticateUser, deleteFlashcard);
-router.put('/update/:id', authenticateUser, updateFlashcard);
+router.put('/:id', authenticateUser, updateFlashcard);
+router.delete('/:id', authenticateUser, deleteFlashcard);
 
 export default router;  

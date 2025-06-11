@@ -148,7 +148,7 @@ export async function logout() {
 
 export async function createFlashcard(
   card: Omit<Flashcard, 'id' | 'created_at' | 'updated_at' | 'created_by'>,
-  deckId?: string
+  deckId?: number
 ) {
   const headers = await getAuthHeaders();
 
@@ -173,7 +173,7 @@ export async function getFlashcards() {
   return result?.data || result || [];
 }
 
-export async function getFlashcardsByDeckId(deckId: string) {
+export async function getFlashcardsByDeckId(deckId: number) {
   const headers = await getAuthHeaders();
 
   const response = await fetch(`${API_BASE_URL}/flashcards/${deckId}`, {
@@ -185,10 +185,10 @@ export async function getFlashcardsByDeckId(deckId: string) {
   return result?.data || result || [];
 }
 
-export async function updateFlashcard(id: string, updatedCard: Partial<Flashcard>) {
+export async function updateFlashcard(id: number, updatedCard: Partial<Flashcard>) {
   const headers = await getAuthHeaders();
 
-  const response = await fetch(`${API_BASE_URL}/flashcards/update/${id}`, {
+  const response = await fetch(`${API_BASE_URL}/flashcards/${id}`, {
     method: 'PUT',
     headers,
     body: JSON.stringify(updatedCard),
@@ -197,10 +197,10 @@ export async function updateFlashcard(id: string, updatedCard: Partial<Flashcard
   return handleResponse(response);
 }
 
-export async function deleteFlashcard(id: string) {
+export async function deleteFlashcard(id: number) {
   const headers = await getAuthHeaders();
 
-  const response = await fetch(`${API_BASE_URL}/flashcards/delete/${id}`, {
+  const response = await fetch(`${API_BASE_URL}/flashcards/${id}`, {
     method: 'DELETE',
     headers,
   });
@@ -235,7 +235,12 @@ export async function getFlashcardDecks() {
   return handleResponse(response);
 }
 
-export async function updateFlashcardDeck(id: string, title: string, subject: string, description?: string) {
+export async function updateFlashcardDeck(
+  id: number,
+  title: string,
+  subject: string,
+  description?: string
+) {
   const headers = await getAuthHeaders();
 
   const response = await fetch(`${API_BASE_URL}/flashcard-decks/${id}`, {
@@ -247,7 +252,7 @@ export async function updateFlashcardDeck(id: string, title: string, subject: st
   return handleResponse(response);
 }
 
-export async function deleteFlashcardDeck(id: string) {
+export async function deleteFlashcardDeck(id: number) {
   const headers = await getAuthHeaders();
 
   const response = await fetch(`${API_BASE_URL}/flashcard-decks/${id}`, {
