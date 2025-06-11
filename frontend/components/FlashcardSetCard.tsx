@@ -1,39 +1,68 @@
 import React from 'react';
-import { StyleSheet, Text } from 'react-native';
+import { StyleSheet, Text, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
-import { useFlashcardSetStore } from '@/store/deck-card-store';
+import { useFlashcardSetStore, useFlashcardStore } from '@/store/deck-card-store';
 import { Box } from '@/components/ui/box';
 import { VStack } from '@/components/ui/vstack';
 import { HStack } from '@/components/ui/hstack';
-import { Button, ButtonIcon, ButtonText } from '@/components/ui/button';
-import { EditIcon, TrashIcon } from '@/components/ui/icon';
+import { Button, ButtonText } from '@/components/ui/button';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import type { FlashcardSet } from '@/types/FlashcardSet';
 
 export default function FlashcardSetCard({ item }: { item: FlashcardSet }) {
   const router = useRouter();
-  const deleteFlashcardSet = useFlashcardSetStore((state) => state.deleteFlashcardSet);
+  const { deleteFlashcardSet, fetchFlashcardSets } = useFlashcardSetStore();
+  const { flashcards } = useFlashcardStore();
+
+  const cardCount = flashcards.filter((card) => card.deck_id === item.id).length;
+
+  const handleDeleteDeck = () => {
+    Alert.alert(
+      'Delete Deck',
+      `Are you sure you want to delete "${item.title}"? This will also delete all flashcards in this deck.`,
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Delete',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              await deleteFlashcardSet(item.id);
+              await fetchFlashcardSets();
+              Alert.alert('Success', 'Deck deleted successfully!');
+            } catch (error: any) {
+              Alert.alert(
+                'Cannot Delete Deck',
+                error.message || 'Failed to delete deck. Please try again.',
+                [{ text: 'OK', style: 'default' }]
+              );
+            }
+          },
+        },
+      ]
+    );
+  };
 
   return (
     <Box style={styles.card}>
       <VStack style={styles.cardContent}>
         <Text style={styles.cardTitle}>{item.title}</Text>
         <Text style={styles.cardSubtitle}>{item.subject}</Text>
-        <Text style={styles.cardDescription}>{item.description}</Text>
-        <Text style={styles.cardCount}>Cards: {item.flashcards?.length || 0}</Text>
+        <Text style={styles.cardDescription}>{item.description ? item.description : ''}</Text>
+        <Text style={styles.cardCount}>Cards: {cardCount}</Text>
 
         <HStack style={styles.actionRow}>
           <Button
             style={[styles.actionButton, styles.studyButton]}
-            onPress={() => router.push({ pathname: './study', params: { id: item.id } })}
+            onPress={() => router.push({ pathname: './study', params: { deckId: item.id } })}
           >
             <ButtonText style={styles.buttonText}>Study</ButtonText>
             <MaterialCommunityIcons name="head-flash" size={24} color="white" />
           </Button>
           <Button
             style={[styles.actionButton, styles.quizButton]}
-            onPress={() => router.push({ pathname: './(quiz)/quiz', params: { id: item.id } })}
+            onPress={() => router.push({ pathname: './(quiz)/quiz', params: { deckId: item.id } })}
           >
             <ButtonText style={styles.buttonText}>Quiz</ButtonText>
             <MaterialIcons name="quiz" size={24} color="white" />
@@ -42,9 +71,8 @@ export default function FlashcardSetCard({ item }: { item: FlashcardSet }) {
       </VStack>
 
       <VStack style={styles.iconColumn}>
-
         <Button
-          style={styles.iconButton}
+          style={[styles.iconButton, styles.cardsButton]}
           onPress={() =>
             router.push({
               pathname: './subjectCards',
@@ -52,13 +80,11 @@ export default function FlashcardSetCard({ item }: { item: FlashcardSet }) {
             })
           }
         >
-          <ButtonIcon as={EditIcon} />
+          <MaterialIcons name="style" size={20} color="white" />
         </Button>
-        <Button
-          style={[styles.iconButton, styles.deleteButton]}
-          onPress={() => deleteFlashcardSet(item.id)}
-        >
-          <ButtonIcon as={TrashIcon} />
+
+        <Button style={[styles.iconButton, styles.deleteButton]} onPress={handleDeleteDeck}>
+          <MaterialIcons name="delete" size={20} color="white" />
         </Button>
       </VStack>
     </Box>
@@ -104,11 +130,12 @@ const styles = StyleSheet.create({
   actionRow: {
     marginTop: 12,
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'flex-start',
     gap: 8,
   },
   actionButton: {
     flex: 1,
+    maxWidth: 150,
     borderRadius: 10,
     flexDirection: 'row',
     alignItems: 'center',
@@ -136,14 +163,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#5492f7',
     borderRadius: 10,
   },
-  // deckEditButton: {
-  //   backgroundColor: '#059669',
-  //   shadowColor: '#059669',
-  //   shadowOpacity: 0.3,
-  //   shadowRadius: 4,
-  //   shadowOffset: { width: 0, height: 2 },
-  //   elevation: 3,
-  // },
+  cardsButton: {
+    backgroundColor: '#059669',
+  },
   deleteButton: {
     backgroundColor: '#ef4444',
   },

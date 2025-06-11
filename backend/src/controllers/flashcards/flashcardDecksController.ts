@@ -43,8 +43,7 @@ export const getDecks = async (
       res.status(401).json({ error: 'Unauthorized' });
       return;
     }
-    // const { page = 1, limit = 10 } = req.pagination || {}; // Pagination can be added when service supports it
-    const decks = await getFlashcardDecks(userId); // Reverted to original signature
+    const decks = await getFlashcardDecks(userId);
     res.status(200).json(decks);
   } catch (error) {
     next(error);
@@ -87,17 +86,12 @@ export const addDeck = async (
       created_by: userId,
     }
     const deck = await addFlashcardDeck(userId, data.title, data.subject, data.description);
-    res.status(201).json({
-      success: true,
-      message: 'Flashcard deck created successfully',
-      data: deck
-    });
+    res.status(201).json(deck[0]);
 
   } catch (error) {
     next(error);
   }
 };
-
 
 /**
  * @swagger
@@ -127,13 +121,10 @@ export const updateDeck = async (
       res.status(401).json({ error: 'Unauthorized' });
       return;
     }
-    const { id, title, subject, description } = req.body;
+    const { id } = req.params;
+    const { title, subject, description } = req.body;
     const deck = await updateFlashcardDeck(userId, id, title, subject, description);
-    res.status(201).json({
-      success: true,
-      message: 'Flashcard deck updated successfully',
-      data: deck
-    });
+    res.status(200).json(deck[0]);
   } catch (error) {
     next(error);
   }
@@ -167,9 +158,17 @@ export const deleteDeck = async (
       res.status(401).json({ error: 'Unauthorized' });
       return;
     }
-    const { id } = req.body;
-    const deck = await deleteFlashcardDeck(userId, id);
-    res.status(200).json(deck);
+
+    const { id } = req.params;
+
+    const result = await deleteFlashcardDeck(userId, id);
+
+    if (!result.success) {
+      res.status(400).json({ error: result.error });
+      return;
+    }
+
+    res.status(200).json({ message: 'Flashcard deck deleted successfully' });
   } catch (error) {
     next(error);
   }

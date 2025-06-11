@@ -1,30 +1,345 @@
-import { Text, Button, StyleSheet, ScrollView } from 'react-native';
-import { useRouter } from 'expo-router';
+import React, { useState } from 'react';
+import {
+  View,
+  Text,
+  TextInput,
+  Pressable,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  Alert,
+  ActivityIndicator,
+} from 'react-native';
+import { useRouter, useLocalSearchParams } from 'expo-router';
+import { Formik } from 'formik';
+import * as Yup from 'yup';
+import { useFlashcardSetStore } from '../../../store/deck-card-store';
 
-export default function HomeScreen() {
+export default function AddDeckScreen() {
   const router = useRouter();
+  const { deckId } = useLocalSearchParams();
+  const [isLoading, setIsLoading] = useState(false);
+
+  const {
+    getFlashcardSetById,
+    addFlashcardSet,
+    updateFlashcardSet,
+    deleteFlashcardSet,
+    fetchFlashcardSets,
+    error,
+  } = useFlashcardSetStore();
+
+  const deckIdString = Array.isArray(deckId) ? deckId[0] : deckId;
+  const existingDeck = deckIdString ? getFlashcardSetById(deckIdString) : null;
+  const isEditMode = !!existingDeck;
+
+  const validationSchema = Yup.object().shape({
+    title: Yup.string().required('Title is required').min(2, 'Title must be at least 2 characters'),
+    subject: Yup.string()
+      .required('Subject is required')
+      .min(2, 'Subject must be at least 2 characters'),
+    description: Yup.string().max(500, 'Description must be less than 500 characters'),
+  });
+
+  const initialValues = {
+    title: existingDeck?.title || '',
+    subject: existingDeck?.subject || '',
+    description: existingDeck?.description || '',
+  };
+
+  async function handleSubmit(values: typeof initialValues) {
+    try {
+      setIsLoading(true);
+
+      if (isEditMode && existingDeck) {
+        await updateFlashcardSet(existingDeck.id, values);
+        Alert.alert('Success', 'Deck updated successfully!', [
+          { text: 'OK', onPress: () => router.back() },
+        ]);
+      } else {
+        const deckData = { ...values, flashcards: [] };
+        await addFlashcardSet(deckData);
+        Alert.alert('Success', 'Deck created successfully!', [
+          { text: 'OK', onPress: () => router.back() },
+        ]);
+      }
+
+      // Refresh the decks list
+      await fetchFlashcardSets();
+    } catch (error: any) {
+      console.error('Error saving deck:', error);
+      Alert.alert('Error', error.message || 'Failed to save deck. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  async function handleDeleteDeck() {
+    if (!existingDeck) return;
+
+    Alert.alert(
+      'Delete Deck',
+      `Are you sure you want to delete "${existingDeck.title}"? This will also delete all flashcards in this deck.`,
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Delete',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              setIsLoading(true);
+              await deleteFlashcardSet(existingDeck.id);
+              await fetchFlashcardSets();
+              Alert.alert('Success', 'Deck deleted successfully!', [
+                { text: 'OK', onPress: () => router.replace('/') },
+              ]);
+            } catch (error: any) {
+              console.error('Error deleting deck:', error);
+              Alert.alert('Error', error.message || 'Failed to delete deck. Please try again.');
+            } finally {
+              setIsLoading(false);
+            }
+          },
+        },
+      ]
+    );
+  }
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.title}>Deck Create/edit screen</Text>
+    <KeyboardAvoidingView
+      style={{ flex: 1, backgroundColor: '#fffafc' }}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+    >
+      {/* Header */}
+      <View
+        style={{
+          backgroundColor: '#b45309',
+          paddingTop: 60,
+          paddingBottom: 20,
+          paddingHorizontal: 20,
+          borderBottomLeftRadius: 20,
+          borderBottomRightRadius: 20,
+        }}
+      >
+        <Pressable onPress={() => router.back()} style={{ marginBottom: 10 }}>
+          <Text style={{ color: 'white', fontSize: 16 }}>← Back</Text>
+        </Pressable>
 
-      <Button title="Create Deck" onPress={() => router.push('/(tabs)/(home)/addDeck')} />
-      <Button title="Edit Deck" onPress={() => router.push('/(tabs)/(home)/addDeck')} />
-    </ScrollView>
+        <Text
+          style={{
+            fontSize: 28,
+            fontWeight: 'bold',
+            color: 'white',
+            marginBottom: 8,
+          }}
+        >
+          {isEditMode ? 'Edit Deck' : 'Create New Deck'}
+        </Text>
+
+        <Text
+          style={{
+            fontSize: 16,
+            color: '#fbbf24',
+            opacity: 0.9,
+          }}
+        >
+          {isEditMode
+            ? 'Update your flashcard deck details'
+            : 'Add a new flashcard deck to your collection'}
+        </Text>
+      </View>
+
+      <ScrollView style={{ flex: 1 }} contentContainerStyle={{ padding: 20 }}>
+        {error && (
+          <View
+            style={{
+              backgroundColor: '#fee2e2',
+              borderColor: '#fca5a5',
+              borderWidth: 1,
+              borderRadius: 8,
+              padding: 12,
+              marginBottom: 20,
+            }}
+          >
+            <Text style={{ color: '#dc2626', fontSize: 14 }}>{error}</Text>
+          </View>
+        )}
+
+        <Formik
+          initialValues={initialValues}
+          validationSchema={validationSchema}
+          onSubmit={handleSubmit}
+          enableReinitialize
+        >
+          {({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => (
+            <View style={{ gap: 20 }}>
+              {/* Title */}
+              <View>
+                <Text
+                  style={{
+                    fontSize: 16,
+                    fontWeight: '600',
+                    color: '#b45309',
+                    marginBottom: 8,
+                  }}
+                >
+                  Deck Title *
+                </Text>
+                <TextInput
+                  style={{
+                    backgroundColor: '#fef3c7',
+                    borderWidth: 1,
+                    borderColor: touched.title && errors.title ? '#ef4444' : '#fbbf24',
+                    borderRadius: 12,
+                    padding: 16,
+                    fontSize: 16,
+                    color: '#78350f',
+                  }}
+                  placeholder="e.g., Introduction to Biology"
+                  placeholderTextColor="#a16207"
+                  value={values.title}
+                  onChangeText={handleChange('title')}
+                  onBlur={handleBlur('title')}
+                />
+                {touched.title && errors.title && (
+                  <Text style={{ color: '#ef4444', fontSize: 12, marginTop: 4 }}>
+                    {errors.title}
+                  </Text>
+                )}
+              </View>
+
+              {/* Subject */}
+              <View>
+                <Text
+                  style={{
+                    fontSize: 16,
+                    fontWeight: '600',
+                    color: '#b45309',
+                    marginBottom: 8,
+                  }}
+                >
+                  Subject *
+                </Text>
+                <TextInput
+                  style={{
+                    backgroundColor: '#fef3c7',
+                    borderWidth: 1,
+                    borderColor: touched.subject && errors.subject ? '#ef4444' : '#fbbf24',
+                    borderRadius: 12,
+                    padding: 16,
+                    fontSize: 16,
+                    color: '#78350f',
+                  }}
+                  placeholder="e.g., Biology, Math, History"
+                  placeholderTextColor="#a16207"
+                  value={values.subject}
+                  onChangeText={handleChange('subject')}
+                  onBlur={handleBlur('subject')}
+                />
+                {touched.subject && errors.subject && (
+                  <Text style={{ color: '#ef4444', fontSize: 12, marginTop: 4 }}>
+                    {errors.subject}
+                  </Text>
+                )}
+              </View>
+
+              {/* Description Field */}
+              <View>
+                <Text
+                  style={{
+                    fontSize: 16,
+                    fontWeight: '600',
+                    color: '#b45309',
+                    marginBottom: 8,
+                  }}
+                >
+                  Description (Optional)
+                </Text>
+                <TextInput
+                  style={{
+                    backgroundColor: '#fef3c7',
+                    borderWidth: 1,
+                    borderColor: touched.description && errors.description ? '#ef4444' : '#fbbf24',
+                    borderRadius: 12,
+                    padding: 16,
+                    fontSize: 16,
+                    color: '#78350f',
+                    minHeight: 100,
+                    textAlignVertical: 'top',
+                  }}
+                  placeholder="Describe what this deck is about..."
+                  placeholderTextColor="#a16207"
+                  value={values.description}
+                  onChangeText={handleChange('description')}
+                  onBlur={handleBlur('description')}
+                  multiline
+                  numberOfLines={4}
+                />
+                {touched.description && errors.description && (
+                  <Text style={{ color: '#ef4444', fontSize: 12, marginTop: 4 }}>
+                    {errors.description}
+                  </Text>
+                )}
+              </View>
+
+              {/* Submit */}
+              <Pressable
+                onPress={() => handleSubmit()}
+                disabled={isLoading}
+                style={{
+                  backgroundColor: isLoading ? '#9ca3af' : '#059669',
+                  borderRadius: 12,
+                  padding: 16,
+                  alignItems: 'center',
+                  marginTop: 20,
+                  shadowColor: '#059669',
+                  shadowOpacity: 0.3,
+                  shadowRadius: 4,
+                  shadowOffset: { width: 0, height: 2 },
+                  elevation: 3,
+                }}
+              >
+                {isLoading ? (
+                  <ActivityIndicator color="white" />
+                ) : (
+                  <Text
+                    style={{
+                      fontSize: 18,
+                      fontWeight: 'bold',
+                      color: 'white',
+                    }}
+                  >
+                    {isEditMode ? 'Update Deck' : 'Create Deck'}
+                  </Text>
+                )}
+              </Pressable>
+
+              {/* Cancel */}
+              <Pressable
+                onPress={() => router.back()}
+                style={{
+                  backgroundColor: '#f3f4f6',
+                  borderWidth: 1,
+                  borderColor: '#d1d5db',
+                  borderRadius: 12,
+                  padding: 16,
+                  alignItems: 'center',
+                }}
+              >
+                <Text
+                  style={{
+                    fontSize: 16,
+                    fontWeight: '600',
+                    color: '#6b7280',
+                  }}
+                >
+                  Cancel
+                </Text>
+              </Pressable>
+            </View>
+          )}
+        </Formik>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    padding: 20,
-    gap: 12,
-    flexGrow: 1,
-    justifyContent: 'center',
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 20,
-    textAlign: 'center',
-  },
-});

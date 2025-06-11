@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -18,10 +18,32 @@ export default function CreateCardScreen() {
   const router = useRouter();
   const { cardId, deckId, subject } = useLocalSearchParams();
 
-  const { getFlashcardById, addFlashcard, updateFlashcard, isLoading, error, setError } =
-    useFlashcardStore();
+  const {
+    getFlashcardById,
+    addFlashcard,
+    updateFlashcard,
+    isLoading,
+    error,
+    fetchFlashcards,
+    flashcards,
+  } = useFlashcardStore();
 
-  const existingCard = typeof cardId === 'string' ? getFlashcardById(cardId) : null;
+  const [existingCard, setExistingCard] = useState(
+    typeof cardId === 'string' ? getFlashcardById(cardId) : null
+  );
+
+  // Fetch flashcards when component mounts to ensure we have the latest data
+  useEffect(() => {
+    fetchFlashcards();
+  }, [fetchFlashcards]);
+
+  // Update existingCard when flashcards are loaded or cardId changes
+  useEffect(() => {
+    if (typeof cardId === 'string' && flashcards && flashcards.length > 0) {
+      const card = getFlashcardById(cardId);
+      setExistingCard(card);
+    }
+  }, [cardId, flashcards, getFlashcardById]);
 
   const validationSchema = Yup.object().shape({
     subject: Yup.string().required('Subject is required'),
@@ -37,10 +59,6 @@ export default function CreateCardScreen() {
     answer: existingCard?.answer || '',
   };
 
-  useEffect(() => {
-    setError(null);
-  }, [setError]);
-
   async function handleSubmit(values: typeof initialValues) {
     try {
       if (existingCard) {
@@ -51,6 +69,11 @@ export default function CreateCardScreen() {
         await addFlashcard(values, targetDeckId);
         Alert.alert('Success', 'Flashcard created successfully!');
       }
+
+      // Refresh the flashcards list to show the new/updated card
+      const { fetchFlashcards } = useFlashcardStore.getState();
+      await fetchFlashcards();
+
       router.back();
     } catch (error: any) {
       Alert.alert('Error', error.message || 'Failed to save flashcard. Please try again.');
@@ -181,7 +204,7 @@ export default function CreateCardScreen() {
                 }}
               >
                 <Text style={{ textAlign: 'center', color: '#4b5563', fontWeight: '500' }}>
-                  {subject ? 'Back to Cards' : 'Return to Home'}
+                  Back to Deck
                 </Text>
               </Pressable>
             </View>

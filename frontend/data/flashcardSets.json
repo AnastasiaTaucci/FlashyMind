@@ -3,39 +3,24 @@
     "id": "01",
     "title": "Intro to Biology",
     "subject": "Biology",
-    "description": "Basics of cell biology and proteins.",
-    "flashcards": [
-      "bio-001",
-      "bio-002"
-    ]
+    "description": "Basics of cell biology and proteins."
   },
   {
     "id": "02",
-    "title": "Psych & Philosophy",
-    "subject": "Mixed",
-    "description": "Cards on learning and ethics.",
-    "flashcards": [
-      "psy-001",
-      "phi-001"
-    ]
+    "title": "Intro to Psych",
+    "subject": "Psychology",
+    // "description": "Basics of ethics."
   },
   {
     "id": "03",
-    "title": "Psych & Philosophy",
-    "subject": "Mixed",
-    "description": "Cards on learning and ethics.",
-    "flashcards": [
-      "psy-001",
-      "phi-001"
-    ]
+    "title": "Intro to Philosophy",
+    "subject": "Philosophy",
+    "description": "Basics of philosofy"
   },
   {
     "id": "04",
     "title": "Climate Basics",
     "subject": "Environmental Science",
-    "description": "Understanding the greenhouse effect.",
-    "flashcards": [
-      "env-001"
-    ]
+    "description": "Understanding the greenhouse effect."
   }
 ]

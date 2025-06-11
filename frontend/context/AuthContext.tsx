@@ -7,6 +7,7 @@ type AuthContextType = {
   login: (email: string, password: string) => Promise<void>;
   signup: (email: string, password: string) => Promise<void>;
   logout: () => void;
+  handleAuthError: () => void;
   session: any;
   isLoading: boolean;
 };
@@ -53,10 +54,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const login = async (email: string, password: string) => {
     try {
       const result = await api.login(email, password);
+
+      const sessionWithTimestamp = {
+        ...result,
+        created_at: Date.now(),
+      };
+
       setIsAuthenticated(true);
-      setSession(result);
-      await saveSession(result);
-      console.log('Login result session:', result); // debug
+      setSession(sessionWithTimestamp);
+      await saveSession(sessionWithTimestamp);
+      console.log('Login result session:', sessionWithTimestamp); // debug
     } catch (error: any) {
       setIsAuthenticated(false);
       setSession(null);
@@ -89,6 +96,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const handleAuthError = async () => {
+    console.log('Handling auth error - logging out user');
+    setIsAuthenticated(false);
+    setSession(null);
+    await AsyncStorage.removeItem('@user_session');
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -97,6 +111,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         login,
         signup,
         logout,
+        handleAuthError,
         isLoading,
       }}
     >
