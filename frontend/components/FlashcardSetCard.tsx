@@ -15,7 +15,6 @@ export default function FlashcardSetCard({ item }: { item: FlashcardSet }) {
   const { deleteFlashcardSet, fetchFlashcardSets } = useFlashcardSetStore();
   const { flashcards } = useFlashcardStore();
 
-  // Calculate card count dynamically by counting flashcards that belong to this deck
   const cardCount = flashcards.filter(card => card.deck_id === item.id).length;
 
   const handleDeleteDeck = () => {

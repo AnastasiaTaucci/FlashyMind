@@ -18,6 +18,9 @@ export default function SubjectCardsScreen() {
     const [subjectCards, setSubjectCards] = useState<Flashcard[]>([]);
     const [subjectDescription, setSubjectDescription] = useState<string>('');
 
+    const currentDeck = currentDeckId ? getFlashcardSetById(currentDeckId) :
+        flashcardSets.find(deck => deck.subject.toLowerCase() === subjectName.toLowerCase());
+
     useEffect(() => {
         fetchFlashcards();
         fetchFlashcardSets();
@@ -93,7 +96,11 @@ export default function SubjectCardsScreen() {
     const handleEditCard = (cardId: string) => {
         router.push({
             pathname: '/addCard',
-            params: { cardId },
+            params: {
+                cardId,
+                deckId: deckId || '',
+                subject: subjectName || ''
+            },
         });
     };
 
@@ -114,6 +121,25 @@ export default function SubjectCardsScreen() {
                 },
             },
         ]);
+    };
+
+    const handleEditDeck = () => {
+        const deckToEdit = currentDeck || flashcardSets.find(deck =>
+            deck.subject.toLowerCase() === subjectName.toLowerCase()
+        );
+
+        if (deckToEdit) {
+            router.push({
+                pathname: '/addDeck',
+                params: { deckId: deckToEdit.id },
+            });
+        } else {
+            Alert.alert(
+                'No Deck Found',
+                'Cannot find deck to edit. Please try again.',
+                [{ text: 'OK' }]
+            );
+        }
     };
 
     if (isLoading) {
@@ -184,14 +210,9 @@ export default function SubjectCardsScreen() {
                             elevation: 3,
                             marginLeft: 8,
                         }}
-                        onPress={() =>
-                            router.push({
-                                pathname: '/addDeck',
-                                params: { deckId: currentDeckId },
-                            })
-                        }
+                        onPress={handleEditDeck}
                     >
-                        <MaterialIcons name="settings" size={24} color="white" />
+                        <MaterialIcons name="edit" size={24} color="white" />
                     </Pressable>
                 </View>
 

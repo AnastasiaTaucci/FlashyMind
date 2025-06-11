@@ -29,7 +29,8 @@ export default function AddDeckScreen() {
     error
   } = useFlashcardSetStore();
 
-  const existingDeck = typeof deckId === 'string' ? getFlashcardSetById(deckId) : null;
+  const deckIdString = Array.isArray(deckId) ? deckId[0] : deckId;
+  const existingDeck = deckIdString ? getFlashcardSetById(deckIdString) : null;
   const isEditMode = !!existingDeck;
 
   const validationSchema = Yup.object().shape({
@@ -168,7 +169,7 @@ export default function AddDeckScreen() {
         >
           {({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => (
             <View style={{ gap: 20 }}>
-              {/* Title Field */}
+              {/* Title */}
               <View>
                 <Text
                   style={{
@@ -203,7 +204,7 @@ export default function AddDeckScreen() {
                 )}
               </View>
 
-              {/* Subject Field */}
+              {/* Subject */}
               <View>
                 <Text
                   style={{
@@ -277,7 +278,7 @@ export default function AddDeckScreen() {
                 )}
               </View>
 
-              {/* Submit Button */}
+              {/* Submit */}
               <Pressable
                 onPress={() => handleSubmit()}
                 disabled={isLoading}
@@ -309,7 +310,7 @@ export default function AddDeckScreen() {
                 )}
               </Pressable>
 
-              {/* Cancel Button */}
+              {/* Cancel */}
               <Pressable
                 onPress={() => router.back()}
                 style={{
@@ -331,31 +332,6 @@ export default function AddDeckScreen() {
                   Cancel
                 </Text>
               </Pressable>
-
-              {/* Delete Button - Only show in edit mode */}
-              {isEditMode && (
-                <Pressable
-                  onPress={handleDeleteDeck}
-                  disabled={isLoading}
-                  style={{
-                    backgroundColor: isLoading ? '#fca5a5' : '#ef4444',
-                    borderRadius: 12,
-                    padding: 16,
-                    alignItems: 'center',
-                    marginTop: 10,
-                  }}
-                >
-                  <Text
-                    style={{
-                      fontSize: 16,
-                      fontWeight: 'bold',
-                      color: 'white',
-                    }}
-                  >
-                    Delete Deck
-                  </Text>
-                </Pressable>
-              )}
             </View>
           )}
         </Formik>

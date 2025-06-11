@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -18,10 +18,25 @@ export default function CreateCardScreen() {
   const router = useRouter();
   const { cardId, deckId, subject } = useLocalSearchParams();
 
-  const { getFlashcardById, addFlashcard, updateFlashcard, isLoading, error, setError } =
+  const { getFlashcardById, addFlashcard, updateFlashcard, isLoading, error, fetchFlashcards, flashcards } =
     useFlashcardStore();
 
-  const existingCard = typeof cardId === 'string' ? getFlashcardById(cardId) : null;
+  const [existingCard, setExistingCard] = useState(
+    typeof cardId === 'string' ? getFlashcardById(cardId) : null
+  );
+
+  // Fetch flashcards when component mounts to ensure we have the latest data
+  useEffect(() => {
+    fetchFlashcards();
+  }, [fetchFlashcards]);
+
+  // Update existingCard when flashcards are loaded or cardId changes
+  useEffect(() => {
+    if (typeof cardId === 'string' && flashcards && flashcards.length > 0) {
+      const card = getFlashcardById(cardId);
+      setExistingCard(card);
+    }
+  }, [cardId, flashcards, getFlashcardById]);
 
   const validationSchema = Yup.object().shape({
     subject: Yup.string().required('Subject is required'),
@@ -36,10 +51,6 @@ export default function CreateCardScreen() {
     question: existingCard?.question || '',
     answer: existingCard?.answer || '',
   };
-
-  useEffect(() => {
-    setError(null);
-  }, [setError]);
 
   async function handleSubmit(values: typeof initialValues) {
     try {

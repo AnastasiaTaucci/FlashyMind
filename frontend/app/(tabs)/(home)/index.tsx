@@ -62,6 +62,7 @@ export default function HomeScreen() {
             <ButtonText style={styles.logoutText}>Logout</ButtonText>
             <MaterialIcons name="logout" size={20} color="#fff" />
           </Button>
+
         </HStack>
 
         <Heading style={styles.heading}>Your Flashcard Sets</Heading>
@@ -93,8 +94,8 @@ export default function HomeScreen() {
             <RefreshControl
               refreshing={refreshing}
               onRefresh={onRefresh}
-              colors={['#2563eb']} // Android
-              tintColor="#2563eb" // iOS
+              colors={['#2563eb']}
+              tintColor="#2563eb"
             />
           }
           ListEmptyComponent={
@@ -133,6 +134,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 14,
+    marginTop: 20,
   },
   logoutText: {
     fontWeight: 'bold',
@@ -142,8 +144,7 @@ const styles = StyleSheet.create({
   heading: {
     fontSize: 30,
     fontWeight: 'bold',
-    marginTop: 20,
-    marginBottom: 16,
+    marginBottom: 20,
     marginLeft: 16,
     color: '1f2937',
     lineHeight: 30,
@@ -155,7 +156,7 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   addDeckButton: {
-    width: '80%',
+    width: '60%',
     backgroundColor: '#ffdd54',
     borderRadius: 8,
     paddingHorizontal: 14,
