@@ -29,7 +29,9 @@ export default function TabLayout() {
         name="(explore)/explore"
         options={{
           title: 'Explore',
-          tabBarIcon: ({ color }) => <IconSymbol size={30} name="paperplane.fill" color={color} />,
+          tabBarIcon: ({ color }) => (
+            <IconSymbol size={30} name="rectangle.fill.on.rectangle.fill" color={color} />
+          ),
         }}
       />
     </Tabs>
