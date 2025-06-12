@@ -99,19 +99,17 @@ FlashyMind enables users to study any topic through custom-created flashcards or
 
 **Goals:**
 
-* Add interactive Quiz Mode and improve UI consistency.
+* Add interactive Quiz Mode, finish Study mode, and improve UI consistency.
 
 **Tasks:**
 
-* Explore Decks screen (fetch from Supabase or local JSON)
-* Refactor backend as needed
-* Apply final design polish and improvements
+* Explore Decks screen (fetch from an outside API) -Anastasia
+* Finish Study mode screen - Anastasia
+* Testing - all of us
+* Refactor backend as needed - Ahmet 
+* Apply final design polish and improvements - Joshua
+* Quiz mode (screen, logic and connection to the backend) - Ahmet, Joshua
 
-**Deliverables:**
-
-* Browseable Explore screen - Ahmet
-* Backend endpoint refinements - Ahmet
-* UI/UX enhancements - - Anastasia, Joshua
 
 ### 🗓️ Sprint 5: Testing & Presentation
 
@@ -157,6 +155,7 @@ FlashyMind enables users to study any topic through custom-created flashcards or
 * GitHub Projects – Task management
 * React Navigation – App routing
 * Formik / React Hook Form – Forms with validation
+* Zustand – Global state management
 
 ---
 
