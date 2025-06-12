@@ -1,4 +1,5 @@
 import { Text, StyleSheet, FlatList, View, RefreshControl } from 'react-native';
+import { Text, StyleSheet, FlatList, View, RefreshControl } from 'react-native';
 import { useRouter, useFocusEffect } from 'expo-router';
 import { useFlashcardSetStore, useFlashcardStore } from '@/store/deck-card-store';
 import { Heading } from '@/components/ui/heading';
@@ -9,6 +10,7 @@ import { VStack } from '@/components/ui/vstack';
 import FlashcardSetCard from '@/components/FlashcardSetCard';
 import { useAuth } from '@/context/AuthContext';
 import { useEffect, useState, useCallback } from 'react';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function HomeScreen() {
@@ -87,6 +89,7 @@ export default function HomeScreen() {
         <FlatList
           data={flashcardSets}
           keyExtractor={(item, index) => (item.id ? item.id.toString() : `deck-${index}`)}
+          keyExtractor={(item, index) => (item.id ? item.id.toString() : `deck-${index}`)}
           contentContainerStyle={styles.listContent}
           renderItem={({ item }) => <FlashcardSetCard item={item} />}
           refreshControl={
@@ -107,6 +110,7 @@ export default function HomeScreen() {
         />
       </VStack>
     </SafeAreaView>
+    </SafeAreaView >
   );
 }
 
@@ -115,10 +119,12 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fffafc',
     // paddingBottom: 15,
+    // paddingBottom: 15,
     width: '100%',
   },
   pageWrapper: {
     flex: 1,
+    marginTop: 10,
     marginTop: 10,
   },
   logoutWrapper: {
@@ -127,6 +133,7 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
   logoutButton: {
+    maxWidth: 200,
     maxWidth: 200,
     backgroundColor: '#ef4444',
     borderRadius: 12,

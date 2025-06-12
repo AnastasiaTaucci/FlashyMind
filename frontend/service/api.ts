@@ -235,7 +235,12 @@ export async function getFlashcardDecks() {
   return handleResponse(response);
 }
 
-export async function updateFlashcardDeck(id: string, title: string, subject: string, description?: string) {
+export async function updateFlashcardDeck(
+  id: string,
+  title: string,
+  subject: string,
+  description?: string
+) {
   const headers = await getAuthHeaders();
 
   const response = await fetch(`${API_BASE_URL}/flashcard-decks/${id}`, {
