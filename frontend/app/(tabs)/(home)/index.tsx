@@ -1,5 +1,4 @@
 import { Text, StyleSheet, FlatList, View, RefreshControl } from 'react-native';
-import { Text, StyleSheet, FlatList, View, RefreshControl } from 'react-native';
 import { useRouter, useFocusEffect } from 'expo-router';
 import { useFlashcardSetStore, useFlashcardStore } from '@/store/deck-card-store';
 import { Heading } from '@/components/ui/heading';
@@ -10,7 +9,6 @@ import { VStack } from '@/components/ui/vstack';
 import FlashcardSetCard from '@/components/FlashcardSetCard';
 import { useAuth } from '@/context/AuthContext';
 import { useEffect, useState, useCallback } from 'react';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function HomeScreen() {
@@ -110,7 +108,6 @@ export default function HomeScreen() {
         />
       </VStack>
     </SafeAreaView>
-    </SafeAreaView >
   );
 }
 
