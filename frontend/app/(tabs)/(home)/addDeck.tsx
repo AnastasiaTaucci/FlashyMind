@@ -33,9 +33,6 @@ export default function AddDeckScreen() {
     subject: Yup.string()
       .required('Subject is required')
       .min(2, 'Subject must be at least 2 characters'),
-    subject: Yup.string()
-      .required('Subject is required')
-      .min(2, 'Subject must be at least 2 characters'),
     description: Yup.string().max(500, 'Description must be less than 500 characters'),
   });
 

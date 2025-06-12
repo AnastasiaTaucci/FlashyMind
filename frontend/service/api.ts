@@ -55,8 +55,9 @@ async function getAuthHeaders() {
 
           await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(updatedSession));
         }
-      } catch (refreshError) {
-        // Continue with existing token
+      } catch (error) {
+        console.error('Refresh token failed:', error);
+        throw error;
       }
     }
 

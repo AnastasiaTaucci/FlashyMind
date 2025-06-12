@@ -31,7 +31,6 @@ export default function CreateCardScreen() {
   const cardIdNumber = typeof cardId === 'string' && cardId ? parseInt(cardId, 10) : undefined;
   const deckIdNumber = typeof deckId === 'string' && deckId ? parseInt(deckId, 10) : undefined;
 
-
   const [existingCard, setExistingCard] = useState(
     cardIdNumber ? getFlashcardById(cardIdNumber) : null
   );

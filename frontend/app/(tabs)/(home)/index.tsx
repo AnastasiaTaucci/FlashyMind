@@ -87,7 +87,6 @@ export default function HomeScreen() {
         <FlatList
           data={flashcardSets}
           keyExtractor={(item, index) => (item.id ? item.id.toString() : `deck-${index}`)}
-          keyExtractor={(item, index) => (item.id ? item.id.toString() : `deck-${index}`)}
           contentContainerStyle={styles.listContent}
           renderItem={({ item }) => <FlashcardSetCard item={item} />}
           refreshControl={
@@ -115,13 +114,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fffafc',
-    // paddingBottom: 15,
-    // paddingBottom: 15,
     width: '100%',
   },
   pageWrapper: {
     flex: 1,
-    marginTop: 10,
     marginTop: 10,
   },
   logoutWrapper: {
@@ -130,7 +126,6 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
   logoutButton: {
-    maxWidth: 200,
     maxWidth: 200,
     backgroundColor: '#ef4444',
     borderRadius: 12,
