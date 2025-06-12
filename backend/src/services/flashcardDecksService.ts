@@ -27,7 +27,7 @@ export const addFlashcardDeck = async (
 
 export const updateFlashcardDeck = async (
   userId: string,
-  id: string,
+  id: number,
   title: string,
   subject: string,
   description?: string
@@ -43,7 +43,7 @@ export const updateFlashcardDeck = async (
   return data;
 };
 
-export const deleteFlashcardDeck = async (userId: string, id: string) => {
+export const deleteFlashcardDeck = async (userId: string, id: number) => {
   const { data: flashcards, error: flashcardsCheckError } = await supabase
     .from('flashcards')
     .select('id')

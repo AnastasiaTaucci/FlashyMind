@@ -121,9 +121,18 @@ export const updateDeck = async (
       res.status(401).json({ error: 'Unauthorized' });
       return;
     }
+
     const { id } = req.params;
+    const idNumber = parseInt(id, 10);
+
+    if (isNaN(idNumber)) {
+      res.status(400).json({ error: 'Invalid deck ID' });
+      return;
+    }
+
     const { title, subject, description } = req.body;
-    const deck = await updateFlashcardDeck(userId, id, title, subject, description);
+
+    const deck = await updateFlashcardDeck(userId, idNumber, title, subject, description);
     res.status(200).json(deck[0]);
   } catch (error) {
     next(error);
@@ -160,8 +169,14 @@ export const deleteDeck = async (
     }
 
     const { id } = req.params;
+    const idNumber = parseInt(id, 10);
 
-    const result = await deleteFlashcardDeck(userId, id);
+    if (isNaN(idNumber)) {
+      res.status(400).json({ error: 'Invalid deck ID' });
+      return;
+    }
+
+    const result = await deleteFlashcardDeck(userId, idNumber);
 
     if (!result.success) {
       res.status(400).json({ error: result.error });

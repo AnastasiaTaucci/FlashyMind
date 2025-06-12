@@ -13,6 +13,7 @@ import {
 import { router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAuth } from '../../context/AuthContext';
+import AnimatedTitle from '../../components/AnimatedTitle';
 
 export default function LoginScreen() {
   const [email, setEmail] = useState('');
@@ -24,6 +25,7 @@ export default function LoginScreen() {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
   };
+
   const getErrorMessage = (error: any) => {
     if (typeof error === 'string') return error;
     if (error?.message) return error.message;
@@ -60,7 +62,7 @@ export default function LoginScreen() {
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
       <SafeAreaView style={styles.container}>
         <View style={styles.formContainer}>
-          <Text style={styles.title}>Flashy Mind</Text>
+          <AnimatedTitle text="Flashy Mind" style={styles.title} />
           <Text style={styles.subtitle}>Sign in to continue</Text>
 
           <View style={styles.inputContainer}>

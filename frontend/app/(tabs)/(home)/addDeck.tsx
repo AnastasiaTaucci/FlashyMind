@@ -20,17 +20,12 @@ export default function AddDeckScreen() {
   const { deckId } = useLocalSearchParams();
   const [isLoading, setIsLoading] = useState(false);
 
-  const {
-    getFlashcardSetById,
-    addFlashcardSet,
-    updateFlashcardSet,
-    deleteFlashcardSet,
-    fetchFlashcardSets,
-    error,
-  } = useFlashcardSetStore();
+  const { getFlashcardSetById, addFlashcardSet, updateFlashcardSet, fetchFlashcardSets, error } =
+    useFlashcardSetStore();
 
   const deckIdString = Array.isArray(deckId) ? deckId[0] : deckId;
-  const existingDeck = deckIdString ? getFlashcardSetById(deckIdString) : null;
+  const deckIdNumber = deckIdString ? parseInt(deckIdString, 10) : undefined;
+  const existingDeck = deckIdNumber ? getFlashcardSetById(deckIdNumber) : null;
   const isEditMode = !!existingDeck;
 
   const validationSchema = Yup.object().shape({
@@ -55,16 +50,17 @@ export default function AddDeckScreen() {
         await updateFlashcardSet(existingDeck.id, values);
         Alert.alert('Success', 'Deck updated successfully!', [
           { text: 'OK', onPress: () => router.back() },
+          { text: 'OK', onPress: () => router.back() },
         ]);
       } else {
         const deckData = { ...values, flashcards: [] };
         await addFlashcardSet(deckData);
         Alert.alert('Success', 'Deck created successfully!', [
           { text: 'OK', onPress: () => router.back() },
+          { text: 'OK', onPress: () => router.back() },
         ]);
       }
 
-      // Refresh the decks list
       await fetchFlashcardSets();
     } catch (error: any) {
       console.error('Error saving deck:', error);
@@ -72,37 +68,6 @@ export default function AddDeckScreen() {
     } finally {
       setIsLoading(false);
     }
-  }
-
-  async function handleDeleteDeck() {
-    if (!existingDeck) return;
-
-    Alert.alert(
-      'Delete Deck',
-      `Are you sure you want to delete "${existingDeck.title}"? This will also delete all flashcards in this deck.`,
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Delete',
-          style: 'destructive',
-          onPress: async () => {
-            try {
-              setIsLoading(true);
-              await deleteFlashcardSet(existingDeck.id);
-              await fetchFlashcardSets();
-              Alert.alert('Success', 'Deck deleted successfully!', [
-                { text: 'OK', onPress: () => router.replace('/') },
-              ]);
-            } catch (error: any) {
-              console.error('Error deleting deck:', error);
-              Alert.alert('Error', error.message || 'Failed to delete deck. Please try again.');
-            } finally {
-              setIsLoading(false);
-            }
-          },
-        },
-      ]
-    );
   }
 
   return (
@@ -143,6 +108,9 @@ export default function AddDeckScreen() {
             opacity: 0.9,
           }}
         >
+          {isEditMode
+            ? 'Update your flashcard deck details'
+            : 'Add a new flashcard deck to your collection'}
           {isEditMode
             ? 'Update your flashcard deck details'
             : 'Add a new flashcard deck to your collection'}

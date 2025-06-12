@@ -14,13 +14,13 @@ interface FlashcardState {
   error: string | null;
   addFlashcard: (
     card: Omit<Flashcard, 'id' | 'created_at' | 'updated_at' | 'created_by'>,
-    deckId?: string
+    deckId?: number
   ) => Promise<void>;
-  updateFlashcard: (id: string, updatedCard: Partial<Flashcard>) => Promise<void>;
-  deleteFlashcard: (id: string) => Promise<void>;
-  getFlashcardById: (id: string) => Flashcard | undefined;
+  updateFlashcard: (id: number, updatedCard: Partial<Flashcard>) => Promise<void>;
+  deleteFlashcard: (id: number) => Promise<void>;
+  getFlashcardById: (id: number) => Flashcard | undefined;
   fetchFlashcards: () => Promise<void>;
-  fetchFlashcardsByDeckId: (deckId: string) => Promise<void>;
+  fetchFlashcardsByDeckId: (deckId: number) => Promise<void>;
 }
 
 const transformFlashcard = (card: any): Flashcard => ({
@@ -129,7 +129,7 @@ export const useFlashcardStore = create<FlashcardState>((set, get) => ({
 
   getFlashcardById: (id) =>
     get().flashcards.find(
-      (card) => card.id == id || card.id === String(id) || String(card.id) === String(id)
+      (card) => card.id === id || card.id === String(id) || String(card.id) === String(id)
     ),
 }));
 
@@ -142,9 +142,9 @@ interface FlashcardSetState {
   isLoading: boolean;
   error: string | null;
   addFlashcardSet: (set: Omit<FlashcardSet, 'id' | 'createdAt' | 'updatedAt'>) => Promise<void>;
-  updateFlashcardSet: (id: string, updatedSet: Partial<FlashcardSet>) => Promise<void>;
-  deleteFlashcardSet: (id: string) => Promise<void>;
-  getFlashcardSetById: (id: string) => FlashcardSet | undefined;
+  updateFlashcardSet: (id: number, updatedSet: Partial<FlashcardSet>) => Promise<void>;
+  deleteFlashcardSet: (id: number) => Promise<void>;
+  getFlashcardSetById: (id: number) => FlashcardSet | undefined;
   fetchFlashcardSets: () => Promise<void>;
 }
 
@@ -245,6 +245,6 @@ export const useFlashcardSetStore = create<FlashcardSetState>((set, get) => ({
 
   getFlashcardSetById: (id) =>
     get().flashcardSets.find(
-      (set) => set.id == id || set.id === String(id) || String(set.id) === String(id)
+      (set) => set.id === id || set.id === String(id) || String(set.id) === String(id)
     ),
 }));

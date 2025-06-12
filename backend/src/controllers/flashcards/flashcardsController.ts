@@ -201,16 +201,17 @@ export const getFlashcardsByDeckId = async (req: Request, res: Response): Promis
     }
 
     const { deck_id } = req.params;
+    const deckIdNumber = parseInt(deck_id, 10);
 
-    if (!deck_id) {
-      res.status(400).json({ error: 'Deck ID is required' });
+    if (!deck_id || isNaN(deckIdNumber)) {
+      res.status(400).json({ error: 'Valid Deck ID is required' });
       return;
     }
 
     const { data, error } = await supabase
       .from('flashcards')
       .select('*')
-      .eq('deck_id', deck_id)
+      .eq('deck_id', deckIdNumber)
       .eq('created_by', userId)
       .order('created_at', { ascending: false });
 
@@ -238,10 +239,17 @@ export const deleteFlashcard = async (req: Request, res: Response): Promise<void
     }
 
     const { id } = req.params;
+    const idNumber = parseInt(id, 10);
+
+    if (isNaN(idNumber)) {
+      res.status(400).json({ error: 'Invalid flashcard ID' });
+      return;
+    }
+
     const { error } = await supabase
       .from('flashcards')
       .delete()
-      .eq('id', id)
+      .eq('id', idNumber)
       .eq('created_by', userId);
 
     if (error) throw new Error(error.message);
@@ -263,31 +271,27 @@ export const updateFlashcard = async (req: Request, res: Response): Promise<void
     }
 
     const { id } = req.params;
+    const idNumber = parseInt(id, 10);
+
+    if (isNaN(idNumber)) {
+      res.status(400).json({ error: 'Invalid flashcard ID' });
+      return;
+    }
+
     const { subject, topic, question, answer, deck_id } = req.body;
     const { data, error } = await supabase
       .from('flashcards')
       .update({ subject, topic, question, answer, deck_id })
-      .eq('id', id)
+      .eq('id', idNumber)
       .eq('created_by', userId)
       .select('*');
 
     if (error) throw new Error(error.message);
 
-    res.status(200).json(data);
+    res.status(200).json(data[0]);
   } catch (error) {
     console.error('Error updating flashcard:', error);
     res.status(500).json({ error: 'Failed to update flashcard', details: error });
   }
-};
-
-export const logout = async (_req: Request, res: Response): Promise<void> => {
-  const { error } = await supabase.auth.signOut();
-
-  if (error) {
-    res.status(400).json({ error: error.message });
-    return;
-  }
-
-  res.status(200).json({ message: 'Logged out successfully' });
 };
 

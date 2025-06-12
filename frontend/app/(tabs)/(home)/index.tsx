@@ -1,7 +1,6 @@
 import { Text, StyleSheet, FlatList, View, RefreshControl } from 'react-native';
 import { useRouter, useFocusEffect } from 'expo-router';
 import { useFlashcardSetStore, useFlashcardStore } from '@/store/deck-card-store';
-
 import { Heading } from '@/components/ui/heading';
 import { Button, ButtonText } from '@/components/ui/button';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
@@ -115,7 +114,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fffafc',
-    // paddingBottom: 15,
     width: '100%',
   },
   pageWrapper: {
