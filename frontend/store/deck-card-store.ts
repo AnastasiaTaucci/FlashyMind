@@ -98,9 +98,7 @@ export const useFlashcardStore = create<FlashcardState>((set, get) => ({
       const data = await api.updateFlashcard(id, updatedCard);
       const transformedData = transformFlashcard(data);
       set((state) => ({
-        flashcards: state.flashcards.map((card) =>
-          card.id === id ? transformedData : card
-        ),
+        flashcards: state.flashcards.map((card) => (card.id === id ? transformedData : card)),
         isLoading: false,
       }));
     } catch (error: any) {
@@ -129,7 +127,9 @@ export const useFlashcardStore = create<FlashcardState>((set, get) => ({
     }
   },
 
-  getFlashcardById: (id) => get().flashcards.find((card) => card.id === id),
+  getFlashcardById: (id) => get().flashcards.find((card) =>
+    card.id == id || card.id === String(id) || String(card.id) === String(id)
+  ),
 }));
 
 // ======================
@@ -242,5 +242,7 @@ export const useFlashcardSetStore = create<FlashcardSetState>((set, get) => ({
     }
   },
 
-  getFlashcardSetById: (id) => get().flashcardSets.find((set) => set.id === id),
+  getFlashcardSetById: (id) => get().flashcardSets.find((set) =>
+    set.id == id || set.id === String(id) || String(set.id) === String(id)
+  ),
 }));

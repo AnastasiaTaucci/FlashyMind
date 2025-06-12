@@ -75,7 +75,7 @@ function shouldRefreshToken(session: any): boolean {
   const now = Date.now();
   const fiftyMinutes = 50 * 60 * 1000;
 
-  return (now - lastRefresh) > fiftyMinutes;
+  return now - lastRefresh > fiftyMinutes;
 }
 
 async function handleResponse(response: Response) {
@@ -235,12 +235,7 @@ export async function getFlashcardDecks() {
   return handleResponse(response);
 }
 
-export async function updateFlashcardDeck(
-  id: number,
-  title: string,
-  subject: string,
-  description?: string
-) {
+export async function updateFlashcardDeck(id: string, title: string, subject: string, description?: string) {
   const headers = await getAuthHeaders();
 
   const response = await fetch(`${API_BASE_URL}/flashcard-decks/${id}`, {

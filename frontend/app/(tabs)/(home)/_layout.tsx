@@ -6,8 +6,9 @@ export default function HomeLayout() {
       <Stack.Screen name="index" />
       <Stack.Screen name="(quiz)/quiz" />
       <Stack.Screen name="(quiz)/quiz-score" />
-      <Stack.Screen name="addCard" />
       <Stack.Screen name="addDeck" />
+      <Stack.Screen name="subjectCards" />
+      <Stack.Screen name="addCard" />
       <Stack.Screen name="study" />
     </Stack>
   );

@@ -49,20 +49,20 @@ export default function FlashcardSetCard({ item }: { item: FlashcardSet }) {
       <VStack style={styles.cardContent}>
         <Text style={styles.cardTitle}>{item.title}</Text>
         <Text style={styles.cardSubtitle}>{item.subject}</Text>
-        <Text style={styles.cardDescription}>{item.description}</Text>
+        <Text style={styles.cardDescription}>{item.description ? item.description : ''}</Text>
         <Text style={styles.cardCount}>Cards: {cardCount}</Text>
 
         <HStack style={styles.actionRow}>
           <Button
             style={[styles.actionButton, styles.studyButton]}
-            onPress={() => router.push({ pathname: './study', params: { id: item.id } })}
+            onPress={() => router.push({ pathname: './study', params: { deckId: item.id } })}
           >
             <ButtonText style={styles.buttonText}>Study</ButtonText>
             <MaterialCommunityIcons name="head-flash" size={24} color="white" />
           </Button>
           <Button
             style={[styles.actionButton, styles.quizButton]}
-            onPress={() => router.push({ pathname: './(quiz)/quiz', params: { id: item.id } })}
+            onPress={() => router.push({ pathname: './(quiz)/quiz', params: { deckId: item.id } })}
           >
             <ButtonText style={styles.buttonText}>Quiz</ButtonText>
             <MaterialIcons name="quiz" size={24} color="white" />
@@ -130,11 +130,12 @@ const styles = StyleSheet.create({
   actionRow: {
     marginTop: 12,
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'flex-start',
     gap: 8,
   },
   actionButton: {
     flex: 1,
+    maxWidth: 150,
     borderRadius: 10,
     flexDirection: 'row',
     alignItems: 'center',
