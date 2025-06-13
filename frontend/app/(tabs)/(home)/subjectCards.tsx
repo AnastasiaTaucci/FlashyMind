@@ -181,7 +181,7 @@ export default function SubjectCardsScreen() {
               flex: 1,
             }}
           >
-            {subjectName} Cards
+            {currentDeck ? `${currentDeck.title} Cards` : `${subjectName} Cards`}
           </Text>
 
           <Pressable
