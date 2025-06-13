@@ -79,5 +79,5 @@ The app backend works on emulators but not on an physical device.
 
 ## 🔜 Next Sprint Priorities
 
-Screen, Quiz Mode, Add/Edit Card screen, , Deck Add/Edit screen
+Study Screen, Quiz Mode, Add/Edit Card screen, , Deck Add/Edit screen
  
