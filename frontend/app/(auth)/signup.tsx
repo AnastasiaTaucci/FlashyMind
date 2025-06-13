@@ -50,6 +50,9 @@ export default function SignUpScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
+      <TouchableOpacity onPress={() => router.push('/')} style={{ marginTop: 20, marginLeft: 5 }}>
+        <Text style={{ color: '#5e3e2b', fontSize: 16 }}>← Back</Text>
+      </TouchableOpacity>
       <View style={styles.formContainer}>
         <Text style={styles.title}>Create Account</Text>
         <Text style={styles.subtitle}>Sign up to get started</Text>
@@ -114,10 +117,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   title: {
-    fontSize: 32,
+    fontSize: 35,
     fontWeight: 'bold',
     marginBottom: 8,
     textAlign: 'center',
+    color: '#5e2606',
   },
   subtitle: {
     fontSize: 16,
@@ -145,10 +149,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   buttonDisabled: {
-    backgroundColor: '#007AFF80',
+    backgroundColor: '#fff1ba',
   },
   buttonText: {
-    color: '#fff',
+    color: '#5e2606',
     fontSize: 16,
     fontWeight: '600',
   },
@@ -164,8 +168,8 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   loginButton: {
-    color: '#007AFF',
-    fontSize: 14,
+    color: '#ff8119',
+    fontSize: 15,
     fontWeight: '600',
   },
 });

@@ -155,11 +155,10 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   addDeckButton: {
-    // width: '60%',
     backgroundColor: '#ffdd54',
     borderRadius: 8,
     borderColor: '#bd4e0f',
-    borderWidth: 0.75,
+    borderWidth: 0.5,
   },
   addDeckText: {
     color: '#5e2606',
