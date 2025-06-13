@@ -64,11 +64,11 @@ export default function HomeScreen() {
           </Button>
         </HStack>
 
-        <Heading style={styles.heading}>Your Flashcard Sets</Heading>
+        <Heading style={styles.heading}>Your Flashcard Decks</Heading>
 
         <HStack style={styles.addDeckWrapper}>
           <Button style={styles.addDeckButton} onPress={() => router.navigate('./addDeck')}>
-            <ButtonText style={styles.addDeckText}>+ New Set</ButtonText>
+            <ButtonText style={styles.addDeckText}>+ New Deck</ButtonText>
           </Button>
         </HStack>
 
@@ -144,7 +144,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 20,
     marginRight: 16,
-    color: '1f2937',
+    color: '#5e2606',
     lineHeight: 30,
     textAlign: 'center',
   },
@@ -155,10 +155,11 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   addDeckButton: {
-    width: '60%',
+    // width: '60%',
     backgroundColor: '#ffdd54',
     borderRadius: 8,
-    paddingHorizontal: 14,
+    borderColor: '#bd4e0f',
+    borderWidth: 0.75,
   },
   addDeckText: {
     color: '#5e2606',
