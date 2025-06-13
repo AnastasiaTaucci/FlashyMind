@@ -8,6 +8,7 @@ import { Button, ButtonText } from '@/components/ui/button';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function StudyDeckScreen() {
   const router = useRouter();
@@ -17,7 +18,7 @@ export default function StudyDeckScreen() {
 
   const deck = flashcardSets.find((set) => String(set.id) === deckId);
   const initialDeck = flashcards.filter((card) => String(card.deck_id) === deckId);
-  const [studyDeck, setStudyDeck] = useState<Flashcard[]>(shuffle(initialDeck));
+  const [studyDeck, setStudyDeck] = useState<Flashcard[]>([]);
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [currentCard, setCurrentCard] = useState<Flashcard | null>(studyDeck[0] || null);
@@ -25,16 +26,52 @@ export default function StudyDeckScreen() {
   const [reviewQueue, setReviewQueue] = useState<Flashcard[]>([]);
 
   useEffect(() => {
+    async function loadProgress() {
+      try {
+        const saved = await AsyncStorage.getItem(`reviewQueue_deck_${deckId}`);
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (Array.isArray(parsed.reviewQueue) && parsed.reviewQueue.length > 0) {
+            setStudyDeck(parsed.reviewQueue);
+            return;
+          }
+        }
+
+        // Default fallback
+        setStudyDeck(shuffle(initialDeck));
+      } catch (error) {
+        console.error('Failed to load review progress:', error);
+        setStudyDeck(shuffle(initialDeck));
+      }
+    }
+
+    loadProgress();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // saves partial progress
+  useEffect(() => {
+    async function saveProgress() {
+      try {
+        const data = JSON.stringify({ reviewQueue });
+        await AsyncStorage.setItem(`reviewQueue_deck_${deckId}`, data);
+      } catch (error) {
+        console.error('Failed to save review progress:', error);
+      }
+    }
+
+    saveProgress();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [reviewQueue]);
+
+  // checks if it is the end of deck
+  useEffect(() => {
     if (currentIndex < studyDeck.length) {
       setCurrentCard(studyDeck[currentIndex]);
     } else {
       setCurrentCard(null);
     }
   }, [currentIndex, studyDeck]);
-
-  // useEffect(() => {
-  //   console.log('Updated reviewQueue:', reviewQueue);
-  // }, [reviewQueue]);
 
   function markForReview() {
     if (currentCard) {
@@ -57,16 +94,18 @@ export default function StudyDeckScreen() {
     setReviewQueue([]);
     setShowAnswer(false);
   }
-  function startOver() {
+
+  async function startOver() {
     setStudyDeck(shuffle(initialDeck));
     setCurrentIndex(0);
     setReviewQueue([]);
     setShowAnswer(false);
+    await AsyncStorage.removeItem(`reviewQueue_deck_${deckId}`);
   }
 
   if (!deck) {
     return (
-      <View style={styles.container}>
+      <View style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}>
         <Text>Deck not found.</Text>
       </View>
     );
@@ -74,7 +113,7 @@ export default function StudyDeckScreen() {
 
   if (studyDeck.length === 0) {
     return (
-      <View style={styles.container}>
+      <View style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}>
         <Text>No cards found for this deck.</Text>
       </View>
     );
