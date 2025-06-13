@@ -52,6 +52,13 @@ export default function StudyDeckScreen() {
     }
   }
 
+  function startReview() {
+    setStudyDeck(shuffle(reviewQueue));
+    setCurrentIndex(0);
+    setReviewQueue([]);
+    setShowAnswer(false);
+  }
+
   if (!deck) {
     return (
       <View style={styles.container}>
@@ -108,11 +115,28 @@ export default function StudyDeckScreen() {
             </ButtonText>
           </Button>
         </View>
-      ) : (
+      ) : reviewQueue.length !== 0 ? (
         <View>
           <Text style={{ fontSize: 20, fontWeight: 'bold' }}>🎉 You finished all cards!</Text>
           <HStack style={styles.actionRow}>
-            <Button style={[styles.actionButton]} onPress={() => console.log("will start over")}>
+            <Button style={[styles.actionButton]} onPress={startReview}>
+              <MaterialCommunityIcons name="repeat-variant" size={24} color="white" />
+              <ButtonText style={styles.buttonText}>Start Review</ButtonText>
+            </Button>
+            <Button style={[styles.actionButton]} onPress={() => router.back()}>
+              <ButtonText style={styles.buttonText}>Done for today</ButtonText>
+              <MaterialIcons name="done-outline" size={24} color="white" />
+            </Button>
+          </HStack>
+        </View>
+      ) : (
+        <View>
+          <Text style={{ fontSize: 20, fontWeight: 'bold' }}>🎉 You learned all cards!</Text>
+          <HStack style={styles.actionRow}>
+            <Button
+              style={[styles.actionButton]}
+              onPress={() => console.log('will start all over again')}
+            >
               <MaterialCommunityIcons name="repeat-variant" size={24} color="white" />
               <ButtonText style={styles.buttonText}>Start Over</ButtonText>
             </Button>
