@@ -15,9 +15,8 @@ export default function StudyDeckScreen() {
   const flashcards = useFlashcardStore((state) => state.flashcards);
 
   const deck = flashcardSets.find((set) => String(set.id) === deckId);
-  const [studyDeck, setStudyDeck] = useState<Flashcard[]>(
-    shuffle(flashcards.filter((card) => String(card.deck_id) === deckId))
-  );
+  const initialDeck = flashcards.filter((card) => String(card.deck_id) === deckId);
+  const [studyDeck, setStudyDeck] = useState<Flashcard[]>(shuffle(initialDeck));
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [currentCard, setCurrentCard] = useState<Flashcard | null>(studyDeck[0] || null);
@@ -54,6 +53,12 @@ export default function StudyDeckScreen() {
 
   function startReview() {
     setStudyDeck(shuffle(reviewQueue));
+    setCurrentIndex(0);
+    setReviewQueue([]);
+    setShowAnswer(false);
+  }
+  function startOver() {
+    setStudyDeck(shuffle(initialDeck));
     setCurrentIndex(0);
     setReviewQueue([]);
     setShowAnswer(false);
@@ -99,11 +104,11 @@ export default function StudyDeckScreen() {
             )}
 
             <HStack style={styles.actionRow}>
-              <Button style={[styles.actionButton]} onPress={markForReview}>
+              <Button style={styles.actionButton} onPress={markForReview}>
                 <MaterialCommunityIcons name="repeat-variant" size={24} color="white" />
-                <ButtonText style={styles.buttonText}>Review</ButtonText>
+                <ButtonText style={styles.buttonText}>Needs Practice</ButtonText>
               </Button>
-              <Button style={[styles.actionButton]} onPress={markLearned}>
+              <Button style={styles.actionButton} onPress={markLearned}>
                 <ButtonText style={styles.buttonText}>Learned</ButtonText>
                 <MaterialIcons name="done-outline" size={24} color="white" />
               </Button>
@@ -119,11 +124,15 @@ export default function StudyDeckScreen() {
         <View>
           <Text style={{ fontSize: 20, fontWeight: 'bold' }}>🎉 You finished all cards!</Text>
           <HStack style={styles.actionRow}>
-            <Button style={[styles.actionButton]} onPress={startReview}>
-              <MaterialCommunityIcons name="repeat-variant" size={24} color="white" />
-              <ButtonText style={styles.buttonText}>Start Review</ButtonText>
+            <Button onPress={startOver} style={styles.actionButton}>
+              <MaterialCommunityIcons name="restart" size={20} color="white" />
+              <ButtonText style={styles.buttonText}>Restart Deck</ButtonText>
             </Button>
-            <Button style={[styles.actionButton]} onPress={() => router.back()}>
+            <Button style={styles.actionButton} onPress={startReview}>
+              <MaterialCommunityIcons name="repeat-variant" size={24} color="white" />
+              <ButtonText style={styles.buttonText}>Keep learning</ButtonText>
+            </Button>
+            <Button style={styles.actionButton} onPress={() => router.back()}>
               <ButtonText style={styles.buttonText}>Done for today</ButtonText>
               <MaterialIcons name="done-outline" size={24} color="white" />
             </Button>
@@ -135,7 +144,7 @@ export default function StudyDeckScreen() {
           <HStack style={styles.actionRow}>
             <Button
               style={[styles.actionButton]}
-              onPress={() => console.log('will start all over again')}
+              onPress={startOver}
             >
               <MaterialCommunityIcons name="repeat-variant" size={24} color="white" />
               <ButtonText style={styles.buttonText}>Start Over</ButtonText>
