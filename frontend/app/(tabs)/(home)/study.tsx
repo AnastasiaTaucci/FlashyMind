@@ -4,13 +4,12 @@ import { useLocalSearchParams } from 'expo-router';
 import { useFlashcardSetStore, useFlashcardStore } from '@/store/deck-card-store';
 
 export default function StudyDeckScreen() {
-  const { id } = useLocalSearchParams();
+  const { deckId } = useLocalSearchParams();
   const flashcardSets = useFlashcardSetStore((state) => state.flashcardSets);
   const flashcards = useFlashcardStore((state) => state.flashcards);
 
-  const deck = flashcardSets.find((set) => String(set.id) === String(id));
-  const cardIds = deck?.flashcards || [];
-  const matchedCards = cardIds.map((id) => flashcards.find((c) => c.id === id)).filter(Boolean);
+  const deck = flashcardSets.find((set) => String(set.id) === deckId);
+  const matchedCards = flashcards.filter((card) => String(card.deck_id) === deckId);
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [showAnswer, setShowAnswer] = useState(false);
