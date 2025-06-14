@@ -80,7 +80,7 @@ export default function FlashcardSetCard({ item }: { item: FlashcardSet }) {
             })
           }
         >
-          <MaterialIcons name="style" size={20} color="white" />
+          <MaterialCommunityIcons name="cards-outline" size={22} color="white" />
         </Button>
 
         <Button style={[styles.iconButton, styles.deleteButton]} onPress={handleDeleteDeck}>

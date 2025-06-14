@@ -3,7 +3,7 @@ import { useRouter, useFocusEffect } from 'expo-router';
 import { useFlashcardSetStore, useFlashcardStore } from '@/store/deck-card-store';
 import { Heading } from '@/components/ui/heading';
 import { Button, ButtonText } from '@/components/ui/button';
-import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import SimpleLineIcons from '@expo/vector-icons/SimpleLineIcons';
 import { HStack } from '@/components/ui/hstack';
 import { VStack } from '@/components/ui/vstack';
 import FlashcardSetCard from '@/components/FlashcardSetCard';
@@ -59,12 +59,18 @@ export default function HomeScreen() {
               }
             }}
           >
+            <SimpleLineIcons name="logout" size={18} color="white" />
             <ButtonText style={styles.logoutText}>Logout</ButtonText>
-            <MaterialIcons name="logout" size={20} color="#fff" />
           </Button>
         </HStack>
 
-        <Heading style={styles.heading}>Your Flashcard Sets</Heading>
+        <Heading style={styles.heading}>Your Flashcard Decks</Heading>
+
+        <HStack style={styles.addDeckWrapper}>
+          <Button style={styles.addDeckButton} onPress={() => router.navigate('./addDeck')}>
+            <ButtonText style={styles.addDeckText}>+ New Deck</ButtonText>
+          </Button>
+        </HStack>
 
         {error && (
           <View style={{ backgroundColor: '#fee2e2', padding: 12, margin: 16, borderRadius: 8 }}>
@@ -77,12 +83,6 @@ export default function HomeScreen() {
             <Text style={{ color: '#6b7280' }}>Loading flashcard sets...</Text>
           </View>
         )}
-
-        <HStack style={styles.addDeckWrapper}>
-          <Button style={styles.addDeckButton} onPress={() => router.navigate('./addDeck')}>
-            <ButtonText style={styles.addDeckText}>+ New Set</ButtonText>
-          </Button>
-        </HStack>
 
         <FlatList
           data={flashcardSets}
@@ -121,18 +121,18 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   logoutWrapper: {
-    justifyContent: 'flex-end',
-    marginRight: 15,
+    justifyContent: 'flex-start',
+    marginLeft: 15,
     marginVertical: 10,
   },
   logoutButton: {
     maxWidth: 200,
-    backgroundColor: '#ef4444',
+    backgroundColor: '#f06c6c',
     borderRadius: 12,
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 14,
-    marginTop: 20,
+    marginBottom: 15,
   },
   logoutText: {
     fontWeight: 'bold',
@@ -143,9 +143,10 @@ const styles = StyleSheet.create({
     fontSize: 30,
     fontWeight: 'bold',
     marginBottom: 20,
-    marginLeft: 16,
-    color: '1f2937',
+    marginRight: 16,
+    color: '#5e2606',
     lineHeight: 30,
+    textAlign: 'center',
   },
   addDeckWrapper: {
     flexDirection: 'row',
@@ -154,10 +155,10 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   addDeckButton: {
-    width: '60%',
     backgroundColor: '#ffdd54',
     borderRadius: 8,
-    paddingHorizontal: 14,
+    borderColor: '#bd4e0f',
+    borderWidth: 0.5,
   },
   addDeckText: {
     color: '#5e2606',
