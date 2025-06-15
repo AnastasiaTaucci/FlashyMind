@@ -1,26 +1,26 @@
 [
-  {
-    "id": "01",
-    "title": "Intro to Biology",
-    "subject": "Biology",
-    "description": "Basics of cell biology and proteins."
-  },
-  {
-    "id": "02",
-    "title": "Intro to Psych",
-    "subject": "Psychology",
-    // "description": "Basics of ethics."
-  },
-  {
-    "id": "03",
-    "title": "Intro to Philosophy",
-    "subject": "Philosophy",
-    "description": "Basics of philosofy"
-  },
-  {
-    "id": "04",
-    "title": "Climate Basics",
-    "subject": "Environmental Science",
-    "description": "Understanding the greenhouse effect."
-  }
+	{
+		"id": "01",
+		"title": "Intro to Biology",
+		"subject": "Biology",
+		"description": "Basics of cell biology and proteins."
+	},
+	{
+		"id": "02",
+		"title": "Intro to Psych",
+		"subject": "Psychology",
+		"description": "Basics of psychology."
+	},
+	{
+		"id": "03",
+		"title": "Intro to Philosophy",
+		"subject": "Philosophy",
+		"description": "Basics of philosophy"
+	},
+	{
+		"id": "04",
+		"title": "Climate Basics",
+		"subject": "Environmental Science",
+		"description": "Understanding the greenhouse effect."
+	}
 ]
