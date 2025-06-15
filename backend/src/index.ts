@@ -6,6 +6,7 @@ import flashcardsRoutes from './routes/flashcards';
 import { authenticateUser } from './middlewares/authMiddleware';
 import paginationMiddleware from './middlewares/pagination';
 import cors from 'cors';
+import detailedQuizResultRoutes from './routes/detailedQuizResultRoutes';
 
 const app = express();
 app.use(express.json());
@@ -33,6 +34,7 @@ app.use(cors());
 app.use('/api/auth', authRouter);
 app.use('/api/flashcard-decks', flashcardDecksRoutes);
 app.use('/api/flashcards', authenticateUser, flashcardsRoutes);
+app.use('/api/detailed-quiz-results', detailedQuizResultRoutes);
 
 app.get('/', (req, res) => {
   res.send('Hello, Express with TypeScript!');
