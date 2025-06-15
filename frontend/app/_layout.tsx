@@ -6,7 +6,7 @@ import { StatusBar } from 'expo-status-bar';
 import 'react-native-reanimated';
 import { AuthProvider } from '../context/AuthContext';
 import Toast from 'react-native-toast-message';
-import { Provider as PaperProvider } from "react-native-paper";
+import { Provider as PaperProvider } from 'react-native-paper';
 
 export default function RootLayout() {
   const [loaded] = useFonts({

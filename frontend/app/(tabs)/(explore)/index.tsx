@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useCallback } from 'react';
 import {
   View,
   Text,
@@ -14,7 +14,6 @@ import * as Yup from 'yup';
 import { useRouter } from 'expo-router';
 import { Menu, Button } from 'react-native-paper';
 import { useFocusEffect } from '@react-navigation/native';
-import { useCallback } from 'react';
 
 const categories = [
   'Any Category',
@@ -199,7 +198,6 @@ const ExploreDeckScreen = () => {
               <Pressable onPress={() => handleSubmit()} style={styles.button}>
                 <Text style={styles.buttonText}>Explore</Text>
               </Pressable>
-
             </View>
           </ScrollView>
         </KeyboardAvoidingView>
