@@ -3,8 +3,8 @@ import { View, Text, ScrollView, Pressable, ActivityIndicator, Alert } from 'rea
 
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { useRouter, useLocalSearchParams, useFocusEffect } from 'expo-router';
-import { useFlashcardStore, useFlashcardSetStore } from '../../../store/deck-card-store';
-import { Flashcard } from '../../../types/Flashcard';
+import { useFlashcardStore, useFlashcardSetStore } from '@/store/deck-card-store';
+import { Flashcard } from '@/types/Flashcard';
 
 export default function SubjectCardsScreen() {
   const router = useRouter();

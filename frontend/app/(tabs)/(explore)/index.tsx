@@ -14,6 +14,7 @@ import * as Yup from 'yup';
 import { useRouter } from 'expo-router';
 import { Menu, Button } from 'react-native-paper';
 import { useFocusEffect } from '@react-navigation/native';
+import { useExploreDeckStore } from '@/store/explore-deck-store';
 
 const categories = [
   'Any Category',
@@ -49,6 +50,7 @@ const ExploreDeckScreen = () => {
   const router = useRouter();
   const [categoryMenuVisible, setCategoryMenuVisible] = useState(false);
   const [difficultyMenuVisible, setDifficultyMenuVisible] = useState(false);
+  const { fetchExploreDeck } = useExploreDeckStore();
 
   const validationSchema = Yup.object().shape({
     amount: Yup.number().min(1).max(50).required('Number of questions is required'),
@@ -79,6 +81,7 @@ const ExploreDeckScreen = () => {
   ) {
     console.log('Explore with values:', values);
     // TODO: Call Zustand action here
+    await fetchExploreDeck(values.amount, values.category, values.difficulty);
     router.push({
       pathname: './subjectCards',
       params: { category: values.category, difficulty: values.difficulty, amount: values.amount },

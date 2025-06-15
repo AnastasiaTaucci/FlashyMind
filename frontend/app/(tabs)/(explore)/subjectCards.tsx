@@ -10,14 +10,13 @@ import {
 } from 'react-native';
 
 import { useRouter, useLocalSearchParams } from 'expo-router';
-import mockData from '@/data/flashcards.json';
+import { useExploreDeckStore } from '@/store/explore-deck-store';
 
 export default function SubjectCardsScreen() {
   const router = useRouter();
   const { category, amount } = useLocalSearchParams();
+  const { flashcards, isLoading, error } = useExploreDeckStore();
 
-  const isLoading = false;
-  const error = false;
 
   function handleSaveDeck() {
     console.log('runs function from zustand to save to supabase');
@@ -53,7 +52,7 @@ export default function SubjectCardsScreen() {
           borderBottomRightRadius: 20,
         }}
       >
-        <Pressable onPress={() => router.push('/')} style={{ marginBottom: 10 }}>
+        <Pressable onPress={() => router.back()} style={{ marginBottom: 10 }}>
           <Text style={{ color: 'white', fontSize: 16 }}>← Back</Text>
         </Pressable>
 
@@ -137,7 +136,7 @@ export default function SubjectCardsScreen() {
         contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 20 }}
         showsVerticalScrollIndicator={false}
       >
-        {mockData.length === 0 ? (
+        {flashcards.length === 0 ? (
           <View
             style={{
               backgroundColor: '#fef3c7',
@@ -170,9 +169,9 @@ export default function SubjectCardsScreen() {
             </Pressable>
           </View>
         ) : (
-          mockData.map((card, index) => (
+          flashcards.map((card, index) => (
             <View
-              key={card.id}
+              key={card.question}
               style={{
                 backgroundColor: '#fef3c7',
                 borderRadius: 16,
