@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef, useState } from 'react';
 import {
   View,
   Text,
@@ -12,6 +12,9 @@ import {
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import { useRouter } from 'expo-router';
+import { Menu, Button } from 'react-native-paper';
+import { useFocusEffect } from '@react-navigation/native';
+import { useCallback } from 'react';
 
 const categories = [
   'Any Category',
@@ -45,6 +48,8 @@ const difficulties = ['Any Difficulty', 'Easy', 'Medium', 'Hard'];
 
 const ExploreDeckScreen = () => {
   const router = useRouter();
+  const [categoryMenuVisible, setCategoryMenuVisible] = useState(false);
+  const [difficultyMenuVisible, setDifficultyMenuVisible] = useState(false);
 
   const validationSchema = Yup.object().shape({
     amount: Yup.number().min(1).max(50).required('Number of questions is required'),
@@ -58,18 +63,33 @@ const ExploreDeckScreen = () => {
     difficulty: 'Any Difficulty',
   };
 
+  const formRef = useRef<any>(null);
+
+  useFocusEffect(
+    useCallback(() => {
+      // When the screen is focused, reset the form
+      if (formRef.current?.resetForm) {
+        formRef.current.resetForm();
+      }
+    }, [])
+  );
+
   async function handleSubmit(
     values: typeof initialValues,
     { resetForm }: { resetForm: () => void }
   ) {
     console.log('Explore with values:', values);
     // TODO: Call Zustand action here
-    router.push({ pathname: './../(home)/subjectCards', params: { explore: 'yes' } });
+    router.push({
+      pathname: './subjectCards',
+      params: { category: values.category, difficulty: values.difficulty, amount: values.amount },
+    });
     resetForm();
   }
 
   return (
     <Formik
+      innerRef={formRef}
       initialValues={initialValues}
       validationSchema={validationSchema}
       onSubmit={handleSubmit}
@@ -93,35 +113,87 @@ const ExploreDeckScreen = () => {
                 value={values.amount}
                 onChangeText={handleChange('amount')}
                 onBlur={handleBlur('amount')}
-                style={styles.input}
+                style={[styles.input, { paddingVertical: 10, paddingHorizontal: 14 }]}
               />
               {touched.amount && errors.amount && <Text style={styles.error}>{errors.amount}</Text>}
 
               {/* Category */}
               <Text style={styles.label}>Select Category</Text>
-              <TextInput
-                value={values.category}
-                onChangeText={handleChange('category')}
-                onBlur={handleBlur('category')}
-                placeholder="Category"
-                style={styles.input}
-              />
-              {touched.category && errors.category && (
-                <Text style={styles.error}>{errors.category}</Text>
-              )}
+              <Menu
+                visible={categoryMenuVisible}
+                onDismiss={() => setCategoryMenuVisible(false)}
+                anchor={
+                  <Button
+                    onPress={() => setCategoryMenuVisible(true)}
+                    style={styles.input}
+                    labelStyle={{
+                      color: '#000',
+                      width: '100%',
+                      textAlign: 'left',
+                      paddingHorizontal: 14,
+                    }}
+                  >
+                    {values.category}
+                  </Button>
+                }
+                contentStyle={{
+                  backgroundColor: '#f2f2f2',
+                }}
+              >
+                <View style={{ maxHeight: 250 }}>
+                  <ScrollView>
+                    {categories.map((label) => (
+                      <Menu.Item
+                        key={label}
+                        onPress={() => {
+                          handleChange('category')(label);
+                          setCategoryMenuVisible(false);
+                        }}
+                        title={label}
+                      />
+                    ))}
+                  </ScrollView>
+                </View>
+              </Menu>
 
               {/* Difficulty */}
               <Text style={styles.label}>Select Difficulty</Text>
-              <TextInput
-                value={values.difficulty}
-                onChangeText={handleChange('difficulty')}
-                onBlur={handleBlur('difficulty')}
-                placeholder="Difficulty"
-                style={styles.input}
-              />
-              {touched.difficulty && errors.difficulty && (
-                <Text style={styles.error}>{errors.difficulty}</Text>
-              )}
+              <Menu
+                visible={difficultyMenuVisible}
+                onDismiss={() => setDifficultyMenuVisible(false)}
+                anchor={
+                  <Button
+                    onPress={() => setDifficultyMenuVisible(true)}
+                    style={styles.input}
+                    labelStyle={{
+                      color: '#000',
+                      width: '100%',
+                      textAlign: 'left',
+                      paddingHorizontal: 14,
+                    }}
+                  >
+                    {values.difficulty}
+                  </Button>
+                }
+                contentStyle={{
+                  backgroundColor: '#f2f2f2',
+                }}
+              >
+                <View style={{ maxHeight: 180 }}>
+                  <ScrollView>
+                    {difficulties.map((level) => (
+                      <Menu.Item
+                        key={level}
+                        onPress={() => {
+                          handleChange('difficulty')(level);
+                          setDifficultyMenuVisible(false);
+                        }}
+                        title={level}
+                      />
+                    ))}
+                  </ScrollView>
+                </View>
+              </Menu>
 
               {/* Submit */}
               <Pressable onPress={() => handleSubmit()} style={styles.button}>
@@ -156,8 +228,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#d1d5db',
     borderRadius: 8,
-    paddingHorizontal: 14,
-    paddingVertical: 10,
     fontSize: 16,
   },
   error: {

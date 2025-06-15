@@ -6,6 +6,7 @@ import { StatusBar } from 'expo-status-bar';
 import 'react-native-reanimated';
 import { AuthProvider } from '../context/AuthContext';
 import Toast from 'react-native-toast-message';
+import { Provider as PaperProvider } from "react-native-paper";
 
 export default function RootLayout() {
   const [loaded] = useFonts({
@@ -17,15 +18,17 @@ export default function RootLayout() {
   }
 
   return (
-    <GluestackUIProvider>
-      <AuthProvider>
-        <Stack screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="index" />
-          <Stack.Screen name="+not-found" />
-        </Stack>
-        <StatusBar style="auto" />
-        <Toast />
-      </AuthProvider>
-    </GluestackUIProvider>
+    <PaperProvider>
+      <GluestackUIProvider>
+        <AuthProvider>
+          <Stack screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="index" />
+            <Stack.Screen name="+not-found" />
+          </Stack>
+          <StatusBar style="auto" />
+          <Toast />
+        </AuthProvider>
+      </GluestackUIProvider>
+    </PaperProvider>
   );
 }
