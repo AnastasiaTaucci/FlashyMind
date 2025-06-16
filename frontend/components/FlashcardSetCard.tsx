@@ -31,7 +31,6 @@ export default function FlashcardSetCard({ item }: { item: FlashcardSet }) {
               await deleteFlashcardSet(item.id);
               Alert.alert('Success', 'Deck deleted successfully!');
               await fetchFlashcardSets();
-
             } catch (error: any) {
               Alert.alert(
                 'Cannot Delete Deck',
