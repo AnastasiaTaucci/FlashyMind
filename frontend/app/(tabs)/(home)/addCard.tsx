@@ -205,7 +205,7 @@ export default function CreateCardScreen() {
                 }}
               >
                 <Text style={{ textAlign: 'center', color: '#4b5563', fontWeight: '500' }}>
-                  Back to Deck
+                  Cancel
                 </Text>
               </Pressable>
             </View>

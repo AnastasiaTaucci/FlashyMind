@@ -78,13 +78,12 @@ export const useExploreDeckStore = create<ExploreState>((set) => ({
   },
   addExploreFlashcardSet: async (newSet) => {
     try {
-        set({ error: null });
+      set({ error: null });
       const data = await api.createFlashcardDeck(newSet.title, newSet.subject, newSet.description);
       const deckId = data.id;
-    //   flashcards.map((item: Flashcard) => {
-    //     const data = await api.createFlashcard(item, deckId);
-    //   })
-      set({ flashcards: [] });
+      //   flashcards.map((item: Flashcard) => {
+      //     const data = await api.createFlashcard(item, deckId);
+      //   })
     } catch (error: any) {
       set({
         error: error.message || 'Failed to add explore flashcard set',

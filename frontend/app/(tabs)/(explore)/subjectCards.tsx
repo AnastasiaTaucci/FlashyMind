@@ -19,19 +19,18 @@ export default function SubjectCardsScreen() {
 
   async function handleSaveDeck() {
     try {
-
-    const newDeck = {
-      title: String(category),
-      subject: String(category),
-      description: `Set of explored cards in ${String(category)} category.`,
-    };
-    await addExploreFlashcardSet(newDeck);
-    Alert.alert('Success', 'Deck added to your library!', [
-      { text: 'OK', onPress: () => router.back() },
-    ]);
-  } catch (err: any) {
-    Alert.alert('Error', err.message || 'Failed to save deck. Please try again.');
-  }
+      const newDeck = {
+        title: String(category),
+        subject: String(category),
+        description: `Set of explored cards in ${String(category)} category.`,
+      };
+      await addExploreFlashcardSet(newDeck);
+      Alert.alert('Success', 'Deck added to your library!', [
+        { text: 'OK', onPress: () => router.back() },
+      ]);
+    } catch (err: any) {
+      Alert.alert('Error', err.message || 'Failed to save deck. Please try again.');
+    }
   }
 
   if (isLoading) {
