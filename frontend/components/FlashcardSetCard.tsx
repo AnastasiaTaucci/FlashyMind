@@ -29,8 +29,9 @@ export default function FlashcardSetCard({ item }: { item: FlashcardSet }) {
           onPress: async () => {
             try {
               await deleteFlashcardSet(item.id);
-              await fetchFlashcardSets();
               Alert.alert('Success', 'Deck deleted successfully!');
+              await fetchFlashcardSets();
+
             } catch (error: any) {
               Alert.alert(
                 'Cannot Delete Deck',
