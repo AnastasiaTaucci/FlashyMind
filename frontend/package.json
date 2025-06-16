@@ -9,6 +9,7 @@
     "ios": "DARK_MODE=media expo start --ios",
     "lint": "expo lint",
     "test": "jest --no-coverage",
+    "test:coverage": "jest --coverage",
     "test:watch": "jest --watchAll",
     "prepare": "husky",
     "web": "DARK_MODE=media undefined"
