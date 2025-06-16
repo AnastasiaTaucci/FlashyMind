@@ -1,13 +1,15 @@
 import { create } from 'zustand';
 import { Flashcard } from '@/types/Flashcard';
 import { decode } from 'he';
-// import * as api from '../service/api';
+import * as api from '../service/api';
+import { FlashcardSet } from '@/types/FlashcardSet';
 
 type ExploreState = {
   isLoading: boolean;
   error: string | null;
   flashcards: Partial<Flashcard>[];
   fetchExploreDeck: (amount: string, category: string, difficulty: string) => Promise<void>;
+  addExploreFlashcardSet: (set: Omit<FlashcardSet, 'id' | 'flashcards'>) => Promise<void>;
 };
 
 const categoryMap: Record<string, number> = {
@@ -41,6 +43,7 @@ export const useExploreDeckStore = create<ExploreState>((set) => ({
   flashcards: [],
   isLoading: false,
   error: null,
+
   fetchExploreDeck: async (amount, category, difficulty) => {
     try {
       set({ isLoading: true, error: null });
@@ -63,7 +66,7 @@ export const useExploreDeckStore = create<ExploreState>((set) => ({
       set({
         flashcards: data.results.map((item: any) => ({
           subject: decode(item.category),
-          topic: decode(item.category).replace(/^Entertainment: /, ''),
+          topic: decode(item.category).replace(/^[^:]+:\s*/, ''),
           question: decode(item.question),
           answer: decode(item.correct_answer),
         })),
@@ -71,6 +74,22 @@ export const useExploreDeckStore = create<ExploreState>((set) => ({
       });
     } catch (err: any) {
       set({ error: err.message || 'Failed to fetch explore deck', isLoading: false });
+    }
+  },
+  addExploreFlashcardSet: async (newSet) => {
+    try {
+        set({ error: null });
+      const data = await api.createFlashcardDeck(newSet.title, newSet.subject, newSet.description);
+      const deckId = data.id;
+    //   flashcards.map((item: Flashcard) => {
+    //     const data = await api.createFlashcard(item, deckId);
+    //   })
+      set({ flashcards: [] });
+    } catch (error: any) {
+      set({
+        error: error.message || 'Failed to add explore flashcard set',
+      });
+      throw error;
     }
   },
 }));

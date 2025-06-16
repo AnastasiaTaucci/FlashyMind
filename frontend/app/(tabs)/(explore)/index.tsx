@@ -80,7 +80,6 @@ const ExploreDeckScreen = () => {
     { resetForm }: { resetForm: () => void }
   ) {
     console.log('Explore with values:', values);
-    // TODO: Call Zustand action here
     await fetchExploreDeck(values.amount, values.category, values.difficulty);
     router.push({
       pathname: './subjectCards',

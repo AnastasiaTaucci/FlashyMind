@@ -15,12 +15,23 @@ import { useExploreDeckStore } from '@/store/explore-deck-store';
 export default function SubjectCardsScreen() {
   const router = useRouter();
   const { category, amount } = useLocalSearchParams();
-  const { flashcards, isLoading, error } = useExploreDeckStore();
+  const { flashcards, isLoading, error, addExploreFlashcardSet } = useExploreDeckStore();
 
+  async function handleSaveDeck() {
+    try {
 
-  function handleSaveDeck() {
-    console.log('runs function from zustand to save to supabase');
-    Alert.alert('Success', 'Deck added to your library!');
+    const newDeck = {
+      title: String(category),
+      subject: String(category),
+      description: `Set of explored cards in ${String(category)} category.`,
+    };
+    await addExploreFlashcardSet(newDeck);
+    Alert.alert('Success', 'Deck added to your library!', [
+      { text: 'OK', onPress: () => router.back() },
+    ]);
+  } catch (err: any) {
+    Alert.alert('Error', err.message || 'Failed to save deck. Please try again.');
+  }
   }
 
   if (isLoading) {
