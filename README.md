@@ -10,7 +10,8 @@ FlashyMind is a mobile flashcard application built with React Native and Expo. I
 * 📚 Study flashcards in a card-flipping interface
 * 🔐 Supabase-powered authentication
 * ❓ Quiz Mode (optional): Test knowledge with multiple-choice quizzes
-* 🏰 Explore pre-made flashcard decks by subject
+* 🏰 Explore pre-made flashcards by category and difficulty using pre-made trivia questions from the [Open Trivia DB](https://opentdb.com/api_config.php)
+
 
 ---
 
