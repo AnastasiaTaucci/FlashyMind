@@ -7,7 +7,7 @@ import { FlashcardSet } from '@/types/FlashcardSet';
 type ExploreState = {
   isLoading: boolean;
   error: string | null;
-  flashcards: Partial<Flashcard>[];
+  flashcards: Omit<Flashcard, 'id'>[];
   fetchExploreDeck: (amount: string, category: string, difficulty: string) => Promise<void>;
   addExploreFlashcardSet: (set: Omit<FlashcardSet, 'id' | 'flashcards'>) => Promise<void>;
 };
@@ -39,7 +39,7 @@ const categoryMap: Record<string, number> = {
   'Entertainment: Cartoon & Animations': 32,
 };
 
-export const useExploreDeckStore = create<ExploreState>((set) => ({
+export const useExploreDeckStore = create<ExploreState>((set, get) => ({
   flashcards: [],
   isLoading: false,
   error: null,
@@ -81,9 +81,10 @@ export const useExploreDeckStore = create<ExploreState>((set) => ({
       set({ error: null });
       const data = await api.createFlashcardDeck(newSet.title, newSet.subject, newSet.description);
       const deckId = data.id;
-      //   flashcards.map((item: Flashcard) => {
-      //     const data = await api.createFlashcard(item, deckId);
-      //   })
+      const { flashcards } = get();
+      for (const card of flashcards) {
+        await api.createFlashcard(card, deckId);
+      }
     } catch (error: any) {
       set({
         error: error.message || 'Failed to add explore flashcard set',
