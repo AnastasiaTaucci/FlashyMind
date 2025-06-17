@@ -28,7 +28,7 @@ export default function HomeScreen() {
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
-    await refreshData();
+    await refreshData(); // calls fetchFlashcardSets and fetchFlashcards
     setRefreshing(false);
   }, [refreshData]);
 
@@ -85,6 +85,7 @@ export default function HomeScreen() {
         )}
 
         <FlatList
+          testID="flatlist" // this is for the test
           data={flashcardSets}
           keyExtractor={(item, index) => (item.id ? item.id.toString() : `deck-${index}`)}
           contentContainerStyle={styles.listContent}
@@ -100,7 +101,7 @@ export default function HomeScreen() {
           ListEmptyComponent={
             <View style={styles.emptyWrapper}>
               <Text style={styles.emptyText}>
-                You have no sets yet. Tap &ldquo;+ New Set&rdquo; to get started!
+                You have no decks yet. Tap &ldquo;+ New Deck&rdquo; to get started!
               </Text>
             </View>
           }
