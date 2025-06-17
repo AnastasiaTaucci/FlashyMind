@@ -187,6 +187,7 @@ export const useFlashcardSetStore = create<FlashcardSetState>((set, get) => ({
     try {
       set({ isLoading: true, error: null });
       const data = await api.createFlashcardDeck(newSet.title, newSet.subject, newSet.description);
+      console.log('here is data from supabase', data);
       const transformedData = transformFlashcardSet(data);
       set((state) => ({
         flashcardSets: [transformedData, ...state.flashcardSets],
