@@ -72,6 +72,7 @@ export default function FlashcardSetCard({ item }: { item: FlashcardSet }) {
 
       <VStack style={styles.iconColumn}>
         <Button
+          testID="edit-button" // this is for the test
           style={[styles.iconButton, styles.cardsButton]}
           onPress={() =>
             router.push({
@@ -83,7 +84,11 @@ export default function FlashcardSetCard({ item }: { item: FlashcardSet }) {
           <MaterialCommunityIcons name="cards-outline" size={22} color="white" />
         </Button>
 
-        <Button style={[styles.iconButton, styles.deleteButton]} onPress={handleDeleteDeck}>
+        <Button
+          testID="delete-button" // this is for the test
+          style={[styles.iconButton, styles.deleteButton]}
+          onPress={handleDeleteDeck}
+        >
           <MaterialIcons name="delete" size={20} color="white" />
         </Button>
       </VStack>

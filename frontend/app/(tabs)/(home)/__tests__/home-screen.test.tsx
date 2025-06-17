@@ -17,6 +17,7 @@ jest.mock('@/context/AuthContext', () => ({
   useAuth: () => ({ logout: mockLogout }),
 }));
 
+// Mock router
 jest.mock('expo-router', () => ({
   useRouter: () => ({ navigate: mockNavigate, replace: mockReplace }),
   useFocusEffect: jest.fn((fn) => fn()),
@@ -53,16 +54,16 @@ describe('HomeScreen', () => {
   });
 
   it('should show loading message when loading', () => {
-      getMockStores({ isLoading: true }); // override only this value
+    getMockStores({ isLoading: true }); // override only this value
 
-      render(<HomeScreen/>);
-      expect(screen.getByText(/loading flashcard sets/i)).toBeTruthy();
+    render(<HomeScreen />);
+    expect(screen.getByText(/loading flashcard sets/i)).toBeTruthy();
   });
 
   it('should display error message when there is an error loading cards', () => {
     getMockStores({ error: 'Something went wrong' }); // override only this value
 
-    render(<HomeScreen/>);
+    render(<HomeScreen />);
     expect(screen.getByText(/.*something went wrong.*/i)).toBeTruthy();
   });
 
@@ -78,18 +79,18 @@ describe('HomeScreen', () => {
     const mockFetchCards = jest.fn();
 
     getMockStores({
-        flashcardSets: [],
-        flashcards: [],
-        fetchFlashcardSets: mockFetchSets,
-        fetchFlashcards: mockFetchCards,
+      flashcardSets: [],
+      flashcards: [],
+      fetchFlashcardSets: mockFetchSets,
+      fetchFlashcards: mockFetchCards,
     });
 
     render(<HomeScreen />);
     await act(async () => {
-        await screen.getByTestId('flatlist').props.refreshControl.props.onRefresh();
+      await screen.getByTestId('flatlist').props.refreshControl.props.onRefresh();
     });
 
     expect(mockFetchSets).toHaveBeenCalled();
     expect(mockFetchCards).toHaveBeenCalled();
-  })
+  });
 });
