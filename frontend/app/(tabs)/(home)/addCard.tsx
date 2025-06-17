@@ -8,11 +8,15 @@ import {
   Platform,
   ScrollView,
   Alert,
+  StyleSheet,
 } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import { useFlashcardStore } from '../../../store/deck-card-store';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { VStack } from '@/components/ui/vstack';
+import { Heading } from '@/components/ui/heading';
 
 export default function CreateCardScreen() {
   const router = useRouter();
@@ -82,136 +86,224 @@ export default function CreateCardScreen() {
   }
 
   return (
-    <Formik
-      initialValues={initialValues}
-      validationSchema={validationSchema}
-      onSubmit={handleSubmit}
-      enableReinitialize
-    >
-      {({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => (
-        <KeyboardAvoidingView
-          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-          style={{ flex: 1, backgroundColor: '#f4f4f5' }}
-        >
-          <ScrollView contentContainerStyle={{ flexGrow: 1 }} keyboardShouldPersistTaps="handled">
-            <View style={{ flex: 1, justifyContent: 'center', padding: 20 }}>
-              <Text
-                style={{ fontSize: 28, fontWeight: 'bold', textAlign: 'center', marginBottom: 20 }}
-              >
+    <SafeAreaView style={styles.container}>
+      <Formik
+        initialValues={initialValues}
+        validationSchema={validationSchema}
+        onSubmit={handleSubmit}
+        enableReinitialize
+      >
+        {({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => (
+          <KeyboardAvoidingView
+            behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+            style={styles.keyboardView}
+          >
+            <VStack style={styles.pageWrapper}>
+              <Heading style={styles.heading}>
                 {existingCard ? 'Edit Flashcard' : 'Create Flashcard'}
-              </Text>
+              </Heading>
 
-              {error && (
-                <View
-                  style={{
-                    backgroundColor: '#fee2e2',
-                    borderColor: '#fca5a5',
-                    borderWidth: 1,
-                    borderRadius: 8,
-                    padding: 12,
-                    marginBottom: 16,
-                  }}
-                >
-                  <Text style={{ color: '#dc2626', fontSize: 14 }}>{error}</Text>
-                </View>
-              )}
+              <ScrollView
+                contentContainerStyle={styles.scrollContent}
+                keyboardShouldPersistTaps="handled"
+                showsVerticalScrollIndicator={false}
+              >
+                <View style={styles.formContainer}>
+                  {error && (
+                    <View style={styles.errorContainer}>
+                      <Text style={styles.errorText}>{error}</Text>
+                    </View>
+                  )}
 
-              {['subject', 'topic', 'question', 'answer'].map((field) => (
-                <View key={field} style={{ marginBottom: 15 }}>
-                  <Text
-                    style={{
-                      fontWeight: '600',
-                      color: '#374151',
-                      marginBottom: 5,
-                      textTransform: 'capitalize',
-                    }}
-                  >
-                    {field}
-                  </Text>
-                  <TextInput
-                    placeholder={`Enter ${field}`}
-                    onChangeText={handleChange(field)}
-                    onBlur={handleBlur(field)}
-                    value={(values as any)[field]}
-                    multiline={field === 'question' || field === 'answer'}
-                    editable={!isLoading}
-                    style={{
-                      backgroundColor: 'white',
-                      borderRadius: 12,
-                      borderWidth: 1,
-                      borderColor: '#d1d5db',
-                      paddingHorizontal: 15,
-                      paddingVertical: 12,
-                      fontSize: 16,
-                      shadowColor: '#000',
-                      shadowOpacity: 0.05,
-                      shadowRadius: 5,
-                      shadowOffset: { width: 0, height: 2 },
-                      minHeight: field === 'answer' ? 120 : undefined,
-                      textAlignVertical: 'top',
-                      opacity: isLoading ? 0.6 : 1,
-                    }}
-                  />
-                  {touched[field as keyof typeof values] &&
-                    errors[field as keyof typeof values] && (
-                      <Text style={{ color: 'red', marginTop: 4 }}>
-                        {errors[field as keyof typeof values]}
+                  {['subject', 'topic', 'question', 'answer'].map((field) => (
+                    <View key={field} style={styles.fieldContainer}>
+                      <Text style={styles.label}>
+                        {field.charAt(0).toUpperCase() + field.slice(1)}
                       </Text>
-                    )}
+                      <TextInput
+                        placeholder={`Enter ${field}`}
+                        placeholderTextColor="rgba(0, 0, 0, 0.3)"
+                        onChangeText={handleChange(field)}
+                        onBlur={handleBlur(field)}
+                        value={(values as any)[field]}
+                        multiline={field === 'question' || field === 'answer'}
+                        editable={!isLoading}
+                        style={[
+                          styles.input,
+                          field === 'answer' && styles.answerInput,
+                          isLoading && styles.inputDisabled,
+                        ]}
+                      />
+                      {touched[field as keyof typeof values] &&
+                        errors[field as keyof typeof values] && (
+                          <Text style={styles.error}>{errors[field as keyof typeof values]}</Text>
+                        )}
+                    </View>
+                  ))}
+
+                  <Pressable
+                    onPress={() => handleSubmit()}
+                    disabled={isLoading}
+                    style={[styles.saveButton, isLoading && styles.saveButtonDisabled]}
+                  >
+                    <Text style={styles.saveButtonText}>
+                      {isLoading ? 'Saving...' : existingCard ? 'Update Card' : 'Save Card'}
+                    </Text>
+                  </Pressable>
+
+                  <Pressable
+                    onPress={() => {
+                      if (subject && deckId) {
+                        router.push({
+                          pathname: '/subjectCards',
+                          params: { subject, deckId },
+                        });
+                      } else {
+                        router.push('/');
+                      }
+                    }}
+                    disabled={isLoading}
+                    style={[styles.cancelButton, isLoading && styles.cancelButtonDisabled]}
+                  >
+                    <Text style={styles.cancelButtonText}>Cancel</Text>
+                  </Pressable>
                 </View>
-              ))}
-
-              <Pressable
-                onPress={() => handleSubmit()}
-                disabled={isLoading}
-                style={{
-                  backgroundColor: isLoading ? '#9ca3af' : '#4f46e5',
-                  paddingVertical: 14,
-                  borderRadius: 12,
-                  shadowColor: '#4f46e5',
-                  shadowOpacity: isLoading ? 0.2 : 0.5,
-                  shadowRadius: 10,
-                  shadowOffset: { width: 0, height: 4 },
-                  opacity: isLoading ? 0.6 : 1,
-                }}
-              >
-                <Text
-                  style={{ color: 'white', textAlign: 'center', fontWeight: '600', fontSize: 18 }}
-                >
-                  {isLoading ? 'Saving...' : existingCard ? 'Update Card' : 'Save Card'}
-                </Text>
-              </Pressable>
-
-              <Pressable
-                onPress={() => {
-                  if (subject && deckId) {
-                    router.push({
-                      pathname: '/subjectCards',
-                      params: { subject, deckId },
-                    });
-                  } else {
-                    router.push('/');
-                  }
-                }}
-                disabled={isLoading}
-                style={{
-                  marginTop: 12,
-                  paddingVertical: 12,
-                  borderRadius: 12,
-                  borderWidth: 1,
-                  borderColor: '#9ca3af',
-                  backgroundColor: 'white',
-                  opacity: isLoading ? 0.6 : 1,
-                }}
-              >
-                <Text style={{ textAlign: 'center', color: '#4b5563', fontWeight: '500' }}>
-                  Cancel
-                </Text>
-              </Pressable>
-            </View>
-          </ScrollView>
-        </KeyboardAvoidingView>
-      )}
-    </Formik>
+              </ScrollView>
+            </VStack>
+          </KeyboardAvoidingView>
+        )}
+      </Formik>
+    </SafeAreaView>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#fffafc',
+    width: '100%',
+  },
+  keyboardView: {
+    flex: 1,
+  },
+  pageWrapper: {
+    flex: 1,
+    marginTop: 30,
+  },
+  heading: {
+    fontSize: 30,
+    fontWeight: 'bold',
+    marginBottom: 20,
+    marginTop: 30,
+    marginHorizontal: 16,
+    color: '#5e2606',
+    lineHeight: 36,
+    textAlign: 'center',
+  },
+  scrollContent: {
+    flexGrow: 1,
+    paddingHorizontal: 20,
+    paddingBottom: 100,
+  },
+  formContainer: {
+    backgroundColor: '#fff',
+    borderRadius: 16,
+    padding: 24,
+    marginTop: 10,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 4,
+  },
+  errorContainer: {
+    backgroundColor: '#fee2e2',
+    borderColor: '#fca5a5',
+    borderWidth: 1,
+    borderRadius: 12,
+    padding: 12,
+    marginBottom: 20,
+  },
+  errorText: {
+    color: '#dc2626',
+    fontSize: 14,
+    fontWeight: '500',
+  },
+  fieldContainer: {
+    marginBottom: 24,
+  },
+  label: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#5e2606',
+    marginBottom: 8,
+  },
+  input: {
+    backgroundColor: '#f9fafb',
+    borderWidth: 1.5,
+    borderColor: '#e5e7eb',
+    borderRadius: 12,
+    fontSize: 16,
+    paddingVertical: 14,
+    paddingHorizontal: 16,
+    color: '#374151',
+    textAlignVertical: 'top',
+  },
+  answerInput: {
+    minHeight: 120,
+  },
+  inputDisabled: {
+    opacity: 0.6,
+  },
+  error: {
+    color: '#dc2626',
+    fontSize: 14,
+    marginTop: 6,
+    fontWeight: '500',
+  },
+  saveButton: {
+    backgroundColor: '#4f46e5',
+    marginTop: 16,
+    paddingVertical: 16,
+    borderRadius: 12,
+    alignItems: 'center',
+    borderColor: '#4f46e5',
+    borderWidth: 1,
+    shadowColor: '#4f46e5',
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 4 },
+  },
+  saveButtonDisabled: {
+    backgroundColor: '#9ca3af',
+    borderColor: '#6b7280',
+    shadowColor: '#6b7280',
+    shadowOpacity: 0.2,
+    opacity: 0.6,
+  },
+  saveButtonText: {
+    color: '#fff',
+    fontWeight: '700',
+    fontSize: 18,
+  },
+  cancelButton: {
+    marginTop: 12,
+    paddingVertical: 14,
+    borderRadius: 12,
+    borderWidth: 1.5,
+    borderColor: '#e5e7eb',
+    backgroundColor: '#f9fafb',
+    alignItems: 'center',
+  },
+  cancelButtonDisabled: {
+    opacity: 0.6,
+  },
+  cancelButtonText: {
+    color: '#6b7280',
+    fontWeight: '600',
+    fontSize: 16,
+  },
+});
