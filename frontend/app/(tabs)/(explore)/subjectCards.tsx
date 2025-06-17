@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -16,9 +16,12 @@ export default function SubjectCardsScreen() {
   const router = useRouter();
   const { category, amount } = useLocalSearchParams();
   const { flashcards, isLoading, error, addExploreFlashcardSet } = useExploreDeckStore();
+  const [isSaving, setIsSaving] = useState(false);
 
   async function handleSaveDeck() {
     try {
+      setIsSaving(true);
+
       const newDeck = {
         title: String(category),
         subject: String(category),
@@ -30,6 +33,8 @@ export default function SubjectCardsScreen() {
       ]);
     } catch (err: any) {
       Alert.alert('Error', err.message || 'Failed to save deck. Please try again.');
+    } finally {
+      setIsSaving(false);
     }
   }
 
@@ -101,8 +106,9 @@ export default function SubjectCardsScreen() {
       <View style={{ padding: 20 }}>
         <Pressable
           onPress={handleSaveDeck}
+          disabled={isSaving}
           style={{
-            backgroundColor: '#ffdd54',
+            backgroundColor: isSaving ? '#9ca3af':'#ffdd54',
             borderRadius: 12,
             padding: 16,
             alignItems: 'center',
@@ -112,15 +118,19 @@ export default function SubjectCardsScreen() {
             shadowOffset: { width: 0, height: 2 },
           }}
         >
-          <Text
-            style={{
-              fontSize: 18,
-              fontWeight: 'bold',
-              color: '#5e2606',
-            }}
-          >
-            + Add to Your Decks
-          </Text>
+          {isSaving ? (
+            <ActivityIndicator color="white" />
+          ) : (
+            <Text
+              style={{
+                fontSize: 18,
+                fontWeight: 'bold',
+                color: '#5e2606',
+              }}
+            >
+              + Add to Your Decks
+            </Text>
+          )}
         </Pressable>
         <Text style={styles.explanation}>* you will be able to edit the deck from Home</Text>
       </View>

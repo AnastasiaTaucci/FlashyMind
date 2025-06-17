@@ -52,10 +52,22 @@ export default function CreateCardScreen() {
   }, [cardIdNumber, flashcards, getFlashcardById]);
 
   const validationSchema = Yup.object().shape({
-    subject: Yup.string().required('Subject is required'),
-    topic: Yup.string().required('Topic is required'),
-    question: Yup.string().required('Question is required'),
-    answer: Yup.string().required('Answer is required'),
+    subject: Yup.string()
+      .trim()
+      .required('Subject is required')
+      .max(50, 'Subject must be less than 50 characters'),
+    topic: Yup.string()
+      .trim()
+      .required('Topic is required')
+      .max(50, 'Topic must be less than 50 characters'),
+    question: Yup.string()
+      .trim()
+      .required('Question is required')
+      .max(200, 'Question must be less than 200 characters'),
+    answer: Yup.string()
+      .trim()
+      .required('Answer is required')
+      .max(200, 'Answer must be less than 200 characters'),
   });
 
   const initialValues = {
