@@ -86,7 +86,7 @@ describe('SignUpScreen', () => {
     fireEvent.press(getByText('Sign Up'));
     await waitFor(() => {
       expect(mockSignup).toHaveBeenCalledWith('test@example.com', '123456');
-      expect(router.replace).toHaveBeenCalledWith('../(tabs)');
+      expect(router.replace).toHaveBeenCalledWith('/(tabs)/(home)');
     });
   });
 
