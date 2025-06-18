@@ -58,7 +58,7 @@ describe('HomeScreen', () => {
     getMockStores({ isLoading: true }); // override only this value
 
     render(<HomeScreen />);
-    expect(screen.getByText(/loading flashcard sets/i)).toBeTruthy();
+    expect(screen.getByText(/loading flashcard decks/i)).toBeTruthy();
   });
 
   it('should display error message when there is an error loading cards', () => {
