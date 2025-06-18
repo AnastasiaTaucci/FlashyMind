@@ -17,31 +17,47 @@ export default function FlashcardSetCard({ item }: { item: FlashcardSet }) {
 
   const cardCount = flashcards.filter((card) => card.deck_id === item.id).length;
 
-  const handleDeleteDeck = () => {
-    Alert.alert(
-      'Delete Deck',
-      `Are you sure you want to delete "${item.title}"? This will also delete all flashcards in this deck.`,
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Delete',
-          style: 'destructive',
-          onPress: async () => {
-            try {
-              await deleteFlashcardSet(item.id);
-              Alert.alert('Success', 'Deck deleted successfully!');
-              await fetchFlashcardSets();
-            } catch (error: any) {
-              Alert.alert(
-                'Cannot Delete Deck',
-                error.message || 'Failed to delete deck. Please try again.',
-                [{ text: 'OK', style: 'default' }]
-              );
+  const handleDeleteDeck = async () => {
+    Alert.alert('Delete Deck', `Are you sure you want to delete "${item.title}"?`, [
+      { text: 'Cancel', style: 'cancel' },
+      {
+        text: 'Delete',
+        style: 'destructive',
+        onPress: async () => {
+          try {
+            const result = await deleteFlashcardSet(item.id, false);
+
+            if (result.needsConfirmation) {
+              Alert.alert('Delete Deck', `${result.error}`, [
+                { text: 'Cancel', style: 'cancel' },
+                {
+                  text: 'Delete All',
+                  style: 'destructive',
+                  onPress: async () => {
+                    try {
+                      await deleteFlashcardSet(item.id, true);
+                      Alert.alert('Success', 'Deck and flashcards deleted successfully!');
+                    } catch (err: any) {
+                      Alert.alert('Error', err.message || 'Failed to delete');
+                    }
+                  },
+                },
+              ]);
+            } else {
+              // Delete immediately (no flashcards)
+              await deleteFlashcardSet(item.id, true);
+              Alert.alert('Success', `${result.message}`);
             }
-          },
+          } catch (error: any) {
+            Alert.alert(
+              'Cannot Delete Deck',
+              error.message || 'Failed to delete deck. Please try again.',
+              [{ text: 'OK', style: 'default' }]
+            );
+          }
         },
-      ]
-    );
+      },
+    ]);
   };
 
   return (

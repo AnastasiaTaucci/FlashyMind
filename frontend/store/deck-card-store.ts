@@ -141,7 +141,14 @@ interface FlashcardSetState {
   error: string | null;
   addFlashcardSet: (set: Omit<FlashcardSet, 'id' | 'createdAt' | 'updatedAt'>) => Promise<void>;
   updateFlashcardSet: (id: number, updatedSet: Partial<FlashcardSet>) => Promise<void>;
-  deleteFlashcardSet: (id: number) => Promise<void>;
+  deleteFlashcardSet: (
+    id: number,
+    forseDelete: boolean
+  ) => Promise<{
+    message?: string;
+    needsConfirmation?: boolean;
+    error?: string;
+  }>;
   getFlashcardSetById: (id: number) => FlashcardSet | undefined;
   fetchFlashcardSets: () => Promise<void>;
 }
@@ -224,18 +231,20 @@ export const useFlashcardSetStore = create<FlashcardSetState>((set, get) => ({
     }
   },
 
-  deleteFlashcardSet: async (id) => {
+  deleteFlashcardSet: async (id, forceDelete) => {
     try {
-      set({ isLoading: true, error: null });
-      await api.deleteFlashcardDeck(id);
-      set((state) => ({
-        flashcardSets: state.flashcardSets.filter((setItem) => setItem.id !== id),
-        isLoading: false,
-      }));
+      set({ error: null });
+      const result = await api.deleteFlashcardDeck(id, forceDelete);
+      if (!result.needsConfirmation) {
+        set((state) => ({
+          flashcardSets: state.flashcardSets.filter((setItem) => setItem.id !== id),
+          isLoading: false,
+        }));
+      }
+      return result;
     } catch (error: any) {
       set({
         error: error.message || 'Failed to delete flashcard set',
-        isLoading: false,
       });
       throw error;
     }

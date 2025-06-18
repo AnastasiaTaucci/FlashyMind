@@ -253,10 +253,10 @@ export async function updateFlashcardDeck(
   return handleResponse(response);
 }
 
-export async function deleteFlashcardDeck(id: number) {
+export async function deleteFlashcardDeck(id: number, forceDelete: boolean) {
   const headers = await getAuthHeaders();
 
-  const response = await fetch(`${API_BASE_URL}/flashcard-decks/${id}`, {
+  const response = await fetch(`${API_BASE_URL}/flashcard-decks/${id}?force=${forceDelete}`, {
     method: 'DELETE',
     headers,
   });

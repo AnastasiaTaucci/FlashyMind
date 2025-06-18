@@ -108,7 +108,7 @@ export default function SubjectCardsScreen() {
           onPress={handleSaveDeck}
           disabled={isSaving}
           style={{
-            backgroundColor: isSaving ? '#9ca3af':'#ffdd54',
+            backgroundColor: isSaving ? '#9ca3af' : '#ffdd54',
             borderRadius: 12,
             padding: 16,
             alignItems: 'center',
