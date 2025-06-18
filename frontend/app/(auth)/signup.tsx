@@ -1,5 +1,14 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+  Alert,
+  Keyboard,
+  TouchableWithoutFeedback,
+} from 'react-native';
 import { router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAuth } from '../../context/AuthContext';
@@ -11,7 +20,7 @@ export default function SignUpScreen() {
   const { signup } = useAuth();
 
   const validateEmail = (email: string) => {
-    const emailRegex = /^[a-zA-Z0-9_]+@[a-zA-Z0-9_]+\.[a-zA-Z]{2,}$/;
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     return emailRegex.test(email);
   };
 
@@ -38,7 +47,7 @@ export default function SignUpScreen() {
 
     try {
       await signup(email, password);
-      router.replace('../(tabs)');
+      router.replace('/(tabs)/(home)');
     } catch (error: any) {
       Alert.alert('Error', error.message || 'Failed to sign up. Please try again.');
     }
@@ -49,60 +58,63 @@ export default function SignUpScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <TouchableOpacity onPress={() => router.push('/')} style={{ marginTop: 20, marginLeft: 5 }}>
-        <Text style={{ color: '#5e3e2b', fontSize: 16 }}>← Back</Text>
-      </TouchableOpacity>
-      <View style={styles.formContainer}>
-        <Text style={styles.title}>Create Account</Text>
-        <Text style={styles.subtitle}>Sign up to get started</Text>
-
-        <View style={styles.inputContainer}>
-          <TextInput
-            style={styles.input}
-            placeholder="Email"
-            value={email}
-            onChangeText={setEmail}
-            autoCapitalize="none"
-            keyboardType="email-address"
-            autoComplete="email"
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="Password"
-            value={password}
-            onChangeText={setPassword}
-            secureTextEntry
-            autoComplete="password-new"
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="Confirm Password"
-            value={confirmPassword}
-            onChangeText={setConfirmPassword}
-            secureTextEntry
-            autoComplete="password-new"
-          />
-        </View>
-
-        <TouchableOpacity
-          style={[
-            styles.button,
-            (!email.trim() || !password.trim() || !confirmPassword.trim()) && styles.buttonDisabled,
-          ]}
-          onPress={handleSignUp}
-        >
-          <Text style={styles.buttonText}>Sign Up</Text>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+      <SafeAreaView style={styles.container}>
+        <TouchableOpacity onPress={() => router.push('/')} style={{ marginTop: 20, marginLeft: 5 }}>
+          <Text style={{ color: '#5e3e2b', fontSize: 16 }}>← Back</Text>
         </TouchableOpacity>
+        <View style={styles.formContainer}>
+          <Text style={styles.title}>Create Account</Text>
+          <Text style={styles.subtitle}>Sign up to get started</Text>
 
-        <View style={styles.loginContainer}>
-          <Text style={styles.loginText}>Already have an account?</Text>
-          <TouchableOpacity onPress={handleBackToLogin}>
-            <Text style={styles.loginButton}>Sign In</Text>
+          <View style={styles.inputContainer}>
+            <TextInput
+              style={styles.input}
+              placeholder="Email"
+              value={email}
+              onChangeText={setEmail}
+              autoCapitalize="none"
+              keyboardType="email-address"
+              autoComplete="email"
+            />
+            <TextInput
+              style={styles.input}
+              placeholder="Password"
+              value={password}
+              onChangeText={setPassword}
+              secureTextEntry
+              autoComplete="password-new"
+            />
+            <TextInput
+              style={styles.input}
+              placeholder="Confirm Password"
+              value={confirmPassword}
+              onChangeText={setConfirmPassword}
+              secureTextEntry
+              autoComplete="password-new"
+            />
+          </View>
+
+          <TouchableOpacity
+            style={[
+              styles.button,
+              (!email.trim() || !password.trim() || !confirmPassword.trim()) &&
+                styles.buttonDisabled,
+            ]}
+            onPress={handleSignUp}
+          >
+            <Text style={styles.buttonText}>Sign Up</Text>
           </TouchableOpacity>
+
+          <View style={styles.loginContainer}>
+            <Text style={styles.loginText}>Already have an account?</Text>
+            <TouchableOpacity onPress={handleBackToLogin}>
+              <Text style={styles.loginButton}>Sign In</Text>
+            </TouchableOpacity>
+          </View>
         </View>
-      </View>
-    </SafeAreaView>
+      </SafeAreaView>
+    </TouchableWithoutFeedback>
   );
 }
 

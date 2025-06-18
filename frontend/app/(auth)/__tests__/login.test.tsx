@@ -57,7 +57,7 @@ describe('LoginScreen', () => {
     fireEvent.press(getByText('Sign In'));
     await waitFor(() => {
       expect(mockLogin).toHaveBeenCalledWith('test@example.com', 'password123');
-      expect(router.replace).toHaveBeenCalledWith('../(tabs)');
+      expect(router.replace).toHaveBeenCalledWith('/(tabs)/(home)');
     });
   });
 
