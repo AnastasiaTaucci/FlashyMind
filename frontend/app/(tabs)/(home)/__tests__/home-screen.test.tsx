@@ -25,6 +25,7 @@ jest.mock('expo-router', () => ({
 
 describe('HomeScreen', () => {
   beforeEach(() => {
+    jest.clearAllMocks();
     getMockStores(); // uses default mockDecks and mockCards
   });
 

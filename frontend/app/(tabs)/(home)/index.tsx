@@ -13,7 +13,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function HomeScreen() {
   const router = useRouter();
-  const { flashcardSets, fetchFlashcardSets, isLoading, error } = useFlashcardSetStore();
+  const { flashcardSets, fetchFlashcardSets, isLoading, isDeleting, error } =
+    useFlashcardSetStore();
   const { fetchFlashcards } = useFlashcardStore();
   const { logout } = useAuth();
   const [refreshing, setRefreshing] = useState(false);
@@ -80,7 +81,13 @@ export default function HomeScreen() {
 
         {isLoading && !refreshing && (
           <View style={{ alignItems: 'center', padding: 20 }}>
-            <Text style={{ color: '#6b7280' }}>Loading flashcard sets...</Text>
+            <Text style={{ color: '#6b7280' }}>Loading flashcard decks...</Text>
+          </View>
+        )}
+
+        {isDeleting && !refreshing && (
+          <View style={{ alignItems: 'center', padding: 20 }}>
+            <Text style={{ color: '#6b7280' }}>Deleting Deck...</Text>
           </View>
         )}
 

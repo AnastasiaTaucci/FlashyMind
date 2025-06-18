@@ -138,6 +138,7 @@ export const useFlashcardStore = create<FlashcardState>((set, get) => ({
 interface FlashcardSetState {
   flashcardSets: FlashcardSet[];
   isLoading: boolean;
+  isDeleting: boolean;
   error: string | null;
   addFlashcardSet: (set: Omit<FlashcardSet, 'id' | 'createdAt' | 'updatedAt'>) => Promise<void>;
   updateFlashcardSet: (id: number, updatedSet: Partial<FlashcardSet>) => Promise<void>;
@@ -167,6 +168,7 @@ const transformFlashcardSet = (deck: any): FlashcardSet => ({
 export const useFlashcardSetStore = create<FlashcardSetState>((set, get) => ({
   flashcardSets: [],
   isLoading: false,
+  isDeleting: false,
   error: null,
 
   fetchFlashcardSets: async () => {
@@ -233,18 +235,19 @@ export const useFlashcardSetStore = create<FlashcardSetState>((set, get) => ({
 
   deleteFlashcardSet: async (id, forceDelete) => {
     try {
-      set({ error: null });
+      set({ isDeleting: true, error: null });
       const result = await api.deleteFlashcardDeck(id, forceDelete);
       if (!result.needsConfirmation) {
         set((state) => ({
           flashcardSets: state.flashcardSets.filter((setItem) => setItem.id !== id),
-          isLoading: false,
+          isDeleting: false,
         }));
       }
       return result;
     } catch (error: any) {
       set({
         error: error.message || 'Failed to delete flashcard set',
+        isDeleting: false,
       });
       throw error;
     }
