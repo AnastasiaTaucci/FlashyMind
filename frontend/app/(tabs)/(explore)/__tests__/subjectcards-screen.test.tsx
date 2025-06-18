@@ -3,7 +3,6 @@ import SubjectCardsScreen from '@/app/(tabs)/(explore)/subjectCards';
 import { Alert } from 'react-native';
 import mockCards from '@/data/flashcards.json';
 
-
 const mockAddExploreFlashcardSet = jest.fn();
 
 const mockStoreState = {
@@ -11,7 +10,7 @@ const mockStoreState = {
   isLoading: false,
   error: null,
   addExploreFlashcardSet: mockAddExploreFlashcardSet,
-}
+};
 
 // Mock router
 const mockBack = jest.fn();
@@ -48,12 +47,12 @@ describe('SubjectCardsScreen', () => {
       expect(Alert.alert).toHaveBeenCalled();
     });
 
-      const alertCall = (Alert.alert as jest.Mock).mock.calls[0]; // .mock.calls: an array that shows every time this function was called.
-      const buttons = alertCall[2]; // The 3rd argument is the buttons array that holds ["Success", "Deck added to your library!", [array of buttons]]
-      const okButton = buttons?.find((btn: any) => btn.text === 'OK');
-      okButton?.onPress?.(); // Simulate pressing OK
-      
-      expect(mockBack).toHaveBeenCalled();
+    const alertCall = (Alert.alert as jest.Mock).mock.calls[0]; // .mock.calls: an array that shows every time this function was called.
+    const buttons = alertCall[2]; // The 3rd argument is the buttons array that holds ["Success", "Deck added to your library!", [array of buttons]]
+    const okButton = buttons?.find((btn: any) => btn.text === 'OK');
+    okButton?.onPress?.(); // Simulate pressing OK
+
+    expect(mockBack).toHaveBeenCalled();
   });
 
   it('should show error if no flashcards', () => {

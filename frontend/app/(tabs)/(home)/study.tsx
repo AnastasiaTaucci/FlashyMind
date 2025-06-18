@@ -9,6 +9,7 @@ import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { shuffle } from '@/utils/shuffle';
 
 export default function StudyDeckScreen() {
   const router = useRouter();
@@ -127,10 +128,6 @@ export default function StudyDeckScreen() {
         </View>
       </SafeAreaView>
     );
-  }
-
-  function shuffle(array: Flashcard[]) {
-    return [...array].sort(() => Math.random() - 0.5);
   }
 
   return (
