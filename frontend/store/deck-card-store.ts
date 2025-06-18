@@ -128,9 +128,7 @@ export const useFlashcardStore = create<FlashcardState>((set, get) => ({
   },
 
   getFlashcardById: (id) =>
-    get().flashcards.find(
-      (card) => card.id === id || card.id === String(id) || String(card.id) === String(id)
-    ),
+    get().flashcards.find((card) => card.id === id || String(card.id) === String(id)),
 }));
 
 // ======================
@@ -244,7 +242,5 @@ export const useFlashcardSetStore = create<FlashcardSetState>((set, get) => ({
   },
 
   getFlashcardSetById: (id) =>
-    get().flashcardSets.find(
-      (set) => set.id === id || set.id === String(id) || String(set.id) === String(id)
-    ),
+    get().flashcardSets.find((set) => set.id === id || String(set.id) === String(id)),
 }));

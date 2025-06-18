@@ -237,7 +237,7 @@ export async function getFlashcardDecks() {
 }
 
 export async function updateFlashcardDeck(
-  id: string,
+  id: number,
   title: string,
   subject: string,
   description?: string
