@@ -78,7 +78,7 @@ export default function FlashcardSetCard({ item }: { item: FlashcardSet }) {
           </Button>
           <Button
             style={[styles.actionButton, styles.quizButton]}
-            onPress={() => router.push({ pathname: './(quiz)/quiz', params: { deckId: item.id } })}
+            onPress={() => router.push({ pathname: './(quiz)/[id]', params: { id: item.id } })}
           >
             <ButtonText style={styles.buttonText}>Quiz</ButtonText>
             <MaterialIcons name="quiz" size={24} color="white" />

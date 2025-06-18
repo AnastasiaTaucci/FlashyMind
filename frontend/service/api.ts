@@ -12,7 +12,7 @@ export function getApiBaseUrl(): string {
     if (Platform.OS === 'android') {
       return 'http://10.0.2.2:3000/api';
     }
-    return `http://${localhost}:3000/api`;
+    return `http://10.0.0.195:3000/api`;
   }
 
   return 'https://api.flashymind.com/api';
@@ -260,6 +260,36 @@ export async function deleteFlashcardDeck(id: number, forceDelete: boolean) {
     method: 'DELETE',
     headers,
   });
+
+  return handleResponse(response);
+}
+
+export async function createDetailedQuizResult(
+  deck_id: number,
+  user_id: string,
+  user_answer: any[]
+) {
+  const headers = await getAuthHeaders();
+
+  const response = await fetch(`${API_BASE_URL}/detailed-quiz-results/detailed-quiz-results`, {
+    method: 'POST',
+    headers,
+    body: JSON.stringify({ deck_id, user_id, user_answer }),
+  });
+
+  return handleResponse(response);
+}
+
+export async function getDetailedQuizResultById(id: number) {
+  const headers = await getAuthHeaders();
+
+  const response = await fetch(
+    `${API_BASE_URL}/detailed-quiz-results/detailed-quiz-results/${id}`,
+    {
+      method: 'GET',
+      headers,
+    }
+  );
 
   return handleResponse(response);
 }
