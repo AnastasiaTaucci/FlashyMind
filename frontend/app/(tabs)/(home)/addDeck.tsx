@@ -29,11 +29,17 @@ export default function AddDeckScreen() {
   const isEditMode = !!existingDeck;
 
   const validationSchema = Yup.object().shape({
-    title: Yup.string().required('Title is required').min(2, 'Title must be at least 2 characters'),
+    title: Yup.string()
+      .trim()
+      .required('Title is required')
+      .min(2, 'Title must be at least 2 characters')
+      .max(100, 'Title must be less than 100 characters'),
     subject: Yup.string()
+      .trim()
       .required('Subject is required')
-      .min(2, 'Subject must be at least 2 characters'),
-    description: Yup.string().max(500, 'Description must be less than 500 characters'),
+      .min(2, 'Subject must be at least 2 characters')
+      .max(50, 'Subject must be less than 50 characters'),
+    description: Yup.string().trim().max(500, 'Description must be less than 500 characters'),
   });
 
   const initialValues = {
@@ -50,13 +56,11 @@ export default function AddDeckScreen() {
         await updateFlashcardSet(existingDeck.id, values);
         Alert.alert('Success', 'Deck updated successfully!', [
           { text: 'OK', onPress: () => router.back() },
-          { text: 'OK', onPress: () => router.back() },
         ]);
       } else {
         const deckData = { ...values, flashcards: [] };
         await addFlashcardSet(deckData);
         Alert.alert('Success', 'Deck created successfully!', [
-          { text: 'OK', onPress: () => router.back() },
           { text: 'OK', onPress: () => router.back() },
         ]);
       }
@@ -108,9 +112,6 @@ export default function AddDeckScreen() {
             opacity: 0.9,
           }}
         >
-          {isEditMode
-            ? 'Update your flashcard deck details'
-            : 'Add a new flashcard deck to your collection'}
           {isEditMode
             ? 'Update your flashcard deck details'
             : 'Add a new flashcard deck to your collection'}

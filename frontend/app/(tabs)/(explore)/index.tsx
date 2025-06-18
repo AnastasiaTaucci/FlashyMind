@@ -56,7 +56,11 @@ const ExploreDeckScreen = () => {
   const { fetchExploreDeck } = useExploreDeckStore();
 
   const validationSchema = Yup.object().shape({
-    amount: Yup.number().min(1).max(50).required('Number of questions is required'),
+    amount: Yup.number()
+      .min(1)
+      .max(50)
+      .integer('Must be a whole number')
+      .required('Number of questions is required'),
     category: Yup.string().required('Please choose category'),
     difficulty: Yup.string().required('Please choose difficulty'),
   });
@@ -82,10 +86,14 @@ const ExploreDeckScreen = () => {
     values: typeof initialValues,
     { resetForm }: { resetForm: () => void }
   ) {
-    await fetchExploreDeck(values.amount, values.category, values.difficulty);
+    await fetchExploreDeck(parseInt(values.amount), values.category, values.difficulty);
     router.push({
       pathname: './subjectCards',
-      params: { category: values.category, difficulty: values.difficulty, amount: values.amount },
+      params: {
+        category: values.category,
+        difficulty: values.difficulty,
+        amount: parseInt(values.amount),
+      },
     });
     resetForm();
   }
@@ -104,7 +112,7 @@ const ExploreDeckScreen = () => {
             style={styles.keyboardView}
           >
             <VStack style={styles.pageWrapper}>
-              <Heading style={styles.heading}>Explore External Decks</Heading>
+              <Heading style={styles.heading}>Import External Decks</Heading>
 
               <ScrollView
                 contentContainerStyle={styles.scrollContent}

@@ -7,6 +7,7 @@ import { IconSymbol } from '@/components/ui/IconSymbol';
 export default function TabLayout() {
   return (
     <Tabs
+      initialRouteName="(home)"
       screenOptions={{
         tabBarActiveTintColor: '#5492f7',
         headerShown: false,

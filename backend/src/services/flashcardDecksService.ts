@@ -44,22 +44,37 @@ export const updateFlashcardDeck = async (
   return data;
 };
 
-export const deleteFlashcardDeck = async (userId: string, id: number) => {
-  const { data: flashcards, error: flashcardsCheckError } = await supabase
-    .from('flashcards')
-    .select('id')
-    .eq('deck_id', id)
-    .eq('created_by', userId);
+export const deleteFlashcardDeck = async (userId: string, id: number, forceDelete: boolean) => {
+  if (!forceDelete){
+      const { data: flashcards, error: flashcardsCheckError } = await supabase
+      .from('flashcards')
+      .select('id')
+      .eq('deck_id', id)
+      .eq('created_by', userId);
 
-  if (flashcardsCheckError) throw new Error(`Failed to check flashcards: ${flashcardsCheckError.message}`);
+    if (flashcardsCheckError) throw new Error(`Failed to check flashcards: ${flashcardsCheckError.message}`);
 
-  if (flashcards && flashcards.length > 0) {
-    return {
-      success: false,
-      error: `Cannot delete deck: This deck contains ${flashcards.length} flashcard(s). Please delete all flashcards first.`
-    };
+    if (flashcards && flashcards.length > 0) {
+      return {
+        success: false,
+        needsConfirmation: true,
+        error: `This deck contains ${flashcards.length} flashcard(s). Are you sure you want to delete all of them?`
+      };
+    }
   }
 
+
+  // Delete Flashcards
+  const { error: flashcardsDeleteError } = await supabase
+    .from('flashcards')
+    .delete()
+    .eq('deck_id', id)
+    .eq('created_by', userId);
+  if (flashcardsDeleteError) {
+    throw new Error(`Failed to delete flashcards: ${flashcardsDeleteError.message}`)
+  }
+
+  // Delete deck
   const { data, error } = await supabase
     .from('flashcard_decks')
     .delete()

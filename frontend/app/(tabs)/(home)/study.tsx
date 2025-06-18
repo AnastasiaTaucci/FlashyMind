@@ -105,17 +105,27 @@ export default function StudyDeckScreen() {
 
   if (!deck) {
     return (
-      <View style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}>
-        <Text>Deck not found.</Text>
-      </View>
+      <SafeAreaView style={styles.container}>
+        <Pressable onPress={() => router.back()} style={{ marginBottom: 10 }}>
+          <Text style={{ color: '#5e3e2b', fontSize: 16 }}>← Back</Text>
+        </Pressable>
+        <View style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}>
+          <Text>Deck not found.</Text>
+        </View>
+      </SafeAreaView>
     );
   }
 
   if (studyDeck.length === 0) {
     return (
-      <View style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}>
-        <Text>No cards found for this deck.</Text>
-      </View>
+      <SafeAreaView style={styles.container}>
+        <Pressable onPress={() => router.back()} style={{ marginBottom: 10 }}>
+          <Text style={{ color: '#5e3e2b', fontSize: 16 }}>← Back</Text>
+        </Pressable>
+        <View style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}>
+          <Text>No cards found for this deck.</Text>
+        </View>
+      </SafeAreaView>
     );
   }
 
@@ -201,7 +211,7 @@ export default function StudyDeckScreen() {
                 onPress={() => router.back()}
               >
                 <ButtonText style={[styles.buttonText, { color: '#5e2606' }]}>
-                  Done for today
+                  Done for now
                 </ButtonText>
                 <MaterialIcons name="done-outline" size={24} color="#5e2606" />
               </Button>
@@ -225,7 +235,7 @@ export default function StudyDeckScreen() {
                 onPress={() => router.back()}
               >
                 <ButtonText style={[styles.buttonText, { color: '#5e2606' }]}>
-                  Done for today
+                  Done for now
                 </ButtonText>
                 <MaterialIcons name="done-outline" size={24} color="white" />
               </Button>
@@ -258,7 +268,7 @@ const styles = StyleSheet.create({
     minWidth: '100%',
     backgroundColor: '#fef3c7',
     minHeight: '55%',
-    maxHeight: '70%',
+    // maxHeight: '70%',
     borderRadius: 16,
     padding: 20,
     marginBottom: 25,
@@ -289,10 +299,8 @@ const styles = StyleSheet.create({
     fontSize: 22,
     color: '#78350f',
     textAlign: 'left',
-    lineHeight: 27,
   },
   answerText: {
-    marginTop: 10,
     fontWeight: 'bold',
     textAlign: 'center',
   },
@@ -333,8 +341,6 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontWeight: '600',
     color: '#78350f',
-    // marginTop: 40,
-    // marginBottom: 16,
     textAlign: 'center',
   },
 });

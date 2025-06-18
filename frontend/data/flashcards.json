@@ -5,7 +5,7 @@
       "topic": "Cell Biology",
       "question": "What is the function of the mitochondria?",
       "answer": "It produces energy (ATP) through cellular respiration.",
-      "deck_id": "01"
+      "deck_id": 1
     },
     {
       "id": "bio-002",
@@ -13,7 +13,7 @@
       "topic": "Proteins",
       "question": "What are the building blocks of proteins?",
       "answer": "Amino acids.",
-      "deck_id": "01"
+      "deck_id": 1
     },
     {
       "id": "psy-001",
@@ -21,7 +21,7 @@
       "topic": "Learning",
       "question": "What is classical conditioning?",
       "answer": "A learning process that pairs a neutral stimulus with a stimulus that elicits a response.",
-      "deck_id": "02"
+      "deck_id": 2
     },
     {
       "id": "phi-001",
@@ -29,7 +29,7 @@
       "topic": "Ethics",
       "question": "What is utilitarianism?",
       "answer": "The ethical theory that actions are right if they benefit the majority.",
-      "deck_id": "03"
+      "deck_id": 3
     },
     {
       "id": "env-001",
@@ -37,7 +37,7 @@
       "topic": "Climate",
       "question": "What is the greenhouse effect?",
       "answer": "The trapping of heat in Earth's atmosphere by greenhouse gases like CO₂ and methane.",
-      "deck_id": "04"
+      "deck_id": 4
     }
   ]
   

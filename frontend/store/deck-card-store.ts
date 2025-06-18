@@ -128,9 +128,7 @@ export const useFlashcardStore = create<FlashcardState>((set, get) => ({
   },
 
   getFlashcardById: (id) =>
-    get().flashcards.find(
-      (card) => card.id === id || card.id === String(id) || String(card.id) === String(id)
-    ),
+    get().flashcards.find((card) => card.id === id || String(card.id) === String(id)),
 }));
 
 // ======================
@@ -143,7 +141,14 @@ interface FlashcardSetState {
   error: string | null;
   addFlashcardSet: (set: Omit<FlashcardSet, 'id' | 'createdAt' | 'updatedAt'>) => Promise<void>;
   updateFlashcardSet: (id: number, updatedSet: Partial<FlashcardSet>) => Promise<void>;
-  deleteFlashcardSet: (id: number) => Promise<void>;
+  deleteFlashcardSet: (
+    id: number,
+    forseDelete: boolean
+  ) => Promise<{
+    message?: string;
+    needsConfirmation?: boolean;
+    error?: string;
+  }>;
   getFlashcardSetById: (id: number) => FlashcardSet | undefined;
   fetchFlashcardSets: () => Promise<void>;
 }
@@ -187,7 +192,6 @@ export const useFlashcardSetStore = create<FlashcardSetState>((set, get) => ({
     try {
       set({ isLoading: true, error: null });
       const data = await api.createFlashcardDeck(newSet.title, newSet.subject, newSet.description);
-      console.log('here is data from supabase', data);
       const transformedData = transformFlashcardSet(data);
       set((state) => ({
         flashcardSets: [transformedData, ...state.flashcardSets],
@@ -227,25 +231,25 @@ export const useFlashcardSetStore = create<FlashcardSetState>((set, get) => ({
     }
   },
 
-  deleteFlashcardSet: async (id) => {
+  deleteFlashcardSet: async (id, forceDelete) => {
     try {
-      set({ isLoading: true, error: null });
-      await api.deleteFlashcardDeck(id);
-      set((state) => ({
-        flashcardSets: state.flashcardSets.filter((setItem) => setItem.id !== id),
-        isLoading: false,
-      }));
+      set({ error: null });
+      const result = await api.deleteFlashcardDeck(id, forceDelete);
+      if (!result.needsConfirmation) {
+        set((state) => ({
+          flashcardSets: state.flashcardSets.filter((setItem) => setItem.id !== id),
+          isLoading: false,
+        }));
+      }
+      return result;
     } catch (error: any) {
       set({
         error: error.message || 'Failed to delete flashcard set',
-        isLoading: false,
       });
       throw error;
     }
   },
 
   getFlashcardSetById: (id) =>
-    get().flashcardSets.find(
-      (set) => set.id === id || set.id === String(id) || String(set.id) === String(id)
-    ),
+    get().flashcardSets.find((set) => set.id === id || String(set.id) === String(id)),
 }));

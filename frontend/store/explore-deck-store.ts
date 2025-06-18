@@ -8,7 +8,7 @@ type ExploreState = {
   isLoading: boolean;
   error: string | null;
   flashcards: Omit<Flashcard, 'id'>[];
-  fetchExploreDeck: (amount: string, category: string, difficulty: string) => Promise<void>;
+  fetchExploreDeck: (amount: number, category: string, difficulty: string) => Promise<void>;
   addExploreFlashcardSet: (set: Omit<FlashcardSet, 'id' | 'flashcards'>) => Promise<void>;
 };
 
