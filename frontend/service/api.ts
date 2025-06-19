@@ -12,7 +12,7 @@ export function getApiBaseUrl(): string {
     if (Platform.OS === 'android') {
       return 'http://10.0.2.2:3000/api';
     }
-    return `http://10.0.0.195:3000/api`;
+    return `http://${localhost}:3000/api`;
   }
 
   return 'https://api.flashymind.com/api';
