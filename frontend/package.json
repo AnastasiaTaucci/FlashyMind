@@ -21,7 +21,10 @@
     ],
     "moduleNameMapper": {
       "\\.(css|less|scss|sass)$": "identity-obj-proxy"
-    }
+    },
+    "setupFiles": [
+      "./__mocks__/@react-native-async-storage/async-storage.js"
+    ]
   },
   "dependencies": {
     "@expo/html-elements": "^0.4.2",

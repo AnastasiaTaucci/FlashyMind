@@ -11,9 +11,8 @@ import {
 } from 'react-native';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
-import { useRouter } from 'expo-router';
+import { useRouter, useFocusEffect } from 'expo-router';
 import { Menu, Button } from 'react-native-paper';
-import { useFocusEffect } from '@react-navigation/native';
 import { useExploreDeckStore } from '@/store/explore-deck-store';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { VStack } from '@/components/ui/vstack';

@@ -12,7 +12,7 @@ import type { FlashcardSet } from '@/types/FlashcardSet';
 
 export default function FlashcardSetCard({ item }: { item: FlashcardSet }) {
   const router = useRouter();
-  const { deleteFlashcardSet, fetchFlashcardSets } = useFlashcardSetStore();
+  const { deleteFlashcardSet, isDeleting } = useFlashcardSetStore();
   const { flashcards } = useFlashcardStore();
 
   const cardCount = flashcards.filter((card) => card.deck_id === item.id).length;
@@ -102,7 +102,8 @@ export default function FlashcardSetCard({ item }: { item: FlashcardSet }) {
 
         <Button
           testID="delete-button" // this is for the test
-          style={[styles.iconButton, styles.deleteButton]}
+          disabled={isDeleting}
+          style={[styles.iconButton, { backgroundColor: isDeleting ? '#9ca3af' : '#ef4444' }]}
           onPress={handleDeleteDeck}
         >
           <MaterialIcons name="delete" size={20} color="white" />
@@ -186,8 +187,5 @@ const styles = StyleSheet.create({
   },
   cardsButton: {
     backgroundColor: '#059669',
-  },
-  deleteButton: {
-    backgroundColor: '#ef4444',
   },
 });
