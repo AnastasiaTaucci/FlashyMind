@@ -66,14 +66,7 @@ export default function AddDeckScreen() {
         ]);
       } else {
         const deckData = { ...values, flashcards: [] };
-        await addFlashcardSet(deckData);
-        await fetchFlashcardSets();
-
-        // Find the newly created deck
-        const { flashcardSets } = useFlashcardSetStore.getState();
-        const newDeck = flashcardSets.find(
-          (deck) => deck.subject === values.subject && deck.title === values.title
-        );
+        const newDeck = await addFlashcardSet(deckData);
 
         resetForm();
 
@@ -83,7 +76,7 @@ export default function AddDeckScreen() {
             onPress: () =>
               router.navigate({
                 pathname: './subjectCards',
-                params: { subject: values.subject, deckId: newDeck?.id || '' },
+                params: { subject: values.subject, deckId: newDeck.id },
               }),
           },
         ]);
