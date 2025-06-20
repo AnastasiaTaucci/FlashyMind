@@ -118,22 +118,24 @@ export default function SubjectCardsScreen() {
             shadowOffset: { width: 0, height: 2 },
           }}
         >
-          {isSaving ? (
-            <ActivityIndicator color="white" />
-          ) : (
-            <Text
-              style={{
-                fontSize: 18,
-                fontWeight: 'bold',
-                color: '#5e2606',
-              }}
-            >
-              + Add to Your Decks
-            </Text>
-          )}
+          <Text
+            style={{
+              fontSize: 18,
+              fontWeight: 'bold',
+              color: '#5e2606',
+            }}
+          >
+            + Add to Your Decks
+          </Text>
         </Pressable>
         <Text style={styles.explanation}>* you will be able to edit the deck from Home</Text>
       </View>
+
+      {isSaving && (
+        <View style={styles.overlay}>
+          <ActivityIndicator size="large" color="#fff" />
+        </View>
+      )}
 
       {error && (
         <View
@@ -263,4 +265,15 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: 10,
   },
+  overlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 10,
+  }
 });

@@ -1,4 +1,4 @@
-import { Text, StyleSheet, FlatList, View, RefreshControl } from 'react-native';
+import { Text, StyleSheet, FlatList, View, RefreshControl, ActivityIndicator } from 'react-native';
 import { useRouter, useFocusEffect } from 'expo-router';
 import { useFlashcardSetStore, useFlashcardStore } from '@/store/deck-card-store';
 import { Heading } from '@/components/ui/heading';
@@ -86,8 +86,8 @@ export default function HomeScreen() {
         )}
 
         {isDeleting && !refreshing && (
-          <View style={{ alignItems: 'center', padding: 20 }}>
-            <Text style={{ color: '#6b7280' }}>Deleting Deck...</Text>
+          <View style={styles.overlay}>
+            <ActivityIndicator size="large" color="#fff" />
           </View>
         )}
 
@@ -189,4 +189,15 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     lineHeight: 22,
   },
+  overlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 10,
+  }
 });
