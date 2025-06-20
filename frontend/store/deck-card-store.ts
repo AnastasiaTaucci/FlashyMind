@@ -3,6 +3,28 @@ import { Flashcard } from '../types/Flashcard';
 import { FlashcardSet } from '../types/FlashcardSet';
 import * as api from '../service/api';
 import { router } from 'expo-router';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+// AsyncStorage helpers
+
+const cacheRecentDecks = async (decks: FlashcardSet[]) => {
+  try {
+    const jsonValue = JSON.stringify(decks);
+    await AsyncStorage.setItem('RecentDecks', jsonValue);
+  } catch (error) {
+    console.error('Failed to cache decks', error);
+  }
+};
+
+const loadCachedDecks = async (): Promise<FlashcardSet[] | null> => {
+  try {
+    const jsonValue = await AsyncStorage.getItem('RecentDecks');
+    return jsonValue != null ? JSON.parse(jsonValue) : null;
+  } catch (error) {
+    console.error('Failed to load cached decks', error);
+    return null;
+  }
+};
 
 // ===================
 // Flashcard Store
@@ -174,9 +196,23 @@ export const useFlashcardSetStore = create<FlashcardSetState>((set, get) => ({
   fetchFlashcardSets: async () => {
     try {
       set({ isLoading: true, error: null });
+
+      // Load and show cached decks first
+      const cached = await loadCachedDecks();
+      console.log('here are the three decks from storage:', cached);
+      if (cached && cached.length > 0) {
+        set({ flashcardSets: cached, isLoading: false });
+      }
+
+      // Then try fetching decks from Supabase
       const data = await api.getFlashcardDecks();
       const transformedData = data?.map(transformFlashcardSet) || [];
       set({ flashcardSets: transformedData, isLoading: false });
+
+      // Save top 3 decks to AsyncStorage
+      await cacheRecentDecks(transformedData.slice(0, 3));
+      console.log('here are the three stored decks:', transformedData.slice(0, 3));
+
     } catch (error: any) {
       if (error.message === 'SESSION_EXPIRED') {
         router.replace('/login');
