@@ -240,11 +240,11 @@ export const useFlashcardSetStore = create<FlashcardSetState>((set, get) => ({
         router.replace('/login');
         return;
       }
-      set({
+      set((state) => ({
         error: error.message || 'Failed to fetch flashcard sets',
-        flashcardSets: [],
+        flashcardSets: state.flashcardSets.length > 0 ? state.flashcardSets : [],
         isLoading: false,
-      });
+      }));
     }
   },
 
