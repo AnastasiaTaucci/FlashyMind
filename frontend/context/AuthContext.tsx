@@ -75,9 +75,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const signup = async (email: string, password: string) => {
     try {
       const result = await api.signup(email, password);
-      setIsAuthenticated(true);
-      setSession(result.session || result.user);
-      await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(result.session || result.user));
+
+      // Check if we got a session with access_token (email confirmation disabled)
+      if (result.access_token) {
+        const sessionWithTimestamp = {
+          ...result,
+          created_at: Date.now(),
+        };
+
+        setIsAuthenticated(true);
+        setSession(sessionWithTimestamp);
+        await saveSession(sessionWithTimestamp);
+      } else {
+        // Email confirmation enabled - automatically log in after signup
+        await login(email, password);
+      }
     } catch (error: any) {
       setIsAuthenticated(false);
       setSession(null);

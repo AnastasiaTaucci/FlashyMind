@@ -158,7 +158,7 @@ export default function AddDeckScreen() {
           enableReinitialize
         >
           {({ handleChange, handleBlur, handleSubmit, values, errors, touched, resetForm }) => (
-            <View style={{ gap: 20 }}>
+            <View style={{ gap: 20, paddingBottom: 100 }}>
               {/* Title */}
               <View>
                 <Text
