@@ -13,7 +13,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function HomeScreen() {
   const router = useRouter();
-  const { flashcardSets, fetchFlashcardSets, isLoading, isDeleting, error } =
+  const { flashcardSets, fetchFlashcardSets, isLoading, isDeleting, error, notConnected } =
     useFlashcardSetStore();
   const { fetchFlashcards } = useFlashcardStore();
   const { logout } = useAuth();
@@ -68,7 +68,11 @@ export default function HomeScreen() {
         <Heading style={styles.heading}>Your Flashcard Decks</Heading>
 
         <HStack style={styles.addDeckWrapper}>
-          <Button style={styles.addDeckButton} onPress={() => router.push('./addDeck')}>
+          <Button
+            style={styles.addDeckButton}
+            onPress={() => router.push('./addDeck')}
+            disabled={notConnected}
+          >
             <ButtonText style={styles.addDeckText}>+ New Deck</ButtonText>
           </Button>
         </HStack>

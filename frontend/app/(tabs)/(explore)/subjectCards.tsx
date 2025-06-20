@@ -11,11 +11,13 @@ import {
 
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useExploreDeckStore } from '@/store/explore-deck-store';
+import { useFlashcardSetStore } from '@/store/deck-card-store';
 
 export default function SubjectCardsScreen() {
   const router = useRouter();
   const { category, amount } = useLocalSearchParams();
   const { flashcards, isLoading, error, addExploreFlashcardSet } = useExploreDeckStore();
+  const { notConnected } = useFlashcardSetStore();
   const [isSaving, setIsSaving] = useState(false);
 
   async function handleSaveDeck() {
@@ -106,7 +108,7 @@ export default function SubjectCardsScreen() {
       <View style={{ padding: 20 }}>
         <Pressable
           onPress={handleSaveDeck}
-          disabled={isSaving}
+          disabled={notConnected}
           style={{
             backgroundColor: isSaving ? '#9ca3af' : '#ffdd54',
             borderRadius: 12,

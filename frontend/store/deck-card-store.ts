@@ -165,6 +165,7 @@ interface FlashcardSetState {
   isLoading: boolean;
   isDeleting: boolean;
   error: string | null;
+  notConnected: boolean,
   addFlashcardSet: (set: Omit<FlashcardSet, 'id' | 'createdAt' | 'updatedAt'>) => Promise<FlashcardSet>;
   updateFlashcardSet: (id: number, updatedSet: Partial<FlashcardSet>) => Promise<void>;
   deleteFlashcardSet: (
@@ -216,6 +217,7 @@ export const useFlashcardSetStore = create<FlashcardSetState>((set, get) => ({
   isLoading: false,
   isDeleting: false,
   error: null,
+  notConnected: false,
 
   fetchFlashcardSets: async () => {
     try {
@@ -230,7 +232,7 @@ export const useFlashcardSetStore = create<FlashcardSetState>((set, get) => ({
       // Then try fetching decks from Supabase
       const data = await api.getFlashcardDecks();
       const transformedData = data?.map(transformFlashcardSet) || [];
-      set({ flashcardSets: transformedData, isLoading: false });
+      set({ flashcardSets: transformedData, isLoading: false, notConnected: false });
 
       // Save top 3 decks to AsyncStorage
       await cacheRecentDecks(transformedData.slice(0, 3));
@@ -244,6 +246,7 @@ export const useFlashcardSetStore = create<FlashcardSetState>((set, get) => ({
         error: error.message || 'Failed to fetch flashcard sets',
         flashcardSets: state.flashcardSets.length > 0 ? state.flashcardSets : [],
         isLoading: false,
+        notConnected: true,
       }));
     }
   },
