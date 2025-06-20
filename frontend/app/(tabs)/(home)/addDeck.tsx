@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -19,7 +19,6 @@ export default function AddDeckScreen() {
   const router = useRouter();
   const { deckId } = useLocalSearchParams();
   const [isLoading, setIsLoading] = useState(false);
-  const [formKey, setFormKey] = useState(0);
 
   const { getFlashcardSetById, addFlashcardSet, updateFlashcardSet, fetchFlashcardSets, error } =
     useFlashcardSetStore();
@@ -28,11 +27,6 @@ export default function AddDeckScreen() {
   const deckIdNumber = deckIdString ? parseInt(deckIdString, 10) : undefined;
   const existingDeck = deckIdNumber ? getFlashcardSetById(deckIdNumber) : null;
   const isEditMode = !!existingDeck;
-
-  // Reset form when switching between create/edit modes
-  useEffect(() => {
-    setFormKey(prev => prev + 1);
-  }, [isEditMode]);
 
   const validationSchema = Yup.object().shape({
     title: Yup.string()
@@ -165,7 +159,6 @@ export default function AddDeckScreen() {
         )}
 
         <Formik
-          key={formKey}
           initialValues={initialValues}
           validationSchema={validationSchema}
           onSubmit={handleSubmit}
