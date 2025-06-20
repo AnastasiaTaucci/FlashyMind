@@ -13,26 +13,7 @@ const app = express();
 app.use(express.json());
 const PORT = Number(process.env.PORT) || 3000;
 
-// Logging middleware to show all API calls
-app.use((req, res, next) => {
-  const start = Date.now();
-  
-  console.log(`\n🔍 [${new Date().toISOString()}] ${req.method} ${req.url}`);
-  console.log(`📝 Headers:`, req.headers);
-  console.log(`📦 Body:`, req.body);
-  console.log(`🔗 Query:`, req.query);
-  console.log(`🆔 Params:`, req.params);
-  
-  // Log response
-  res.on('finish', () => {
-    const duration = Date.now() - start;
-    console.log(`✅ [${new Date().toISOString()}] ${req.method} ${req.url} - ${res.statusCode} (${duration}ms)`);
-    console.log(`📤 Response:`, res.locals.responseData || 'No response data logged');
-    console.log('─'.repeat(80));
-  });
-  
-  next();
-});
+// Logging middleware disabled for cleaner terminal output
 
 // Swagger setup
 const swaggerOptions = {

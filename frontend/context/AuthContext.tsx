@@ -24,7 +24,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const restoreSession = async () => {
       try {
         const storedSession = await AsyncStorage.getItem(STORAGE_KEY);
-        console.log('Stored session:', storedSession);
+
         if (storedSession) {
           const parsedSession = JSON.parse(storedSession);
           setSession(parsedSession);
@@ -44,7 +44,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const saveSession = async (session: any) => {
     if (session) {
       await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(session));
-      console.log('Session saved:', session);
+
     } else {
       await AsyncStorage.removeItem(STORAGE_KEY);
       console.log('Session removed');
@@ -63,7 +63,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setIsAuthenticated(true);
       setSession(sessionWithTimestamp);
       await saveSession(sessionWithTimestamp);
-      console.log('Login result session:', sessionWithTimestamp); // debug
+
     } catch (error: any) {
       setIsAuthenticated(false);
       setSession(null);
