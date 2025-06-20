@@ -62,18 +62,6 @@ export const deleteFlashcardDeck = async (userId: string, id: number, forceDelet
       };
     }
   }
-
-
-  // Delete Flashcards
-  const { error: flashcardsDeleteError } = await supabase
-    .from('flashcards')
-    .delete()
-    .eq('deck_id', id)
-    .eq('created_by', userId);
-  if (flashcardsDeleteError) {
-    throw new Error(`Failed to delete flashcards: ${flashcardsDeleteError.message}`)
-  }
-
   // Delete deck
   const { data, error } = await supabase
     .from('flashcard_decks')
