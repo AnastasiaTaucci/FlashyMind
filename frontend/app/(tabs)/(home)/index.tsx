@@ -68,7 +68,7 @@ export default function HomeScreen() {
         <Heading style={styles.heading}>Your Flashcard Decks</Heading>
 
         <HStack style={styles.addDeckWrapper}>
-          <Button style={styles.addDeckButton} onPress={() => router.navigate('./addDeck')}>
+          <Button style={styles.addDeckButton} onPress={() => router.push('./addDeck')}>
             <ButtonText style={styles.addDeckText}>+ New Deck</ButtonText>
           </Button>
         </HStack>
