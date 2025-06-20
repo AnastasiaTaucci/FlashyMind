@@ -140,7 +140,7 @@ interface FlashcardSetState {
   isLoading: boolean;
   isDeleting: boolean;
   error: string | null;
-  addFlashcardSet: (set: Omit<FlashcardSet, 'id' | 'createdAt' | 'updatedAt'>) => Promise<void>;
+  addFlashcardSet: (set: Omit<FlashcardSet, 'id' | 'createdAt' | 'updatedAt'>) => Promise<FlashcardSet>;
   updateFlashcardSet: (id: number, updatedSet: Partial<FlashcardSet>) => Promise<void>;
   deleteFlashcardSet: (
     id: number,
@@ -199,6 +199,7 @@ export const useFlashcardSetStore = create<FlashcardSetState>((set, get) => ({
         flashcardSets: [transformedData, ...state.flashcardSets],
         isLoading: false,
       }));
+      return transformedData; // Return the new deck!
     } catch (error: any) {
       set({
         error: error.message || 'Failed to add flashcard set',

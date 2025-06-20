@@ -48,20 +48,37 @@ export default function AddDeckScreen() {
     description: existingDeck?.description || '',
   };
 
-  async function handleSubmit(values: typeof initialValues) {
+  async function handleSubmit(values: typeof initialValues, { resetForm }: { resetForm: () => void }) {
     try {
       setIsLoading(true);
 
       if (isEditMode && existingDeck) {
         await updateFlashcardSet(existingDeck.id, values);
         Alert.alert('Success', 'Deck updated successfully!', [
-          { text: 'OK', onPress: () => router.back() },
+          {
+            text: 'OK',
+            onPress: () =>
+              router.navigate({
+                pathname: './subjectCards',
+                params: { subject: values.subject, deckId: existingDeck.id },
+              }),
+          },
         ]);
       } else {
         const deckData = { ...values, flashcards: [] };
-        await addFlashcardSet(deckData);
+        const newDeck = await addFlashcardSet(deckData);
+
+        resetForm();
+
         Alert.alert('Success', 'Deck created successfully!', [
-          { text: 'OK', onPress: () => router.back() },
+          {
+            text: 'OK',
+            onPress: () =>
+              router.navigate({
+                pathname: './subjectCards',
+                params: { subject: values.subject, deckId: newDeck.id },
+              }),
+          },
         ]);
       }
 
@@ -140,7 +157,7 @@ export default function AddDeckScreen() {
           onSubmit={handleSubmit}
           enableReinitialize
         >
-          {({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => (
+          {({ handleChange, handleBlur, handleSubmit, values, errors, touched, resetForm }) => (
             <View style={{ gap: 20 }}>
               {/* Title */}
               <View>
