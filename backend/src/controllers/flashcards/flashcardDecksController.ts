@@ -175,12 +175,13 @@ export const deleteDeck = async (
       res.status(400).json({ error: 'Invalid deck ID' });
       return;
     }
-    
+
     const forceDelete = req.query.force === 'true';
     const result = await deleteFlashcardDeck(userId, idNumber, forceDelete);
 
     if (!result.success && result.needsConfirmation) {
       res.status(200).json({ needsConfirmation: result.needsConfirmation, error: result.error });
+      return;
     }
 
     if (!result.success) {
