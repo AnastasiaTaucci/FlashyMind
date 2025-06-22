@@ -70,7 +70,7 @@ export default function HomeScreen() {
         <HStack style={styles.addDeckWrapper}>
           <Button
             style={styles.addDeckButton}
-            onPress={() => router.push('./addDeck')}
+            onPress={() => router.navigate('./addDeck')}
             disabled={notConnected}
           >
             <ButtonText style={styles.addDeckText}>+ New Deck</ButtonText>
