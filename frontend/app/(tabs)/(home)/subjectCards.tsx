@@ -13,7 +13,8 @@ export default function SubjectCardsScreen() {
   const currentDeckId = typeof deckId === 'string' && deckId ? parseInt(deckId, 10) : undefined;
 
   const { flashcards, fetchFlashcards, deleteFlashcard, isLoading, error } = useFlashcardStore();
-  const { flashcardSets, fetchFlashcardSets, getFlashcardSetById, notConnected } = useFlashcardSetStore();
+  const { flashcardSets, fetchFlashcardSets, getFlashcardSetById, notConnected } =
+    useFlashcardSetStore();
 
   const [subjectCards, setSubjectCards] = useState<Flashcard[]>([]);
   const [subjectDescription, setSubjectDescription] = useState<string>('');

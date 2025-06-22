@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, Pressable } from 'react-native';
+import { View, StyleSheet, Pressable } from 'react-native';
 
 interface CardProps {
   children: React.ReactNode;
@@ -9,12 +9,9 @@ interface CardProps {
 
 export default function Card({ children, onPress, style }: CardProps) {
   const CardComponent = onPress ? Pressable : View;
-  
+
   return (
-    <CardComponent 
-      style={[styles.card, style]} 
-      onPress={onPress}
-    >
+    <CardComponent style={[styles.card, style]} onPress={onPress}>
       {children}
     </CardComponent>
   );

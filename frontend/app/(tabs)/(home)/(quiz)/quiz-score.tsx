@@ -1,4 +1,4 @@
-import { Text, Button, ScrollView, StyleSheet, View, Pressable, Alert } from 'react-native';
+import { Text, ScrollView, StyleSheet, View, Pressable, Alert } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import * as api from '@/service/api';
@@ -9,22 +9,22 @@ interface DetailedQuizResult {
   user_id: string;
   flashcard_deck_id: number;
   score: number;
-  correct_answers: Array<{
+  correct_answers: {
     question: string;
     user_answer: string;
     correct_answer: string;
-  }>;
-  wrong_answers: Array<{
+  }[];
+  wrong_answers: {
     question: string;
     user_answer: string;
     correct_answer: string;
-  }>;
+  }[];
 }
 
 export default function QuizScore() {
   const router = useRouter();
   const params = useLocalSearchParams();
-  
+
   // Extract parameters passed from quiz submission
   const quizResultId = params.quizResultId as string;
   const score = parseInt(params.score as string) || 0;
@@ -32,13 +32,13 @@ export default function QuizScore() {
   const correctAnswers = parseInt(params.correctAnswers as string) || 0;
   const deckTitle = params.deckTitle as string;
   const deckId = params.deckId as string;
-  
+
   const [detailedResult, setDetailedResult] = useState<DetailedQuizResult | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  
+
   // Calculate percentage
   const percentage = totalQuestions > 0 ? Math.round((correctAnswers / totalQuestions) * 100) : 0;
-  
+
   // Determine performance message and color
   const getPerformanceInfo = () => {
     if (percentage >= 90) {
@@ -53,14 +53,14 @@ export default function QuizScore() {
       return { message: 'Keep practicing!', color: '#ef4444', emoji: '📚' };
     }
   };
-  
+
   const performance = getPerformanceInfo();
 
   // Fetch detailed quiz results
   useEffect(() => {
     const fetchDetailedResults = async () => {
       if (!quizResultId) return;
-      
+
       try {
         setIsLoading(true);
         const result = await api.getDetailedQuizResultById(parseInt(quizResultId));
@@ -76,21 +76,28 @@ export default function QuizScore() {
     fetchDetailedResults();
   }, [quizResultId]);
 
-  const renderAnswerCard = (item: { question: string; user_answer: string; correct_answer: string }, isCorrect: boolean, index: number) => (
-    <View key={index} style={[styles.answerCard, isCorrect ? styles.correctCard : styles.incorrectCard]}>
+  const renderAnswerCard = (
+    item: { question: string; user_answer: string; correct_answer: string },
+    isCorrect: boolean,
+    index: number
+  ) => (
+    <View
+      key={index}
+      style={[styles.answerCard, isCorrect ? styles.correctCard : styles.incorrectCard]}
+    >
       <View style={styles.cardHeader}>
         <Text style={[styles.statusText, isCorrect ? styles.correctText : styles.incorrectText]}>
           {isCorrect ? '✓ Correct' : '✗ Incorrect'}
         </Text>
       </View>
-      
+
       <Text style={styles.questionText}>{item.question}</Text>
-      
+
       <View style={styles.answerSection}>
         <Text style={styles.answerLabel}>Your Answer:</Text>
         <Text style={styles.answerText}>{item.user_answer || 'No answer provided'}</Text>
       </View>
-      
+
       <View style={styles.answerSection}>
         <Text style={styles.answerLabel}>Correct Answer:</Text>
         <Text style={styles.answerText}>{item.correct_answer || 'No correct answer provided'}</Text>
@@ -107,9 +114,7 @@ export default function QuizScore() {
 
       <View style={styles.scoreContainer}>
         <Text style={styles.emoji}>{performance.emoji}</Text>
-        <Text style={[styles.percentage, { color: performance.color }]}>
-          {percentage}%
-        </Text>
+        <Text style={[styles.percentage, { color: performance.color }]}>{percentage}%</Text>
         <Text style={[styles.performanceMessage, { color: performance.color }]}>
           {performance.message}
         </Text>
@@ -120,12 +125,14 @@ export default function QuizScore() {
           <Text style={styles.statLabel}>Score</Text>
           <Text style={styles.statValue}>{score} points</Text>
         </View>
-        
+
         <View style={styles.statItem}>
           <Text style={styles.statLabel}>Correct Answers</Text>
-          <Text style={styles.statValue}>{correctAnswers}/{totalQuestions}</Text>
+          <Text style={styles.statValue}>
+            {correctAnswers}/{totalQuestions}
+          </Text>
         </View>
-        
+
         <View style={styles.statItem}>
           <Text style={styles.statLabel}>Accuracy</Text>
           <Text style={styles.statValue}>{percentage}%</Text>
@@ -136,22 +143,26 @@ export default function QuizScore() {
       {!isLoading && detailedResult && (
         <View style={styles.detailedResultsContainer}>
           <Text style={styles.sectionTitle}>Detailed Results</Text>
-          
+
           {/* Correct Answers */}
           {detailedResult.correct_answers && detailedResult.correct_answers.length > 0 && (
             <View style={styles.resultsSection}>
-              <Text style={styles.resultsSectionTitle}>✅ Correct Answers ({detailedResult.correct_answers.length})</Text>
-              {detailedResult.correct_answers.map((item, index) => 
+              <Text style={styles.resultsSectionTitle}>
+                ✅ Correct Answers ({detailedResult.correct_answers.length})
+              </Text>
+              {detailedResult.correct_answers.map((item, index) =>
                 renderAnswerCard(item, true, index)
               )}
             </View>
           )}
-          
+
           {/* Incorrect Answers */}
           {detailedResult.wrong_answers && detailedResult.wrong_answers.length > 0 && (
             <View style={styles.resultsSection}>
-              <Text style={styles.resultsSectionTitle}>❌ Incorrect Answers ({detailedResult.wrong_answers.length})</Text>
-              {detailedResult.wrong_answers.map((item, index) => 
+              <Text style={styles.resultsSectionTitle}>
+                ❌ Incorrect Answers ({detailedResult.wrong_answers.length})
+              </Text>
+              {detailedResult.wrong_answers.map((item, index) =>
                 renderAnswerCard(item, false, index)
               )}
             </View>
@@ -160,17 +171,14 @@ export default function QuizScore() {
       )}
 
       <View style={styles.buttonContainer}>
-        <Pressable 
-          style={styles.primaryButton} 
+        <Pressable
+          style={styles.primaryButton}
           onPress={() => router.push(`/(tabs)/(home)/(quiz)/${deckId}`)}
         >
           <Text style={styles.primaryButtonText}>Try Again</Text>
         </Pressable>
-        
-        <Pressable 
-          style={styles.secondaryButton} 
-          onPress={() => router.push('/(tabs)/(home)')}
-        >
+
+        <Pressable style={styles.secondaryButton} onPress={() => router.push('/(tabs)/(home)')}>
           <Text style={styles.secondaryButtonText}>Back to Home</Text>
         </Pressable>
       </View>

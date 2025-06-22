@@ -218,7 +218,7 @@ export default function ExploreDeckScreen() {
       </Formik>
     </SafeAreaView>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {

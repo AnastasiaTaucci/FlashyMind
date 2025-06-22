@@ -59,35 +59,34 @@ describe('ExploreDeckScreen', () => {
     });
   });
 
-    it('should show validation error when amount is empty', async () => {
-        renderWithPaper(<ExploreDeckScreen />);
+  it('should show validation error when amount is empty', async () => {
+    renderWithPaper(<ExploreDeckScreen />);
 
-        fireEvent.changeText(screen.getByPlaceholderText(/enter number/i), '');
-        fireEvent.press(screen.getByText(/Start Exploring/i));
+    fireEvent.changeText(screen.getByPlaceholderText(/enter number/i), '');
+    fireEvent.press(screen.getByText(/Start Exploring/i));
 
-        await waitFor(() => {
-            expect(screen.getByText(/number of questions is required/i)).toBeTruthy();
-            expect(mockFetchExploreDeck).not.toHaveBeenCalled();
-            expect(mockPush).not.toHaveBeenCalled();
-        });
+    await waitFor(() => {
+      expect(screen.getByText(/number of questions is required/i)).toBeTruthy();
+      expect(mockFetchExploreDeck).not.toHaveBeenCalled();
+      expect(mockPush).not.toHaveBeenCalled();
+    });
+  });
+
+  it('should show validation error for invalid number', async () => {
+    renderWithPaper(<ExploreDeckScreen />);
+
+    fireEvent.changeText(screen.getByPlaceholderText(/enter number/i), '0');
+    fireEvent.press(screen.getByText(/Start Exploring/i));
+
+    await waitFor(() => {
+      expect(screen.getByText(/must be greater than or equal to 1/i)).toBeTruthy();
     });
 
-    it('should show validation error for invalid number', async () => {
-        renderWithPaper(<ExploreDeckScreen />);
+    fireEvent.changeText(screen.getByPlaceholderText(/enter number/i), '100');
+    fireEvent.press(screen.getByText(/Start Exploring/i));
 
-        fireEvent.changeText(screen.getByPlaceholderText(/enter number/i), '0');
-        fireEvent.press(screen.getByText(/Start Exploring/i));
-
-        await waitFor(() => {
-            expect(screen.getByText(/must be greater than or equal to 1/i)).toBeTruthy();
-        });
-
-        fireEvent.changeText(screen.getByPlaceholderText(/enter number/i), '100');
-        fireEvent.press(screen.getByText(/Start Exploring/i));
-
-        await waitFor(() => {
-            expect(screen.getByText(/must be less than or equal to 50/i)).toBeTruthy();
-        });
+    await waitFor(() => {
+      expect(screen.getByText(/must be less than or equal to 50/i)).toBeTruthy();
     });
-
+  });
 });
