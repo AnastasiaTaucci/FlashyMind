@@ -44,8 +44,8 @@ describe('FlashcardSetCard', () => {
     render(<FlashcardSetCard item={mockDeck} />);
     fireEvent.press(screen.getByText('Quiz'));
     expect(mockPush).toHaveBeenCalledWith({
-      pathname: './(quiz)/quiz',
-      params: { deckId: mockDeck.id },
+      pathname: './(quiz)/[id]',
+      params: { id: mockDeck.id },
     });
   });
 

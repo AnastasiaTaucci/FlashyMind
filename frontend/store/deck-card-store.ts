@@ -78,7 +78,7 @@ export const useFlashcardStore = create<FlashcardState>((set, get) => ({
 
       // Get saved decks and extract IDs
       const cachedDecks = await loadCachedDecks();
-      const threeSavedDecks = cachedDecks?.map(deck => deck.id) || [];
+      const threeSavedDecks = cachedDecks?.map((deck) => deck.id) || [];
 
       // From all fetched cards, store only those from the 3 saved decks
       const recentDeckFlashcards = transformedData.filter((card: TransformedFlashcard) =>
@@ -165,8 +165,10 @@ interface FlashcardSetState {
   isLoading: boolean;
   isDeleting: boolean;
   error: string | null;
-  notConnected: boolean,
-  addFlashcardSet: (set: Omit<FlashcardSet, 'id' | 'createdAt' | 'updatedAt'>) => Promise<FlashcardSet>;
+  notConnected: boolean;
+  addFlashcardSet: (
+    set: Omit<FlashcardSet, 'id' | 'createdAt' | 'updatedAt'>
+  ) => Promise<FlashcardSet>;
   updateFlashcardSet: (id: number, updatedSet: Partial<FlashcardSet>) => Promise<void>;
   deleteFlashcardSet: (
     id: number,
@@ -236,7 +238,6 @@ export const useFlashcardSetStore = create<FlashcardSetState>((set, get) => ({
 
       // Save top 3 decks to AsyncStorage
       await cacheRecentDecks(transformedData.slice(0, 3));
-
     } catch (error: any) {
       if (error.message === 'SESSION_EXPIRED') {
         router.replace('/login');

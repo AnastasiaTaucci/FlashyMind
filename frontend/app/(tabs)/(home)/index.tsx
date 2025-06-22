@@ -1,4 +1,4 @@
-import { Text, StyleSheet, FlatList, View, RefreshControl, ActivityIndicator } from 'react-native';
+import { Text, StyleSheet, View, RefreshControl, ActivityIndicator } from 'react-native';
 import { useRouter, useFocusEffect } from 'expo-router';
 import { useFlashcardSetStore, useFlashcardStore } from '@/store/deck-card-store';
 import { Heading } from '@/components/ui/heading';
@@ -10,6 +10,7 @@ import FlashcardSetCard from '@/components/FlashcardSetCard';
 import { useAuth } from '@/context/AuthContext';
 import { useEffect, useState, useCallback } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import Animated, { LinearTransition } from 'react-native-reanimated';
 
 export default function HomeScreen() {
   const router = useRouter();
@@ -70,7 +71,7 @@ export default function HomeScreen() {
         <HStack style={styles.addDeckWrapper}>
           <Button
             style={styles.addDeckButton}
-            onPress={() => router.push('./addDeck')}
+            onPress={() => router.navigate('./addDeck')}
             disabled={notConnected}
           >
             <ButtonText style={styles.addDeckText}>+ New Deck</ButtonText>
@@ -95,12 +96,13 @@ export default function HomeScreen() {
           </View>
         )}
 
-        <FlatList
+        <Animated.FlatList
           testID="flatlist" // this is for the test
           data={flashcardSets}
           keyExtractor={(item, index) => (item.id ? item.id.toString() : `deck-${index}`)}
           contentContainerStyle={styles.listContent}
           renderItem={({ item }) => <FlashcardSetCard item={item} />}
+          itemLayoutAnimation={LinearTransition}
           refreshControl={
             <RefreshControl
               refreshing={refreshing}
@@ -203,5 +205,5 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     zIndex: 10,
-  }
+  },
 });

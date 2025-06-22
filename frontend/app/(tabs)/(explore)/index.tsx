@@ -48,7 +48,7 @@ const categories = [
 
 const difficulties = ['Any Difficulty', 'Easy', 'Medium', 'Hard'];
 
-const ExploreDeckScreen = () => {
+export default function ExploreDeckScreen() {
   const router = useRouter();
   const [categoryMenuVisible, setCategoryMenuVisible] = useState(false);
   const [difficultyMenuVisible, setDifficultyMenuVisible] = useState(false);
@@ -218,9 +218,7 @@ const ExploreDeckScreen = () => {
       </Formik>
     </SafeAreaView>
   );
-};
-
-export default ExploreDeckScreen;
+}
 
 const styles = StyleSheet.create({
   container: {
