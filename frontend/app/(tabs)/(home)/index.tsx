@@ -37,11 +37,11 @@ export default function HomeScreen() {
     refreshData();
   }, [refreshData]);
 
-  // Automatically refresh when returning to this screen
   useFocusEffect(
     useCallback(() => {
-      refreshData();
-    }, [refreshData])
+      useFlashcardSetStore.setState({ error: null });
+      useFlashcardStore.setState({ error: null });
+    }, [])
   );
 
   return (

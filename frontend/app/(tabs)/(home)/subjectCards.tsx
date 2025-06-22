@@ -27,11 +27,11 @@ export default function SubjectCardsScreen() {
     fetchFlashcardSets();
   }, [fetchFlashcards, fetchFlashcardSets]);
 
-  // Refresh flashcards when screen comes into focus
   useFocusEffect(
     React.useCallback(() => {
-      fetchFlashcards();
-    }, [fetchFlashcards])
+      useFlashcardStore.setState({ error: null });
+      useFlashcardSetStore.setState({ error: null });
+    }, [])
   );
 
   useEffect(() => {
