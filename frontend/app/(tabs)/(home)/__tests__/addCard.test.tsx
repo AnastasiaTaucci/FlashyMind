@@ -3,20 +3,20 @@ import { render, fireEvent, waitFor } from '@testing-library/react-native';
 import { Alert } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import CreateCardScreen from '../addCard';
-import { useFlashcardStore } from '../../../../store/deck-card-store';
+import { useFlashcardStore } from '@/store/deck-card-store';
 
 jest.mock('expo-router', () => ({
   useRouter: jest.fn(),
   useLocalSearchParams: jest.fn(),
 }));
 
-jest.mock('../../../../store/deck-card-store', () => ({
+jest.mock('@/store/deck-card-store', () => ({
   useFlashcardStore: jest.fn(),
 }));
 
 // Mock the store's getState method
 const mockGetState = jest.fn();
-jest.mock('../../../../store/deck-card-store', () => ({
+jest.mock('@/store/deck-card-store', () => ({
   useFlashcardStore: Object.assign(jest.fn(), {
     getState: mockGetState,
   }),

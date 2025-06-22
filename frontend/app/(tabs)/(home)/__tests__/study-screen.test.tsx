@@ -39,6 +39,7 @@ describe('StudyDeckScreen', () => {
       }
     });
   });
+  
   beforeEach(() => {
     jest.clearAllMocks();
   });
