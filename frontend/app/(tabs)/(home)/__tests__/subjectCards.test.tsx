@@ -17,7 +17,7 @@ jest.mock('@/store/deck-card-store');
 // Mock MaterialIcons to prevent act() warnings
 jest.mock('@expo/vector-icons/MaterialIcons', () => 'MaterialIcons');
 
-jest.spyOn(Alert, 'alert').mockImplementation(() => { });
+jest.spyOn(Alert, 'alert').mockImplementation(() => {});
 
 describe('SubjectCardsScreen', () => {
   const mockRouter = {

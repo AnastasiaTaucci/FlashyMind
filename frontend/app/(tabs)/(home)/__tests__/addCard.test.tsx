@@ -14,7 +14,7 @@ jest.mock('expo-router', () => ({
 
 jest.mock('@/store/deck-card-store');
 
-jest.spyOn(Alert, 'alert').mockImplementation(() => { });
+jest.spyOn(Alert, 'alert').mockImplementation(() => {});
 
 // Mock console.error to suppress expected error logs during testing
 const originalConsoleError = console.error;
