@@ -12,7 +12,7 @@ import type { FlashcardSet } from '@/types/FlashcardSet';
 
 export default function FlashcardSetCard({ item }: { item: FlashcardSet }) {
   const router = useRouter();
-  const { deleteFlashcardSet, isDeleting } = useFlashcardSetStore();
+  const { deleteFlashcardSet, isDeleting, notConnected } = useFlashcardSetStore();
   const { flashcards } = useFlashcardStore();
 
   const cardCount = flashcards.filter((card) => card.deck_id === item.id).length;
@@ -102,7 +102,7 @@ export default function FlashcardSetCard({ item }: { item: FlashcardSet }) {
 
         <Button
           testID="delete-button" // this is for the test
-          disabled={isDeleting}
+          disabled={isDeleting || notConnected}
           style={[styles.iconButton, { backgroundColor: isDeleting ? '#9ca3af' : '#ef4444' }]}
           onPress={handleDeleteDeck}
         >

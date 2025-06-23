@@ -1,11 +1,20 @@
-import { useFlashcardSetStore, useFlashcardStore } from "@/store/deck-card-store";
-import { router, useLocalSearchParams } from "expo-router";
-import { KeyboardAvoidingView, Platform, Pressable, StyleSheet, Text, View, Alert, Animated } from "react-native";
-import Card from "@/components/Flashcard";
-import { useEffect, useState, useRef } from "react";
-import { TextInput, Button, IconButton } from "react-native-paper";
-import { useAuth } from "@/context/AuthContext";
-import * as api from "@/service/api";
+import { useFlashcardSetStore, useFlashcardStore } from '@/store/deck-card-store';
+import { router, useLocalSearchParams } from 'expo-router';
+import {
+  KeyboardAvoidingView,
+  Platform,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+  Alert,
+  Animated,
+} from 'react-native';
+import Card from '@/components/Flashcard';
+import { useEffect, useState, useRef } from 'react';
+import { TextInput, Button, IconButton } from 'react-native-paper';
+import { useAuth } from '@/context/AuthContext';
+import * as api from '@/service/api';
 
 export default function QuizScreen() {
   const { id } = useLocalSearchParams();
@@ -26,7 +35,7 @@ export default function QuizScreen() {
   // function to randomize the flashcards
   const randomizeFlashcards = () => {
     if (!deck) return [];
-    const deckFlashcards = flashcards.filter(card => card.deck_id === deck.id);
+    const deckFlashcards = flashcards.filter((card) => card.deck_id === deck.id);
     const shuffledFlashcards = [...deckFlashcards].sort(() => Math.random() - 0.5);
     return shuffledFlashcards;
   };
@@ -39,17 +48,18 @@ export default function QuizScreen() {
     setUserAnswers({});
     setIsFlipped(false);
     flipAnimation.setValue(0);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [flashcards, deck]);
 
   const goToNextCard = () => {
     // Save current answer before moving
     if (currentCard && userAnswer.trim()) {
-      setUserAnswers(prev => ({
+      setUserAnswers((prev) => ({
         ...prev,
-        [currentCard.id]: userAnswer.trim()
+        [currentCard.id]: userAnswer.trim(),
       }));
     }
-    
+
     if (currentCardIndex < shuffledCards.length - 1) {
       setCurrentCardIndex(currentCardIndex + 1);
       setUserAnswer('');
@@ -61,12 +71,12 @@ export default function QuizScreen() {
   const goToPreviousCard = () => {
     // Save current answer before moving
     if (currentCard && userAnswer.trim()) {
-      setUserAnswers(prev => ({
+      setUserAnswers((prev) => ({
         ...prev,
-        [currentCard.id]: userAnswer.trim()
+        [currentCard.id]: userAnswer.trim(),
       }));
     }
-    
+
     if (currentCardIndex > 0) {
       setCurrentCardIndex(currentCardIndex - 1);
       setUserAnswer('');
@@ -77,7 +87,7 @@ export default function QuizScreen() {
 
   const handleFlipCard = () => {
     const toValue = isFlipped ? 0 : 1;
-    
+
     Animated.timing(flipAnimation, {
       toValue,
       duration: 300,
@@ -97,26 +107,22 @@ export default function QuizScreen() {
 
     try {
       setIsSubmitting(true);
-      
+
       // Create a copy of current userAnswers and add the current answer
       const finalUserAnswers = { ...userAnswers };
       if (currentCard && userAnswer.trim()) {
         finalUserAnswers[currentCard.id] = userAnswer.trim();
       }
-      
+
       // Prepare all answers for a single submission
       const allAnswers = shuffledCards.map((card) => {
         const answer = finalUserAnswers[card.id] || '';
         return { card_id: card.id, answer: answer };
       });
-      
+
       // Submit all answers in a single API call and capture the response
-      const quizResult = await api.createDetailedQuizResult(
-        deckId,
-        session.user.id,
-        allAnswers
-      );
-      
+      const quizResult = await api.createDetailedQuizResult(deckId, session.user.id, allAnswers);
+
       // Navigate to quiz score screen with the quiz result data
       router.push({
         pathname: '/(tabs)/(home)/(quiz)/quiz-score',
@@ -126,8 +132,8 @@ export default function QuizScreen() {
           totalQuestions: shuffledCards.length.toString(),
           correctAnswers: quizResult.correct_answers.length.toString(),
           deckTitle: deck?.title || '',
-          deckId: deckId.toString()
-        }
+          deckId: deckId.toString(),
+        },
       });
     } catch (error) {
       console.error('Error submitting quiz:', error);
@@ -185,7 +191,10 @@ export default function QuizScreen() {
 
   if (shuffledCards.length === 0) {
     return (
-      <KeyboardAvoidingView style={styles.pageWrapper} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+      <KeyboardAvoidingView
+        style={styles.pageWrapper}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      >
         <View style={styles.header}>
           <Pressable onPress={() => router.back()} style={{ marginBottom: 10 }}>
             <Text style={{ color: 'white', fontSize: 16 }}>← Back</Text>
@@ -193,9 +202,7 @@ export default function QuizScreen() {
           <Text style={{ fontSize: 28, fontWeight: 'bold', color: 'white', marginBottom: 8 }}>
             {deck.title}
           </Text>
-          <Text style={{ fontSize: 16, color: '#fbbf24', opacity: 0.9 }}>
-            {deck.description}
-          </Text>
+          <Text style={{ fontSize: 16, color: '#fbbf24', opacity: 0.9 }}>{deck.description}</Text>
         </View>
         <View style={styles.centerContent}>
           <Text style={styles.noCardsText}>No flashcards found in this deck</Text>
@@ -250,7 +257,7 @@ export default function QuizScreen() {
       <View style={styles.flipButtonContainer}>
         {/* Flip Button */}
         <IconButton
-          icon={isFlipped ? "eye-off" : "eye"}
+          icon={isFlipped ? 'eye-off' : 'eye'}
           onPress={handleFlipCard}
           style={styles.flipButton}
           iconColor="white"
@@ -266,10 +273,12 @@ export default function QuizScreen() {
           {/* Front of card (Question) */}
           <Animated.View style={[styles.cardSide, frontAnimatedStyle]}>
             <Card>
-              <Text style={{ color: 'white', fontSize: 18, fontWeight: '500', textAlign: 'center' }}>
+              <Text
+                style={{ color: 'white', fontSize: 18, fontWeight: '500', textAlign: 'center' }}
+              >
                 {currentCard?.question}
               </Text>
-              
+
               <TextInput
                 mode="outlined"
                 label="Your Answer"
@@ -290,10 +299,12 @@ export default function QuizScreen() {
           {/* Back of card (Answer) */}
           <Animated.View style={[styles.cardSide, styles.cardBack, backAnimatedStyle]}>
             <Card>
-              <Text style={{ color: 'white', fontSize: 18, fontWeight: '500', textAlign: 'center' }}>
+              <Text
+                style={{ color: 'white', fontSize: 18, fontWeight: '500', textAlign: 'center' }}
+              >
                 {currentCard?.question}
               </Text>
-              
+
               <View style={styles.answerContainer}>
                 <Text style={styles.answerLabel}>Correct Answer:</Text>
                 <Text style={styles.answerText}>{currentCard?.answer}</Text>
@@ -301,18 +312,18 @@ export default function QuizScreen() {
             </Card>
           </Animated.View>
         </View>
-        
-        
       </View>
 
       {/* Navigation Controls */}
       <View style={styles.navigationContainer}>
-        <Pressable 
-          style={[styles.navButton, currentCardIndex === 0 && styles.navButtonDisabled]} 
+        <Pressable
+          style={[styles.navButton, currentCardIndex === 0 && styles.navButtonDisabled]}
           onPress={goToPreviousCard}
           disabled={currentCardIndex === 0}
         >
-          <Text style={[styles.navButtonText, currentCardIndex === 0 && styles.navButtonTextDisabled]}>
+          <Text
+            style={[styles.navButtonText, currentCardIndex === 0 && styles.navButtonTextDisabled]}
+          >
             Previous
           </Text>
         </Pressable>
@@ -330,13 +341,8 @@ export default function QuizScreen() {
             Submit Quiz
           </Button>
         ) : (
-          <Pressable 
-            style={styles.navButton} 
-            onPress={goToNextCard}
-          >
-            <Text style={styles.navButtonText}>
-              Next
-            </Text>
+          <Pressable style={styles.navButton} onPress={goToNextCard}>
+            <Text style={styles.navButtonText}>Next</Text>
           </Pressable>
         )}
       </View>

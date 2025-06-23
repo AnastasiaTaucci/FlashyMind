@@ -1,11 +1,7 @@
-import { useFlashcardSetStore } from "@/store/deck-card-store";
-import { router } from "expo-router";
-import { KeyboardAvoidingView, Platform, Pressable, StyleSheet, Text, View } from "react-native";
-
+import { router } from 'expo-router';
+import { KeyboardAvoidingView, Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 
 export default function QuizScreen() {
-  const { flashcardSets, isLoading, error } = useFlashcardSetStore();
-
   return (
     <KeyboardAvoidingView
       style={styles.pageWrapper}
@@ -13,7 +9,7 @@ export default function QuizScreen() {
     >
       {/* Header */}
       <View style={styles.header}>
-      <Pressable onPress={() => router.back()} style={{ marginBottom: 10 }}>
+        <Pressable onPress={() => router.back()} style={{ marginBottom: 10 }}>
           <Text style={{ color: 'white', fontSize: 16 }}>← Back</Text>
         </Pressable>
 
@@ -61,4 +57,4 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
   },
-}); 
+});

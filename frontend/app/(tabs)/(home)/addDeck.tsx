@@ -55,7 +55,10 @@ export default function AddDeckScreen() {
     description: existingDeck?.description || '',
   };
 
-  async function handleSubmit(values: typeof initialValues, { resetForm }: { resetForm: () => void }) {
+  async function handleSubmit(
+    values: typeof initialValues,
+    { resetForm }: { resetForm: () => void }
+  ) {
     try {
       setIsLoading(true);
 

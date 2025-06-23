@@ -26,6 +26,20 @@ jest.mock('@/utils/shuffle', () => ({
 }));
 
 describe('StudyDeckScreen', () => {
+  // Silence expected AsyncStorage errors during tests (e.g. mocked save/load failures)
+  // Prevents noisy console output for known issues while still allowing real errors to show
+  beforeAll(() => {
+    jest.spyOn(console, 'error').mockImplementation((msg) => {
+      if (
+        typeof msg === 'string' &&
+        (msg.includes('Failed to save review progress') ||
+          msg.includes('Failed to save load progress'))
+      ) {
+        return;
+      }
+    });
+  });
+
   beforeEach(() => {
     jest.clearAllMocks();
   });

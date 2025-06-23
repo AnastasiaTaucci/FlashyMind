@@ -13,7 +13,8 @@ export default function SubjectCardsScreen() {
   const currentDeckId = typeof deckId === 'string' && deckId ? parseInt(deckId, 10) : undefined;
 
   const { flashcards, fetchFlashcards, deleteFlashcard, isLoading, error } = useFlashcardStore();
-  const { flashcardSets, fetchFlashcardSets, getFlashcardSetById } = useFlashcardSetStore();
+  const { flashcardSets, fetchFlashcardSets, getFlashcardSetById, notConnected } =
+    useFlashcardSetStore();
 
   const [subjectCards, setSubjectCards] = useState<Flashcard[]>([]);
   const [subjectDescription, setSubjectDescription] = useState<string>('');
@@ -200,6 +201,7 @@ export default function SubjectCardsScreen() {
               marginLeft: 8,
             }}
             onPress={handleEditDeck}
+            disabled={notConnected}
           >
             <MaterialIcons name="edit" size={24} color="white" />
           </Pressable>
@@ -232,6 +234,7 @@ export default function SubjectCardsScreen() {
       <View style={{ padding: 20 }}>
         <Pressable
           onPress={handleCreateCard}
+          disabled={notConnected}
           style={{
             backgroundColor: '#ffdd54',
             borderRadius: 12,
@@ -298,6 +301,7 @@ export default function SubjectCardsScreen() {
             </Text>
             <Pressable
               onPress={handleCreateCard}
+              disabled={notConnected}
               style={{
                 backgroundColor: '#b45309',
                 paddingHorizontal: 24,
@@ -382,6 +386,7 @@ export default function SubjectCardsScreen() {
               >
                 <Pressable
                   onPress={() => handleEditCard(card.id)}
+                  disabled={notConnected}
                   style={{
                     backgroundColor: '#2563eb',
                     paddingHorizontal: 20,
@@ -404,6 +409,7 @@ export default function SubjectCardsScreen() {
 
                 <Pressable
                   onPress={() => handleDeleteCard(card.id)}
+                  disabled={notConnected}
                   style={{
                     backgroundColor: '#ef4444',
                     paddingHorizontal: 20,

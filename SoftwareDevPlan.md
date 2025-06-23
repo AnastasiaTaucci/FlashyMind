@@ -119,9 +119,10 @@ FlashyMind enables users to study any topic through custom-created flashcards or
 
 **Tasks:**
 
-* Fix bugs and test all features on multiple devices
-* Write README and setup documentation
-* Record or present final demo
+* Fix bugs and test all features on multiple devices - all
+* Write README and setup documentation - Anastasia, Ahmet
+* Record or present final demo - in person by all
+* Prepare PowerPoint - Anastasia
 
 **Deliverables:**
 

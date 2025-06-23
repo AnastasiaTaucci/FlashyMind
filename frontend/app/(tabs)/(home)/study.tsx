@@ -181,19 +181,20 @@ export default function StudyDeckScreen() {
           </View>
         ) : reviewQueue.length !== 0 ? (
           <View>
-            <View style={styles.card}>
-              <Button
-                onPress={startOver}
-                style={[styles.actionButton, { backgroundColor: '#a16207', alignSelf: 'flex-end' }]}
-              >
-                <MaterialCommunityIcons name="restart" size={20} color="white" />
-                <ButtonText style={styles.buttonText}>Restart Deck</ButtonText>
-              </Button>
-              <View style={{ height: '100%', justifyContent: 'center' }}>
-                <Text style={[styles.congratText, { paddingBottom: 30 }]}>
-                  🎉 You finished all cards!
-                </Text>
-              </View>
+            <Button
+              onPress={startOver}
+              style={[
+                styles.actionButton,
+                { backgroundColor: '#a16207', alignSelf: 'flex-end', marginBottom: 15 },
+              ]}
+            >
+              <MaterialCommunityIcons name="restart" size={20} color="white" />
+              <ButtonText style={styles.buttonText}>Restart Deck</ButtonText>
+            </Button>
+            <View style={[styles.card, { justifyContent: 'center' }]}>
+              <Text style={[styles.congratText, { paddingBottom: 30 }]}>
+                🎉 You finished all cards!
+              </Text>
             </View>
             <HStack style={styles.actionRow}>
               <Button

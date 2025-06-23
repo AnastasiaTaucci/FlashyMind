@@ -1,4 +1,4 @@
-import { Text, StyleSheet, FlatList, View, RefreshControl } from 'react-native';
+import { Text, StyleSheet, View, RefreshControl, ActivityIndicator } from 'react-native';
 import { useRouter, useFocusEffect } from 'expo-router';
 import { useFlashcardSetStore, useFlashcardStore } from '@/store/deck-card-store';
 import { Heading } from '@/components/ui/heading';
@@ -10,10 +10,11 @@ import FlashcardSetCard from '@/components/FlashcardSetCard';
 import { useAuth } from '@/context/AuthContext';
 import { useEffect, useState, useCallback } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import Animated, { LinearTransition } from 'react-native-reanimated';
 
 export default function HomeScreen() {
   const router = useRouter();
-  const { flashcardSets, fetchFlashcardSets, isLoading, isDeleting, error } =
+  const { flashcardSets, fetchFlashcardSets, isLoading, isDeleting, error, notConnected } =
     useFlashcardSetStore();
   const { fetchFlashcards } = useFlashcardStore();
   const { logout } = useAuth();
@@ -68,7 +69,11 @@ export default function HomeScreen() {
         <Heading style={styles.heading}>Your Flashcard Decks</Heading>
 
         <HStack style={styles.addDeckWrapper}>
-          <Button style={styles.addDeckButton} onPress={() => router.push('./addDeck')}>
+          <Button
+            style={styles.addDeckButton}
+            onPress={() => router.navigate('./addDeck')}
+            disabled={notConnected}
+          >
             <ButtonText style={styles.addDeckText}>+ New Deck</ButtonText>
           </Button>
         </HStack>
@@ -86,17 +91,18 @@ export default function HomeScreen() {
         )}
 
         {isDeleting && !refreshing && (
-          <View style={{ alignItems: 'center', padding: 20 }}>
-            <Text style={{ color: '#6b7280' }}>Deleting Deck...</Text>
+          <View style={styles.overlay}>
+            <ActivityIndicator size="large" color="#fff" />
           </View>
         )}
 
-        <FlatList
+        <Animated.FlatList
           testID="flatlist" // this is for the test
           data={flashcardSets}
           keyExtractor={(item, index) => (item.id ? item.id.toString() : `deck-${index}`)}
           contentContainerStyle={styles.listContent}
           renderItem={({ item }) => <FlashcardSetCard item={item} />}
+          itemLayoutAnimation={LinearTransition}
           refreshControl={
             <RefreshControl
               refreshing={refreshing}
@@ -188,5 +194,16 @@ const styles = StyleSheet.create({
     color: '#6b7280',
     textAlign: 'center',
     lineHeight: 22,
+  },
+  overlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 10,
   },
 });

@@ -47,6 +47,5 @@ app.get('/', (req, res) => {
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`🚀 Server is running on http://0.0.0.0:${PORT}`);
   console.log(`📚 API documentation available at http://localhost:${PORT}/api-docs`);
-  console.log(`🔍 Debug mode: All API calls will be logged`);
 });
 export default app;
