@@ -182,6 +182,7 @@ const styles = StyleSheet.create({
   listContent: {
     paddingHorizontal: 20,
     paddingVertical: 10,
+    paddingBottom: 50,
   },
   emptyWrapper: {
     marginTop: 50,
