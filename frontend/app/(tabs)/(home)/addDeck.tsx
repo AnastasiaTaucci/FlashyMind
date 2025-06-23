@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useCallback } from 'react';
 import {
   View,
   Text,
@@ -11,7 +11,6 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import { useRouter, useLocalSearchParams, useFocusEffect } from 'expo-router';
-import { useCallback } from 'react';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import { useFlashcardSetStore } from '../../../store/deck-card-store';
@@ -309,8 +308,6 @@ export default function AddDeckScreen() {
                   </Text>
                 )}
               </Pressable>
-
-
 
               {/* Cancel */}
               <Pressable

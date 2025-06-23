@@ -8,6 +8,7 @@
  */
 
 import * as deckStore from '@/store/deck-card-store';
+import * as exploreStore from '@/store/explore-deck-store';
 import mockDecks from '@/data/flashcardSets.json';
 import mockCards from '@/data/flashcards.json';
 
@@ -18,6 +19,7 @@ type MockOptions = {
   error?: string | null;
   fetchFlashcardSets?: jest.Mock;
   fetchFlashcards?: jest.Mock;
+  fetchExploreDeck?: jest.Mock;
 };
 
 // Helper function to mock deck and flashcard store values for tests
@@ -29,6 +31,7 @@ export function getMockStores({
   error = null, // Default error state is null
   fetchFlashcardSets = jest.fn(), // Allow injecting a custom mock to track calls to fetchFlashcardSets
   fetchFlashcards = jest.fn(), // Allow injecting a custom mock to track calls to fetchFlashcards
+  fetchExploreDeck = jest.fn(), // Allow injecting a custom mock to track calls to fetchExploreDeck
 }: MockOptions = {}) {
   // {} makes sure the function receives an empty object by default.
   // Mock the return value of useFlashcardSetStore (used to manage decks)
@@ -37,11 +40,21 @@ export function getMockStores({
     fetchFlashcardSets, // Fake fetch function (prevents real API calls)
     isLoading, // Set loading state for testing loading UI
     error, // Set error message to simulate fetch failure
+    setState: jest.fn(), // Mock setState for error clearing
+    notConnected: false, // Add notConnected to prevent button disabling
+    isDeleting: false, // Add isDeleting state
   });
 
   // Mock the return value of useFlashcardStore (used to manage flashcards)
   jest.spyOn(deckStore, 'useFlashcardStore').mockReturnValue({
     flashcards, // Use either the passed-in or default flashcard data
     fetchFlashcards, // Fake fetch function (prevents real API calls)
+    setState: jest.fn(), // Mock setState for error clearing
+  });
+
+  // Mock the return value of useExploreDeckStore (used to manage explore functionality)
+  jest.spyOn(exploreStore, 'useExploreDeckStore').mockReturnValue({
+    fetchExploreDeck, // Fake fetch function (prevents real API calls)
+    setState: jest.fn(), // Mock setState for error clearing
   });
 }
