@@ -9,16 +9,18 @@ import {
   View,
   Alert,
   Animated,
+  TouchableWithoutFeedback,
+  Keyboard,
 } from 'react-native';
 import Card from '@/components/Flashcard';
-import { useEffect, useState, useRef } from 'react';
-import { TextInput, Button, IconButton } from 'react-native-paper';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
+import { TextInput, Button } from 'react-native-paper';
 import { useAuth } from '@/context/AuthContext';
 import * as api from '@/service/api';
 
 export default function QuizScreen() {
   const { id } = useLocalSearchParams();
-  const { flashcardSets, isLoading, error } = useFlashcardSetStore();
+  const { flashcardSets, isLoading } = useFlashcardSetStore();
   const { flashcards } = useFlashcardStore();
   const { session } = useAuth();
   const deckId = Array.isArray(id) ? parseInt(id[0], 10) : parseInt(id as string, 10);
@@ -30,15 +32,14 @@ export default function QuizScreen() {
   const [userAnswers, setUserAnswers] = useState<Record<number, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isFlipped, setIsFlipped] = useState(false);
+  const [isTyped, setIsTyped] = useState(false);
   const flipAnimation = useRef(new Animated.Value(0)).current;
 
-  // function to randomize the flashcards
-  const randomizeFlashcards = () => {
+  const randomizeFlashcards = useCallback(() => {
     if (!deck) return [];
     const deckFlashcards = flashcards.filter((card) => card.deck_id === deck.id);
-    const shuffledFlashcards = [...deckFlashcards].sort(() => Math.random() - 0.5);
-    return shuffledFlashcards;
-  };
+    return [...deckFlashcards].sort(() => Math.random() - 0.5);
+  }, [deck, flashcards]);
 
   useEffect(() => {
     const cards = randomizeFlashcards();
@@ -48,11 +49,9 @@ export default function QuizScreen() {
     setUserAnswers({});
     setIsFlipped(false);
     flipAnimation.setValue(0);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [flashcards, deck]);
+  }, [flashcards, deck, flipAnimation, randomizeFlashcards]);
 
   const goToNextCard = () => {
-    // Save current answer before moving
     if (currentCard && userAnswer.trim()) {
       setUserAnswers((prev) => ({
         ...prev,
@@ -69,7 +68,6 @@ export default function QuizScreen() {
   };
 
   const goToPreviousCard = () => {
-    // Save current answer before moving
     if (currentCard && userAnswer.trim()) {
       setUserAnswers((prev) => ({
         ...prev,
@@ -87,7 +85,6 @@ export default function QuizScreen() {
 
   const handleFlipCard = () => {
     const toValue = isFlipped ? 0 : 1;
-
     Animated.timing(flipAnimation, {
       toValue,
       duration: 300,
@@ -108,22 +105,18 @@ export default function QuizScreen() {
     try {
       setIsSubmitting(true);
 
-      // Create a copy of current userAnswers and add the current answer
       const finalUserAnswers = { ...userAnswers };
       if (currentCard && userAnswer.trim()) {
         finalUserAnswers[currentCard.id] = userAnswer.trim();
       }
 
-      // Prepare all answers for a single submission
       const allAnswers = shuffledCards.map((card) => {
         const answer = finalUserAnswers[card.id] || '';
         return { card_id: card.id, answer: answer };
       });
 
-      // Submit all answers in a single API call and capture the response
       const quizResult = await api.createDetailedQuizResult(deckId, session.user.id, allAnswers);
 
-      // Navigate to quiz score screen with the quiz result data
       router.push({
         pathname: '/(tabs)/(home)/(quiz)/quiz-score',
         params: {
@@ -135,8 +128,7 @@ export default function QuizScreen() {
           deckId: deckId.toString(),
         },
       });
-    } catch (error) {
-      console.error('Error submitting quiz:', error);
+    } catch {
       Alert.alert('Error', 'Failed to submit quiz. Please try again.');
     } finally {
       setIsSubmitting(false);
@@ -145,7 +137,6 @@ export default function QuizScreen() {
 
   const currentCard = shuffledCards[currentCardIndex];
 
-  // Create animated transforms for flip effect
   const frontAnimatedStyle = {
     transform: [
       {
@@ -168,7 +159,6 @@ export default function QuizScreen() {
     ],
   };
 
-  // Load saved answer when card changes
   useEffect(() => {
     if (currentCard && userAnswers[currentCard.id]) {
       setUserAnswer(userAnswers[currentCard.id]);
@@ -177,17 +167,8 @@ export default function QuizScreen() {
     }
   }, [currentCardIndex, currentCard, userAnswers]);
 
-  if (isLoading) {
-    return <Text>Loading...</Text>;
-  }
-
-  if (error) {
-    return <Text>Error: {error}</Text>;
-  }
-
-  if (!deck) {
-    return <Text>Deck not found</Text>;
-  }
+  if (isLoading) return <Text>Loading...</Text>;
+  if (!deck) return <Text>Deck not found</Text>;
 
   if (shuffledCards.length === 0) {
     return (
@@ -215,137 +196,181 @@ export default function QuizScreen() {
     <KeyboardAvoidingView
       style={styles.pageWrapper}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 20}
     >
-      {/* Header */}
-      <View style={styles.header}>
-        <Pressable onPress={() => router.back()} style={{ marginBottom: 10 }}>
-          <Text style={{ color: 'white', fontSize: 16 }}>← Back</Text>
-        </Pressable>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+        <View style={{ flex: 1 }}>
+          <View style={styles.header}>
+            <Pressable onPress={() => router.back()} style={{ marginBottom: 10 }}>
+              <Text style={{ color: 'white', fontSize: 16 }}>← Back</Text>
+            </Pressable>
+            <Text style={{ fontSize: 28, fontWeight: 'bold', color: 'white', marginBottom: 8 }}>
+              {deck.title}
+            </Text>
+            <Text style={{ fontSize: 16, color: '#fbbf24', opacity: 0.9 }}>{deck.description}</Text>
+            <Text style={{ fontSize: 14, color: 'white', opacity: 0.8, marginTop: 8 }}>
+              Card {currentCardIndex + 1} of {shuffledCards.length}
+            </Text>
+          </View>
 
-        <Text
-          style={{
-            fontSize: 28,
-            fontWeight: 'bold',
-            color: 'white',
-            marginBottom: 8,
-          }}
-        >
-          {deck.title}
-        </Text>
+          <View style={styles.contentArea}>
+            <View style={styles.cardContainer}>
+              <View style={styles.cardWrapper}>
+                <Animated.View
+                  style={[
+                    styles.cardSide,
+                    frontAnimatedStyle,
+                    !isFlipped && { pointerEvents: 'auto' },
+                    isFlipped && { pointerEvents: 'none' },
+                  ]}
+                >
+                  <Card>
+                    <View style={styles.cardContentContainer}>
+                      <Pressable onPress={handleFlipCard}>
+                        <Text
+                          style={{
+                            color: 'white',
+                            fontSize: 18,
+                            fontWeight: '500',
+                            textAlign: 'center',
+                            marginBottom: 15,
+                          }}
+                        >
+                          {currentCard?.question}
+                        </Text>
+                      </Pressable>
 
-        <Text
-          style={{
-            fontSize: 16,
-            color: '#fbbf24',
-            opacity: 0.9,
-          }}
-        >
-          {deck.description}
-        </Text>
+                      <View style={styles.inputContainer}>
+                        <TextInput
+                          mode="outlined"
+                          placeholder="Your Answer"
+                          value={userAnswer}
+                          onChangeText={(text) => {
+                            setUserAnswer(text);
+                            setIsTyped(text.length > 0);
+                          }}
+                          onFocus={() => setIsTyped(true)}
+                          onBlur={() => setIsTyped(userAnswer.length > 0)}
+                          style={styles.textInput}
+                          outlineColor="#fbbf24"
+                          activeOutlineColor="#ffdd54"
+                          textColor="#78350f"
+                          placeholderTextColor="#a16207"
+                          multiline
+                          numberOfLines={2}
+                          contentStyle={styles.textInputContent}
+                          theme={{
+                            colors: {
+                              onSurfaceVariant: '#78350f',
+                              outline: '#fbbf24',
+                              primary: '#ffdd54',
+                              surface: '#fef3c7',
+                              onSurface: '#78350f',
+                            },
+                          }}
+                        />
+                      </View>
+                    </View>
+                  </Card>
+                </Animated.View>
 
-        <Text
-          style={{
-            fontSize: 14,
-            color: 'white',
-            opacity: 0.8,
-            marginTop: 8,
-          }}
-        >
-          Card {currentCardIndex + 1} of {shuffledCards.length}
-        </Text>
-      </View>
-      <View style={styles.flipButtonContainer}>
-        {/* Flip Button */}
-        <IconButton
-          icon={isFlipped ? 'eye-off' : 'eye'}
-          onPress={handleFlipCard}
-          style={styles.flipButton}
-          iconColor="white"
-          size={24}
-          mode="contained"
-          containerColor="#fbbf24"
-        />
-      </View>
+                <Animated.View
+                  style={[
+                    styles.cardSide,
+                    styles.cardBack,
+                    backAnimatedStyle,
+                    isFlipped && { pointerEvents: 'auto' },
+                    !isFlipped && { pointerEvents: 'none' },
+                  ]}
+                >
+                  <Card>
+                    <View style={styles.cardContentContainer}>
+                      <Pressable onPress={handleFlipCard}>
+                        <Text
+                          style={{
+                            color: 'white',
+                            fontSize: 18,
+                            fontWeight: '500',
+                            textAlign: 'center',
+                            marginBottom: 15,
+                          }}
+                        >
+                          {currentCard?.question}
+                        </Text>
+                      </Pressable>
 
-      {/* Current Card */}
-      <View style={styles.cardContainer}>
-        <View style={styles.cardWrapper}>
-          {/* Front of card (Question) */}
-          <Animated.View style={[styles.cardSide, frontAnimatedStyle]}>
-            <Card>
-              <Text
-                style={{ color: 'white', fontSize: 18, fontWeight: '500', textAlign: 'center' }}
-              >
-                {currentCard?.question}
-              </Text>
-
-              <TextInput
-                mode="outlined"
-                label="Your Answer"
-                value={userAnswer}
-                onChangeText={setUserAnswer}
-                style={styles.textInput}
-                outlineColor="white"
-                activeOutlineColor="#fbbf24"
-                textColor="white"
-                placeholderTextColor="white"
-                multiline
-                numberOfLines={3}
-                contentStyle={styles.textInputContent}
-              />
-            </Card>
-          </Animated.View>
-
-          {/* Back of card (Answer) */}
-          <Animated.View style={[styles.cardSide, styles.cardBack, backAnimatedStyle]}>
-            <Card>
-              <Text
-                style={{ color: 'white', fontSize: 18, fontWeight: '500', textAlign: 'center' }}
-              >
-                {currentCard?.question}
-              </Text>
-
-              <View style={styles.answerContainer}>
-                <Text style={styles.answerLabel}>Correct Answer:</Text>
-                <Text style={styles.answerText}>{currentCard?.answer}</Text>
+                      <View style={styles.inputContainer}>
+                        <View style={styles.answerContainer}>
+                          <Text style={styles.answerLabel}>Correct Answer:</Text>
+                          <Text style={styles.answerText}>{currentCard?.answer}</Text>
+                        </View>
+                      </View>
+                    </View>
+                  </Card>
+                </Animated.View>
               </View>
-            </Card>
-          </Animated.View>
+
+              <View style={styles.navigationButtons}>
+                {!isTyped ? (
+                  <>
+                    <Pressable
+                      style={[styles.navButton, currentCardIndex === 0 && styles.navButtonDisabled]}
+                      onPress={goToPreviousCard}
+                      disabled={currentCardIndex === 0}
+                    >
+                      <Text
+                        style={[
+                          styles.navButtonText,
+                          currentCardIndex === 0 && styles.navButtonTextDisabled,
+                        ]}
+                      >
+                        Previous
+                      </Text>
+                    </Pressable>
+
+                    {currentCardIndex === shuffledCards.length - 1 ? (
+                      <Pressable
+                        style={styles.navButton}
+                        onPress={submitQuiz}
+                        disabled={isSubmitting}
+                      >
+                        <Text style={styles.navButtonText}>
+                          {isSubmitting ? 'Submitting...' : 'Submit Quiz'}
+                        </Text>
+                      </Pressable>
+                    ) : (
+                      <Pressable style={styles.navButton} onPress={goToNextCard}>
+                        <Text style={styles.navButtonText}>Next</Text>
+                      </Pressable>
+                    )}
+                  </>
+                ) : (
+                  <View style={styles.saveButtonContainer}>
+                    <Button
+                      mode="contained"
+                      onPress={() => {
+                        if (currentCard && userAnswer.trim()) {
+                          setUserAnswers((prev) => ({
+                            ...prev,
+                            [currentCard.id]: userAnswer.trim(),
+                          }));
+                        }
+                        setIsTyped(false);
+                        Keyboard.dismiss();
+                      }}
+                      style={styles.saveAnswerButton}
+                      buttonColor="#059669"
+                      textColor="white"
+                    >
+                      Save Answer
+                    </Button>
+                  </View>
+                )}
+              </View>
+            </View>
+          </View>
         </View>
-      </View>
-
-      {/* Navigation Controls */}
-      <View style={styles.navigationContainer}>
-        <Pressable
-          style={[styles.navButton, currentCardIndex === 0 && styles.navButtonDisabled]}
-          onPress={goToPreviousCard}
-          disabled={currentCardIndex === 0}
-        >
-          <Text
-            style={[styles.navButtonText, currentCardIndex === 0 && styles.navButtonTextDisabled]}
-          >
-            Previous
-          </Text>
-        </Pressable>
-
-        {currentCardIndex === shuffledCards.length - 1 ? (
-          <Button
-            mode="contained"
-            onPress={submitQuiz}
-            loading={isSubmitting}
-            disabled={isSubmitting}
-            style={styles.submitButton}
-            buttonColor="#fbbf24"
-            textColor="white"
-          >
-            Submit Quiz
-          </Button>
-        ) : (
-          <Pressable style={styles.navButton} onPress={goToNextCard}>
-            <Text style={styles.navButtonText}>Next</Text>
-          </Pressable>
-        )}
-      </View>
+      </TouchableWithoutFeedback>
     </KeyboardAvoidingView>
   );
 }
@@ -354,8 +379,8 @@ const styles = StyleSheet.create({
   header: {
     backgroundColor: '#b45309',
     paddingTop: 60,
-    paddingBottom: 20,
     paddingHorizontal: 20,
+    paddingBottom: 20,
     borderBottomLeftRadius: 20,
     borderBottomRightRadius: 20,
   },
@@ -364,30 +389,37 @@ const styles = StyleSheet.create({
     backgroundColor: '#fffafc',
     width: '100%',
   },
-  headerText: {
-    color: '#fff',
-    fontSize: 24,
-    fontWeight: 'bold',
-  },
+
   cardContainer: {
-    flex: 1,
-    marginTop: 100,
-    justifyContent: 'center',
     alignItems: 'center',
-    position: 'relative',
+    marginBottom: 10,
+    flex: 0,
   },
-  navigationContainer: {
+  navigationButtons: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    padding: 20,
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    marginTop: 5,
+    gap: 20,
+  },
+  contentArea: {
+    flex: 1,
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    justifyContent: 'flex-start',
   },
   navButton: {
     backgroundColor: '#fbbf24',
-    padding: 10,
-    borderRadius: 5,
+    borderRadius: 8,
+    paddingHorizontal: 24,
+    paddingVertical: 12,
+    minWidth: 80,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   navButtonDisabled: {
-    backgroundColor: '#ccc',
+    backgroundColor: '#d1d5db',
   },
   navButtonText: {
     color: 'white',
@@ -395,12 +427,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   navButtonTextDisabled: {
-    color: '#999',
-  },
-  submitButton: {
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    borderRadius: 5,
+    color: '#9ca3af',
   },
   centerContent: {
     flex: 1,
@@ -413,18 +440,19 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   textInput: {
-    backgroundColor: 'transparent',
-    margin: 10,
+    backgroundColor: '#fef3c7',
+    margin: 5,
     alignSelf: 'center',
-    width: '80%',
+    width: '90%',
+    maxHeight: 100,
   },
   textInputContent: {
-    fontSize: 18,
-    color: 'white',
+    fontSize: 14,
+    color: '#78350f',
+    paddingTop: 8,
   },
   answerContainer: {
-    margin: 10,
-    padding: 10,
+    padding: 15,
     backgroundColor: 'rgba(255, 255, 255, 0.1)',
     borderRadius: 8,
     alignItems: 'center',
@@ -433,38 +461,48 @@ const styles = StyleSheet.create({
     color: '#fbbf24',
     fontSize: 14,
     fontWeight: 'bold',
-    marginBottom: 5,
+    marginBottom: 8,
   },
   answerText: {
     color: 'white',
     fontSize: 16,
     textAlign: 'center',
     fontWeight: '500',
-  },
-  flipButton: {
-    position: 'absolute',
-    top: 20,
-    right: 20,
-    backgroundColor: '#fbbf24',
-    borderRadius: 20,
+    lineHeight: 22,
   },
   cardWrapper: {
     width: '100%',
-    height: '100%',
     position: 'relative',
+    height: 300,
+    marginBottom: 20,
   },
   cardSide: {
     width: '100%',
-    height: '100%',
+    height: 300,
     position: 'absolute',
     backfaceVisibility: 'hidden',
   },
   cardBack: {
     transform: [{ rotateY: '180deg' }],
   },
-  flipButtonContainer: {
-    position: 'absolute',
-    top: 180,
-    right: 10,
+  saveAnswerButton: {
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 8,
+    minWidth: 120,
+  },
+  saveButtonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  cardContentContainer: {
+    height: 250,
+    padding: 20,
+    justifyContent: 'space-between',
+  },
+  inputContainer: {
+    flex: 1,
+    justifyContent: 'center',
   },
 });
