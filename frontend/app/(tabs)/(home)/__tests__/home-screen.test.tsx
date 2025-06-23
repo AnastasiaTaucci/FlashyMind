@@ -3,7 +3,7 @@ import { render, screen, fireEvent, act } from '@testing-library/react-native';
 import { Alert } from 'react-native';
 import { useRouter } from 'expo-router';
 import HomeScreen from '../index';
-import { getMockStores } from '../../../../utils/test-utils/getMockStores';
+import { getMockStores } from '@/utils/test-utils/getMockStores';
 
 // Mock icon components with strings to avoid Icon setState warning
 jest.mock('@expo/vector-icons/MaterialCommunityIcons', () => 'MaterialCommunityIcons');
@@ -27,7 +27,7 @@ jest.mock('expo-router', () => ({
   useFocusEffect: jest.fn((cb) => cb()), // simulate focus effect
 }));
 
-jest.mock('../../../../store/deck-card-store');
+jest.mock('@/store/deck-card-store');
 
 jest.spyOn(Alert, 'alert').mockImplementation(() => {});
 

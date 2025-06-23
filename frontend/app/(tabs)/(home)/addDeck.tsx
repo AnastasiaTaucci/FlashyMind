@@ -13,7 +13,7 @@ import {
 import { useRouter, useLocalSearchParams, useFocusEffect } from 'expo-router';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
-import { useFlashcardSetStore } from '../../../store/deck-card-store';
+import { useFlashcardSetStore } from '@/store/deck-card-store';
 
 export default function AddDeckScreen() {
   const router = useRouter();

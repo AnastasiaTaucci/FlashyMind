@@ -278,7 +278,7 @@ export default function SubjectCardsScreen() {
 
       <ScrollView
         style={{ flex: 1 }}
-        contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 20 }}
+        contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 80 }}
         showsVerticalScrollIndicator={false}
       >
         {subjectCards.length === 0 ? (

@@ -3,6 +3,7 @@ import { Flashcard } from '@/types/Flashcard';
 import { decode } from 'he';
 import * as api from '../service/api';
 import { FlashcardSet } from '@/types/FlashcardSet';
+import { useFlashcardSetStore, useFlashcardStore } from './deck-card-store';
 
 type ExploreState = {
   isLoading: boolean;
@@ -85,6 +86,9 @@ export const useExploreDeckStore = create<ExploreState>((set, get) => ({
       for (const card of flashcards) {
         await api.createFlashcard(card, deckId);
       }
+      // Refresh both deck and flashcard stores to update UI immediately
+      useFlashcardSetStore.getState().fetchFlashcardSets();
+      useFlashcardStore.getState().fetchFlashcards();
     } catch (error: any) {
       set({
         error: error.message || 'Failed to add explore flashcard set',

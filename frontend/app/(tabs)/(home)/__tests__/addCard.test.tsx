@@ -3,8 +3,8 @@ import { render, fireEvent, waitFor } from '@testing-library/react-native';
 import { Alert } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import CreateCardScreen from '../addCard';
-import { useFlashcardStore, useFlashcardSetStore } from '../../../../store/deck-card-store';
-import { getMockStores } from '../../../../utils/test-utils/getMockStores';
+import { useFlashcardStore, useFlashcardSetStore } from '@/store/deck-card-store';
+import { getMockStores } from '@/utils/test-utils/getMockStores';
 
 jest.mock('expo-router', () => ({
   useRouter: jest.fn(),
@@ -12,7 +12,7 @@ jest.mock('expo-router', () => ({
   useFocusEffect: jest.fn((cb) => cb()), // simulate focus effect
 }));
 
-jest.mock('../../../../store/deck-card-store');
+jest.mock('@/store/deck-card-store');
 
 jest.spyOn(Alert, 'alert').mockImplementation(() => {});
 
