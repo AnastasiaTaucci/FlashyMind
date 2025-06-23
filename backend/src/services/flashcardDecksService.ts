@@ -4,7 +4,7 @@ export const getFlashcardDecks = async (userId: string) => {
   const { data, error } = await supabase
     .from('flashcard_decks')
     .select('*')
-    .order('created_at', { ascending: false })
+    .order('updated_at', { ascending: false })
     .eq('created_by', userId);
 
   if (error) throw new Error(error.message);

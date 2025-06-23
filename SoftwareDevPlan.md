@@ -121,7 +121,7 @@ FlashyMind enables users to study any topic through custom-created flashcards or
 
 * Fix bugs and test all features on multiple devices - all
 * Write README and setup documentation - Anastasia, Ahmet
-* Record or present final demo - in person by all
+* Present final demo - in person by all
 * Prepare PowerPoint - Anastasia
 
 **Deliverables:**
@@ -157,6 +157,7 @@ FlashyMind enables users to study any topic through custom-created flashcards or
 * React Navigation – App routing
 * Formik / React Hook Form – Forms with validation
 * Zustand – Global state management
+* Gluestack - Components Library & Patterns 
 
 ---
 
