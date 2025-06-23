@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import {
   View,
   Text,
@@ -10,7 +10,7 @@ import {
   Alert,
   ActivityIndicator,
 } from 'react-native';
-import { useRouter, useLocalSearchParams } from 'expo-router';
+import { useRouter, useLocalSearchParams, useFocusEffect } from 'expo-router';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import { useFlashcardSetStore } from '../../../store/deck-card-store';
@@ -27,6 +27,12 @@ export default function AddDeckScreen() {
   const deckIdNumber = deckIdString ? parseInt(deckIdString, 10) : undefined;
   const existingDeck = deckIdNumber ? getFlashcardSetById(deckIdNumber) : null;
   const isEditMode = !!existingDeck;
+
+  useFocusEffect(
+    useCallback(() => {
+      useFlashcardSetStore.setState({ error: null });
+    }, [])
+  );
 
   const validationSchema = Yup.object().shape({
     title: Yup.string()
@@ -161,7 +167,7 @@ export default function AddDeckScreen() {
           enableReinitialize
         >
           {({ handleChange, handleBlur, handleSubmit, values, errors, touched, resetForm }) => (
-            <View style={{ gap: 20 }}>
+            <View style={{ gap: 20, paddingBottom: 100 }}>
               {/* Title */}
               <View>
                 <Text

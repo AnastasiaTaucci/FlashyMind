@@ -106,19 +106,31 @@ export const signup = async (req: Request, res: Response): Promise<void> => {
 
   const { data, error } = await supabase.auth.signUp({ email, password });
 
-  if (error || !data.user || !data.session) {
+  if (error || !data.user) {
     res.status(400).json({ error: error?.message || 'User creation failed' });
     return;
   }
 
-  res.status(201).json({
-    user: {
-      id: data.user.id,
-      email: data.user.email
-    },
-    access_token: data.session.access_token,
-    refresh_token: data.session.refresh_token
-  });
+  // If email confirmation is disabled, user is created and automatically signed in
+  if (data.session) {
+    res.status(201).json({
+      user: {
+        id: data.user.id,
+        email: data.user.email
+      },
+      access_token: data.session.access_token,
+      refresh_token: data.session.refresh_token
+    });
+  } else {
+    // Email confirmation is enabled - user needs to confirm email
+    res.status(201).json({
+      user: {
+        id: data.user.id,
+        email: data.user.email
+      },
+      message: 'Please check your email to confirm your account'
+    });
+  }
 };
 
 // POST /api/auth/login

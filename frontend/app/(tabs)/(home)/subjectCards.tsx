@@ -28,11 +28,11 @@ export default function SubjectCardsScreen() {
     fetchFlashcardSets();
   }, [fetchFlashcards, fetchFlashcardSets]);
 
-  // Refresh flashcards when screen comes into focus
   useFocusEffect(
     React.useCallback(() => {
-      fetchFlashcards();
-    }, [fetchFlashcards])
+      useFlashcardStore.setState({ error: null });
+      useFlashcardSetStore.setState({ error: null });
+    }, [])
   );
 
   useEffect(() => {
@@ -161,7 +161,7 @@ export default function SubjectCardsScreen() {
           borderBottomRightRadius: 20,
         }}
       >
-        <Pressable onPress={() => router.push('/')} style={{ marginBottom: 10 }}>
+        <Pressable onPress={() => router.navigate('/')} style={{ marginBottom: 10 }}>
           <Text style={{ color: 'white', fontSize: 16 }}>← Back</Text>
         </Pressable>
 
@@ -258,21 +258,23 @@ export default function SubjectCardsScreen() {
         </Pressable>
       </View>
 
-      {error && (
-        <View
-          style={{
-            backgroundColor: '#fee2e2',
-            borderColor: '#fca5a5',
-            borderWidth: 1,
-            borderRadius: 8,
-            padding: 12,
-            marginHorizontal: 20,
-            marginBottom: 10,
-          }}
-        >
-          <Text style={{ color: '#dc2626', fontSize: 14 }}>{error}</Text>
-        </View>
-      )}
+      {error &&
+        !error.toLowerCase().includes('network') &&
+        !error.toLowerCase().includes('failed to fetch') && (
+          <View
+            style={{
+              backgroundColor: '#fee2e2',
+              borderColor: '#fca5a5',
+              borderWidth: 1,
+              borderRadius: 8,
+              padding: 12,
+              marginHorizontal: 20,
+              marginBottom: 10,
+            }}
+          >
+            <Text style={{ color: '#dc2626', fontSize: 14 }}>{error}</Text>
+          </View>
+        )}
 
       <ScrollView
         style={{ flex: 1 }}

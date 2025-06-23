@@ -1,6 +1,9 @@
+import React from 'react';
 import { render, screen, fireEvent, act } from '@testing-library/react-native';
-import HomeScreen from '@/app/(tabs)/(home)/index';
-import { getMockStores } from '@/utils/test-utils/getMockStores';
+import { Alert } from 'react-native';
+import { useRouter } from 'expo-router';
+import HomeScreen from '../index';
+import { getMockStores } from '../../../../utils/test-utils/getMockStores';
 
 // Mock icon components with strings to avoid Icon setState warning
 jest.mock('@expo/vector-icons/MaterialCommunityIcons', () => 'MaterialCommunityIcons');
@@ -11,22 +14,44 @@ jest.mock('@expo/vector-icons/MaterialIcons', () => 'MaterialIcons');
 const mockLogout = jest.fn();
 const mockReplace = jest.fn();
 const mockNavigate = jest.fn();
+const mockPush = jest.fn();
 
 // MOCK useAuth() to avoid needing real context
-jest.mock('@/context/AuthContext', () => ({
+jest.mock('../../../../context/AuthContext', () => ({
   useAuth: () => ({ logout: mockLogout }),
 }));
 
 // Mock router
 jest.mock('expo-router', () => ({
-  useRouter: () => ({ navigate: mockNavigate, replace: mockReplace }),
-  useFocusEffect: jest.fn((fn) => fn()),
+  useRouter: jest.fn(),
+  useFocusEffect: jest.fn((cb) => cb()), // simulate focus effect
 }));
 
+jest.mock('../../../../store/deck-card-store');
+
+jest.spyOn(Alert, 'alert').mockImplementation(() => {});
+
+// Mock console.error to suppress expected error logs during testing
+const originalConsoleError = console.error;
+beforeAll(() => {
+  console.error = jest.fn();
+});
+
+afterAll(() => {
+  console.error = originalConsoleError;
+});
+
 describe('HomeScreen', () => {
+  const mockRouter = {
+    push: mockPush,
+    replace: mockReplace,
+    navigate: mockNavigate,
+  };
+
   beforeEach(() => {
     jest.clearAllMocks();
-    getMockStores(); // uses default mockDecks and mockCards
+    (useRouter as jest.Mock).mockReturnValue(mockRouter);
+    getMockStores(); // Use the mock stores utility
   });
 
   it('should render HomeSceen heading and "+ New Deck" button', () => {

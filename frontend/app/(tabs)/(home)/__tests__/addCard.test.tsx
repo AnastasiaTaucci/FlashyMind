@@ -3,26 +3,28 @@ import { render, fireEvent, waitFor } from '@testing-library/react-native';
 import { Alert } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import CreateCardScreen from '../addCard';
-import { useFlashcardStore } from '@/store/deck-card-store';
+import { useFlashcardStore, useFlashcardSetStore } from '../../../../store/deck-card-store';
+import { getMockStores } from '../../../../utils/test-utils/getMockStores';
 
 jest.mock('expo-router', () => ({
   useRouter: jest.fn(),
   useLocalSearchParams: jest.fn(),
+  useFocusEffect: jest.fn((cb) => cb()), // simulate focus effect
 }));
 
-jest.mock('@/store/deck-card-store', () => ({
-  useFlashcardStore: jest.fn(),
-}));
-
-// Mock the store's getState method
-const mockGetState = jest.fn();
-jest.mock('@/store/deck-card-store', () => ({
-  useFlashcardStore: Object.assign(jest.fn(), {
-    getState: mockGetState,
-  }),
-}));
+jest.mock('../../../../store/deck-card-store');
 
 jest.spyOn(Alert, 'alert').mockImplementation(() => {});
+
+// Mock console.error to suppress expected error logs during testing
+const originalConsoleError = console.error;
+beforeAll(() => {
+  console.error = jest.fn();
+});
+
+afterAll(() => {
+  console.error = originalConsoleError;
+});
 
 describe('CreateCardScreen', () => {
   const mockRouter = {
@@ -30,14 +32,20 @@ describe('CreateCardScreen', () => {
     push: jest.fn(),
   };
 
-  const mockStore = {
+  const mockFlashcardStore = {
     getFlashcardById: jest.fn(),
     addFlashcard: jest.fn(),
     updateFlashcard: jest.fn(),
+    setState: jest.fn(),
     fetchFlashcards: jest.fn(),
+    flashcards: [],
     isLoading: false,
     error: null,
-    flashcards: [],
+  };
+
+  const mockFlashcardSetStore = {
+    getFlashcardSetById: jest.fn(),
+    setState: jest.fn(),
   };
 
   beforeEach(() => {
@@ -47,10 +55,10 @@ describe('CreateCardScreen', () => {
       subject: 'Biology',
       deckId: '1',
     });
-    (useFlashcardStore as jest.Mock).mockReturnValue(mockStore);
-    mockGetState.mockReturnValue({
-      fetchFlashcards: jest.fn(),
-    });
+
+    getMockStores();
+    (useFlashcardStore as unknown as jest.Mock).mockReturnValue(mockFlashcardStore);
+    (useFlashcardSetStore as unknown as jest.Mock).mockReturnValue(mockFlashcardSetStore);
   });
 
   // Render
@@ -80,7 +88,7 @@ describe('CreateCardScreen', () => {
       subject: 'Biology',
       deckId: '1',
     });
-    mockStore.getFlashcardById.mockReturnValue(existingCard);
+    mockFlashcardStore.getFlashcardById.mockReturnValue(existingCard);
 
     const { getByText, getByDisplayValue } = render(<CreateCardScreen />);
 
@@ -111,7 +119,7 @@ describe('CreateCardScreen', () => {
 
   // Creation
   it('handles successful card creation', async () => {
-    mockStore.addFlashcard.mockResolvedValueOnce({});
+    mockFlashcardStore.addFlashcard.mockResolvedValueOnce({});
     const { getByText, getByPlaceholderText } = render(<CreateCardScreen />);
 
     fireEvent.changeText(getByPlaceholderText('Enter subject'), 'Biology');
@@ -123,7 +131,7 @@ describe('CreateCardScreen', () => {
 
     await waitFor(
       () => {
-        expect(mockStore.addFlashcard).toHaveBeenCalledWith(
+        expect(mockFlashcardStore.addFlashcard).toHaveBeenCalledWith(
           {
             subject: 'Biology',
             topic: 'Cells',
@@ -141,7 +149,7 @@ describe('CreateCardScreen', () => {
   // Error Handling
   it('handles creation error', async () => {
     const errorMessage = 'Failed to create card';
-    mockStore.addFlashcard.mockRejectedValueOnce(new Error(errorMessage));
+    mockFlashcardStore.addFlashcard.mockRejectedValueOnce(new Error(errorMessage));
     const { getByText, getByPlaceholderText } = render(<CreateCardScreen />);
 
     fireEvent.changeText(getByPlaceholderText('Enter subject'), 'Biology');

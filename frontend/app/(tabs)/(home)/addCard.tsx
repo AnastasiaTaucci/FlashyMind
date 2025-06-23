@@ -43,6 +43,10 @@ export default function CreateCardScreen() {
     fetchFlashcards();
   }, [fetchFlashcards]);
 
+  useEffect(() => {
+    useFlashcardStore.setState({ error: null });
+  }, []);
+
   // Update existingCard
   useEffect(() => {
     if (cardIdNumber && flashcards && flashcards.length > 0) {

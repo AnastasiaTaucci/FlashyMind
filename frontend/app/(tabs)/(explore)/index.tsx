@@ -74,7 +74,7 @@ export default function ExploreDeckScreen() {
 
   useFocusEffect(
     useCallback(() => {
-      // When the screen is focused, reset the form
+      useExploreDeckStore.setState({ error: null });
       if (formRef.current?.resetForm) {
         formRef.current.resetForm();
       }

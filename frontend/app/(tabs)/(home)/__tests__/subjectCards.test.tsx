@@ -4,6 +4,7 @@ import { Alert } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import SubjectCardsScreen from '../subjectCards';
 import { useFlashcardStore, useFlashcardSetStore } from '../../../../store/deck-card-store';
+import { getMockStores } from '../../../../utils/test-utils/getMockStores';
 
 jest.mock('expo-router', () => ({
   useRouter: jest.fn(),
@@ -11,10 +12,7 @@ jest.mock('expo-router', () => ({
   useFocusEffect: jest.fn((callback) => callback()),
 }));
 
-jest.mock('../../../../store/deck-card-store', () => ({
-  useFlashcardStore: jest.fn(),
-  useFlashcardSetStore: jest.fn(),
-}));
+jest.mock('../../../../store/deck-card-store');
 
 // Mock MaterialIcons to prevent act() warnings
 jest.mock('@expo/vector-icons/MaterialIcons', () => 'MaterialIcons');
@@ -42,6 +40,7 @@ describe('SubjectCardsScreen', () => {
     deleteFlashcard: jest.fn(),
     isLoading: false,
     error: null,
+    setState: jest.fn(),
   };
 
   const mockFlashcardSetStore = {
@@ -55,6 +54,7 @@ describe('SubjectCardsScreen', () => {
     ],
     fetchFlashcardSets: jest.fn(),
     getFlashcardSetById: jest.fn(),
+    setState: jest.fn(),
   };
 
   beforeEach(() => {
@@ -64,6 +64,8 @@ describe('SubjectCardsScreen', () => {
       subject: 'Biology',
       deckId: '1',
     });
+
+    getMockStores();
     (useFlashcardStore as unknown as jest.Mock).mockReturnValue(mockFlashcardStore);
     (useFlashcardSetStore as unknown as jest.Mock).mockReturnValue(mockFlashcardSetStore);
     mockFlashcardSetStore.getFlashcardSetById.mockReturnValue(

@@ -1,6 +1,7 @@
 import { render, fireEvent, screen, waitFor } from '@testing-library/react-native';
-import ExploreDeckScreen from '@/app/(tabs)/(explore)/index';
+import ExploreDeckScreen from '../index';
 import { PaperProvider } from 'react-native-paper';
+import { getMockStores } from '../../../../utils/test-utils/getMockStores';
 
 export function renderWithPaper(ui: React.ReactNode) {
   return render(<PaperProvider>{ui}</PaperProvider>);
@@ -10,11 +11,7 @@ export function renderWithPaper(ui: React.ReactNode) {
 const mockFetchExploreDeck = jest.fn();
 
 // Mock Zustand store
-jest.mock('@/store/explore-deck-store', () => ({
-  useExploreDeckStore: () => ({
-    fetchExploreDeck: mockFetchExploreDeck,
-  }),
-}));
+jest.mock('../../../../store/explore-deck-store');
 
 // Mock router
 const mockPush = jest.fn();
@@ -26,6 +23,7 @@ jest.mock('expo-router', () => ({
 describe('ExploreDeckScreen', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    getMockStores({ fetchExploreDeck: mockFetchExploreDeck });
   });
 
   it('should render heading and input fields', () => {

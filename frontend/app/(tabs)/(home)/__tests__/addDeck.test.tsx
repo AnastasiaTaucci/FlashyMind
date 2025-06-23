@@ -4,19 +4,18 @@ import { Alert } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import AddDeckScreen from '../addDeck';
 import { useFlashcardSetStore } from '../../../../store/deck-card-store';
+import { getMockStores } from '../../../../utils/test-utils/getMockStores';
 
 jest.mock('expo-router', () => ({
   useRouter: jest.fn(),
   useLocalSearchParams: jest.fn(),
+  useFocusEffect: jest.fn((cb) => cb()),
 }));
 
-jest.mock('../../../../store/deck-card-store', () => ({
-  useFlashcardSetStore: jest.fn(),
-}));
+jest.mock('../../../../store/deck-card-store');
 
 jest.spyOn(Alert, 'alert').mockImplementation(() => {});
 
-// Mock console.error to suppress expected error logs during testing
 const originalConsoleError = console.error;
 beforeAll(() => {
   console.error = jest.fn();
@@ -38,12 +37,15 @@ describe('AddDeckScreen', () => {
     updateFlashcardSet: jest.fn(),
     fetchFlashcardSets: jest.fn(),
     error: null,
+    setState: jest.fn(),
   };
 
   beforeEach(() => {
     jest.clearAllMocks();
     (useRouter as jest.Mock).mockReturnValue(mockRouter);
     (useLocalSearchParams as jest.Mock).mockReturnValue({});
+
+    getMockStores();
     (useFlashcardSetStore as unknown as jest.Mock).mockReturnValue(mockStore);
   });
 
