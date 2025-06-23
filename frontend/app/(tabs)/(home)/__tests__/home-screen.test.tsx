@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, fireEvent, act, waitFor } from '@testing-library/react-native';
+import { render, screen, fireEvent, act } from '@testing-library/react-native';
 import { Alert } from 'react-native';
 import { useRouter } from 'expo-router';
 import HomeScreen from '../index';
@@ -29,7 +29,7 @@ jest.mock('expo-router', () => ({
 
 jest.mock('../../../../store/deck-card-store');
 
-jest.spyOn(Alert, 'alert').mockImplementation(() => { });
+jest.spyOn(Alert, 'alert').mockImplementation(() => {});
 
 // Mock console.error to suppress expected error logs during testing
 const originalConsoleError = console.error;

@@ -23,7 +23,6 @@ jest.mock('expo-router', () => ({
 describe('ExploreDeckScreen', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    // Use getMockStores to setup the explore deck store mock
     getMockStores({ fetchExploreDeck: mockFetchExploreDeck });
   });
 

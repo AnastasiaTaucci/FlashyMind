@@ -14,9 +14,8 @@ jest.mock('expo-router', () => ({
 
 jest.mock('../../../../store/deck-card-store');
 
-jest.spyOn(Alert, 'alert').mockImplementation(() => { });
+jest.spyOn(Alert, 'alert').mockImplementation(() => {});
 
-// Mock console.error to suppress expected error logs during testing
 const originalConsoleError = console.error;
 beforeAll(() => {
   console.error = jest.fn();
@@ -46,7 +45,6 @@ describe('AddDeckScreen', () => {
     (useRouter as jest.Mock).mockReturnValue(mockRouter);
     (useLocalSearchParams as jest.Mock).mockReturnValue({});
 
-    // Use getMockStores but then override with our specific mock
     getMockStores();
     (useFlashcardSetStore as unknown as jest.Mock).mockReturnValue(mockStore);
   });
