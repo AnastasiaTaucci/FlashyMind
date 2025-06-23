@@ -13,7 +13,7 @@ import {
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
-import { useFlashcardStore } from '../../../store/deck-card-store';
+import { useFlashcardStore } from '@/store/deck-card-store';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { VStack } from '@/components/ui/vstack';
 import { Heading } from '@/components/ui/heading';

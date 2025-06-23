@@ -1,7 +1,7 @@
 import { render, fireEvent, screen, waitFor } from '@testing-library/react-native';
 import ExploreDeckScreen from '../index';
 import { PaperProvider } from 'react-native-paper';
-import { getMockStores } from '../../../../utils/test-utils/getMockStores';
+import { getMockStores } from '@/utils/test-utils/getMockStores';
 
 export function renderWithPaper(ui: React.ReactNode) {
   return render(<PaperProvider>{ui}</PaperProvider>);

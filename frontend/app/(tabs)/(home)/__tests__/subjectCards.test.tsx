@@ -3,8 +3,8 @@ import { render, fireEvent } from '@testing-library/react-native';
 import { Alert } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import SubjectCardsScreen from '../subjectCards';
-import { useFlashcardStore, useFlashcardSetStore } from '../../../../store/deck-card-store';
-import { getMockStores } from '../../../../utils/test-utils/getMockStores';
+import { useFlashcardStore, useFlashcardSetStore } from '@/store/deck-card-store';
+import { getMockStores } from '@/utils/test-utils/getMockStores';
 
 jest.mock('expo-router', () => ({
   useRouter: jest.fn(),
@@ -12,12 +12,12 @@ jest.mock('expo-router', () => ({
   useFocusEffect: jest.fn((callback) => callback()),
 }));
 
-jest.mock('../../../../store/deck-card-store');
+jest.mock('@/store/deck-card-store');
 
 // Mock MaterialIcons to prevent act() warnings
 jest.mock('@expo/vector-icons/MaterialIcons', () => 'MaterialIcons');
 
-jest.spyOn(Alert, 'alert').mockImplementation(() => {});
+jest.spyOn(Alert, 'alert').mockImplementation(() => { });
 
 describe('SubjectCardsScreen', () => {
   const mockRouter = {
