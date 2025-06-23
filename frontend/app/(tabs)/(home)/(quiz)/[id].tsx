@@ -34,6 +34,7 @@ export default function QuizScreen() {
   const [isFlipped, setIsFlipped] = useState(false);
   const [isTyped, setIsTyped] = useState(false);
   const flipAnimation = useRef(new Animated.Value(0)).current;
+  const saveButtonPressed = useRef(false);
 
   const randomizeFlashcards = useCallback(() => {
     if (!deck) return [];
@@ -250,7 +251,13 @@ export default function QuizScreen() {
                             setIsTyped(text.length > 0);
                           }}
                           onFocus={() => setIsTyped(true)}
-                          onBlur={() => setIsTyped(userAnswer.length > 0)}
+                          onBlur={() => {
+                            setTimeout(() => {
+                              if (!saveButtonPressed.current) {
+                                setIsTyped(userAnswer.length > 0);
+                              }
+                            }, 100);
+                          }}
                           style={styles.textInput}
                           outlineColor="#fbbf24"
                           activeOutlineColor="#ffdd54"
@@ -349,6 +356,7 @@ export default function QuizScreen() {
                     <Button
                       mode="contained"
                       onPress={() => {
+                        saveButtonPressed.current = true;
                         if (currentCard && userAnswer.trim()) {
                           setUserAnswers((prev) => ({
                             ...prev,
@@ -357,6 +365,9 @@ export default function QuizScreen() {
                         }
                         setIsTyped(false);
                         Keyboard.dismiss();
+                        setTimeout(() => {
+                          saveButtonPressed.current = false;
+                        }, 200);
                       }}
                       style={styles.saveAnswerButton}
                       buttonColor="#059669"
