@@ -161,7 +161,7 @@ export default function SubjectCardsScreen() {
           borderBottomRightRadius: 20,
         }}
       >
-        <Pressable onPress={() => router.back()} style={{ marginBottom: 10 }}>
+        <Pressable onPress={() => router.navigate('/')} style={{ marginBottom: 10 }}>
           <Text style={{ color: 'white', fontSize: 16 }}>← Back</Text>
         </Pressable>
 
