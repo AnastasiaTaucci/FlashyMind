@@ -158,6 +158,13 @@ Some screens (e.g., Study Mode, Quiz Mode) include test files under `__tests__/`
 
 ---
 
+## 🎤 Final Presentation
+
+You can view the final presentation slides here:  
+[FlashyMind Project Presentation – View on OneDrive](https://1drv.ms/p/c/9f4164d2de04d803/Ecck3vwkEMtAqSkYzWzDYjcBjRV6k838Z3GV-1A37P8zFA?e=0qEicG)
+
+---
+
 ## 📄 License
 
 MIT License © 2024 FlashyMind Team
