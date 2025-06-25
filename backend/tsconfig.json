@@ -1,0 +1,30 @@
+{
+	"compilerOptions": {
+	  "target": "ES6",
+	  "module": "commonjs",
+	  "outDir": "./dist",
+	  "rootDir": "./src",
+	  "strict": true,
+	  "esModuleInterop": true,
+	  "skipLibCheck": true,
+	  "forceConsistentCasingInFileNames": true,
+	  "typeRoots": [
+		"./node_modules/@types",
+		"./src/types"
+	  ],
+	  "types": [
+		"node",
+		"jest",
+		"express",
+		"swagger-jsdoc",
+		"swagger-ui-express",
+		"cors",
+		"dotenv"
+	  ]
+	},
+	"include": [
+	  "src/**/*",
+	  "types/**/*"
+	]
+  }
+  
