@@ -6,26 +6,27 @@ FlashyMind is a mobile flashcard application built with React Native and Expo. I
 
 ## 📱 Features
 
-* ✏️ Create and edit your own flashcards and decks
-* 📚 Study flashcards
-* 🔐 Supabase-powered authentication
-* ❓ Quiz Mode: Test knowledge in a card-flipping interface
-* 🏰 Explore pre-made flashcards by category and difficulty using pre-made trivia questions from the [Open Trivia DB](https://opentdb.com/api_config.php)
-
+- ✏️ Create and edit your own flashcards and decks
+- 📚 Study flashcards
+- 🔐 Supabase-powered authentication
+- ❓ Quiz Mode: Test knowledge in a card-flipping interface
+- 🏰 Explore pre-made flashcards by category and difficulty using pre-made trivia questions from the [Open Trivia DB](https://opentdb.com/api_config.php)
 
 ---
 
 ## 🛠️ Tech Stack
 
 **Frontend:**
-- **React Native + Expo** – for building cross-platform mobile apps  
-- **Expo Router** – screen-based routing and navigation  
-- **Zustand** – lightweight global state management  
-- **Formik + Yup** – for form input handling and validation  
+
+- **React Native + Expo** – for building cross-platform mobile apps
+- **Expo Router** – screen-based routing and navigation
+- **Zustand** – lightweight global state management
+- **Formik + Yup** – for form input handling and validation
 - **AsyncStorage** – to store decks and progress locally for offline access
 
 **Backend & Data:**
-- **Supabase** – provides authentication and real-time database (used for storing decks and cards)  
+
+- **Supabase** – provides authentication and real-time database (used for storing decks and cards)
 - **ExpressJS** – custom backend API for extended logic beyond Supabase
 
 ---
@@ -57,9 +58,9 @@ flashymind/
 
 ### Prerequisites
 
-* Node.js >= 16
-* Expo CLI (`npm install -g expo-cli`)
-* Supabase account & project
+- Node.js >= 16
+- Expo CLI (`npm install -g expo-cli`)
+- Supabase account & project
 
 ### Installation
 
@@ -79,12 +80,22 @@ $ npm install
 
 ### Environment Setup
 
-Create a `.env` file in both `frontend/` and `backend/` directories and configure:
+Create a `.env` file in `backend/` directory and configure:
 
 ```
 SUPABASE_URL=your_supabase_url
 SUPABASE_ANON_KEY=your_supabase_key
 ```
+
+---
+
+## 🔑 Demo Credentials
+
+If you're reviewing this project and want to try it out with our demo Supabase instance, you can find the necessary credentials here:
+
+👉 [View Supabase Demo Credentials (Google Doc)](https://docs.google.com/document/d/1ie7tb5OnlBIhcsSsSjMEDnlnBdXlFvDLh2pys0eDwq8/edit?usp=sharing)
+
+> ⚠️ These keys are **read-only** and for **demo purposes only**. Please do not use them in production apps.
 
 ---
 
@@ -108,9 +119,9 @@ $ npm run dev
 
 ## 👥 Contributing
 
-* Follow feature branch naming convention: `FEAT<ISSUE#>_<ShortDescription>_<YourName>`
-* Open a pull request to `develop` branch
-* Include issue references and testing instructions in PRs
+- Follow feature branch naming convention: `FEAT<ISSUE#>_<ShortDescription>_<YourName>`
+- Open a pull request to `develop` branch
+- Include issue references and testing instructions in PRs
 
 ---
 
@@ -146,6 +157,7 @@ Some screens (e.g., Study Mode, Quiz Mode) include test files under `__tests__/`
 - The app currently works only on iOS due to backend connection issues on Android.
 - No normalization for decks and flashcards — the same flashcard cannot be reused across multiple decks.
 - Add/Edit/Delete buttons become inactive only after a delayed network timeout, which may confuse users during slow or unstable connections.
+
 ---
 
 ## 💡 Potential Improvements
