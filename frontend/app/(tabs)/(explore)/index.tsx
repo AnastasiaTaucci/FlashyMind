@@ -1,4 +1,4 @@
-import React, { useRef, useState, useCallback } from 'react';
+import React, { useRef, useState, useCallback } from "react";
 import {
   View,
   Text,
@@ -8,45 +8,44 @@ import {
   KeyboardAvoidingView,
   Platform,
   StyleSheet,
-} from 'react-native';
-import { Formik } from 'formik';
-import * as Yup from 'yup';
-import { useRouter, useFocusEffect } from 'expo-router';
-import { Menu, Button } from 'react-native-paper';
-import { useExploreDeckStore } from '@/store/explore-deck-store';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { VStack } from '@/components/ui/vstack';
-import { Heading } from '@/components/ui/heading';
+} from "react-native";
+import { Formik } from "formik";
+import * as Yup from "yup";
+import { useRouter, useFocusEffect } from "expo-router";
+import { useExploreDeckStore } from "@/store/explore-deck-store";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { VStack } from "@/components/ui/vstack";
+import { Heading } from "@/components/ui/heading";
 
 const categories = [
-  'Any Category',
-  'General Knowledge',
-  'Entertainment: Books',
-  'Entertainment: Film',
-  'Entertainment: Music',
-  'Entertainment: Musicals & Theatres',
-  'Entertainment: Television',
-  'Entertainment: Video Games',
-  'Entertainment: Board Games',
-  'Science & Nature',
-  'Science: Computers',
-  'Science: Mathematics',
-  'Mythology',
-  'Sports',
-  'Geography',
-  'History',
-  'Politics',
-  'Art',
-  'Celebrities',
-  'Animals',
-  'Vehicles',
-  'Entertainment: Comics',
-  'Science: Gadgets',
-  'Entertainment: Japanese Anime & Manga',
-  'Entertainment: Cartoon & Animations',
+  "Any Category",
+  "General Knowledge",
+  "Entertainment: Books",
+  "Entertainment: Film",
+  "Entertainment: Music",
+  "Entertainment: Musicals & Theatres",
+  "Entertainment: Television",
+  "Entertainment: Video Games",
+  "Entertainment: Board Games",
+  "Science & Nature",
+  "Science: Computers",
+  "Science: Mathematics",
+  "Mythology",
+  "Sports",
+  "Geography",
+  "History",
+  "Politics",
+  "Art",
+  "Celebrities",
+  "Animals",
+  "Vehicles",
+  "Entertainment: Comics",
+  "Science: Gadgets",
+  "Entertainment: Japanese Anime & Manga",
+  "Entertainment: Cartoon & Animations",
 ];
 
-const difficulties = ['Any Difficulty', 'Easy', 'Medium', 'Hard'];
+const difficulties = ["Any Difficulty", "Easy", "Medium", "Hard"];
 
 export default function ExploreDeckScreen() {
   const router = useRouter();
@@ -58,16 +57,16 @@ export default function ExploreDeckScreen() {
     amount: Yup.number()
       .min(1)
       .max(50)
-      .integer('Must be a whole number')
-      .required('Number of questions is required'),
-    category: Yup.string().required('Please choose category'),
-    difficulty: Yup.string().required('Please choose difficulty'),
+      .integer("Must be a whole number")
+      .required("Number of questions is required"),
+    category: Yup.string().required("Please choose category"),
+    difficulty: Yup.string().required("Please choose difficulty"),
   });
 
   const initialValues = {
-    amount: '10',
-    category: 'Any Category',
-    difficulty: 'Any Difficulty',
+    amount: "10",
+    category: "Any Category",
+    difficulty: "Any Difficulty",
   };
 
   const formRef = useRef<any>(null);
@@ -78,16 +77,20 @@ export default function ExploreDeckScreen() {
       if (formRef.current?.resetForm) {
         formRef.current.resetForm();
       }
-    }, [])
+    }, []),
   );
 
   async function handleSubmit(
     values: typeof initialValues,
-    { resetForm }: { resetForm: () => void }
+    { resetForm }: { resetForm: () => void },
   ) {
-    await fetchExploreDeck(parseInt(values.amount), values.category, values.difficulty);
+    await fetchExploreDeck(
+      parseInt(values.amount),
+      values.category,
+      values.difficulty,
+    );
     router.push({
-      pathname: './subjectCards',
+      pathname: "./subjectCards",
       params: {
         category: values.category,
         difficulty: values.difficulty,
@@ -105,9 +108,16 @@ export default function ExploreDeckScreen() {
         validationSchema={validationSchema}
         onSubmit={handleSubmit}
       >
-        {({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => (
+        {({
+          handleChange,
+          handleBlur,
+          handleSubmit,
+          values,
+          errors,
+          touched,
+        }) => (
           <KeyboardAvoidingView
-            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+            behavior={Platform.OS === "ios" ? "padding" : "height"}
             style={styles.keyboardView}
           >
             <VStack style={styles.pageWrapper}>
@@ -125,8 +135,8 @@ export default function ExploreDeckScreen() {
                     <TextInput
                       keyboardType="numeric"
                       value={values.amount}
-                      onChangeText={handleChange('amount')}
-                      onBlur={handleBlur('amount')}
+                      onChangeText={handleChange("amount")}
+                      onBlur={handleBlur("amount")}
                       style={styles.input}
                       placeholder="Enter number (1-50)"
                       placeholderTextColor="#d1d5db"
@@ -139,76 +149,100 @@ export default function ExploreDeckScreen() {
                   {/* Category */}
                   <View style={styles.fieldContainer}>
                     <Text style={styles.label}>Select Category</Text>
-                    <Menu
-                      visible={categoryMenuVisible}
-                      onDismiss={() => setCategoryMenuVisible(false)}
-                      anchor={
-                        <Button
-                          onPress={() => setCategoryMenuVisible(true)}
-                          style={styles.menuButton}
-                          labelStyle={styles.menuButtonLabel}
-                        >
-                          {values.category}
-                        </Button>
-                      }
-                      contentStyle={styles.menuContent}
+
+                    <Pressable
+                      onPress={() => {
+                        setDifficultyMenuVisible(false);
+                        setCategoryMenuVisible((prev) => !prev);
+                      }}
+                      style={styles.dropdownButton}
                     >
-                      <View style={styles.menuScrollContainer}>
-                        <ScrollView>
+                      <Text style={styles.dropdownButtonText}>
+                        {values.category}
+                      </Text>
+                      <Text style={styles.dropdownArrow}>
+                        {categoryMenuVisible ? "▲" : "▼"}
+                      </Text>
+                    </Pressable>
+
+                    {categoryMenuVisible && (
+                      <View style={styles.dropdownList}>
+                        <ScrollView
+                          nestedScrollEnabled
+                          keyboardShouldPersistTaps="handled"
+                          style={styles.dropdownScroll}
+                        >
                           {categories.map((label) => (
-                            <Menu.Item
+                            <Pressable
                               key={label}
                               onPress={() => {
-                                handleChange('category')(label);
+                                handleChange("category")(label);
                                 setCategoryMenuVisible(false);
                               }}
-                              title={label}
-                              titleStyle={styles.menuItemTitle}
-                            />
+                              style={styles.dropdownItem}
+                            >
+                              <Text style={styles.dropdownItemText}>
+                                {label}
+                              </Text>
+                            </Pressable>
                           ))}
                         </ScrollView>
                       </View>
-                    </Menu>
+                    )}
                   </View>
 
                   {/* Difficulty */}
                   <View style={styles.fieldContainer}>
                     <Text style={styles.label}>Select Difficulty</Text>
-                    <Menu
-                      visible={difficultyMenuVisible}
-                      onDismiss={() => setDifficultyMenuVisible(false)}
-                      anchor={
-                        <Button
-                          onPress={() => setDifficultyMenuVisible(true)}
-                          style={styles.menuButton}
-                          labelStyle={styles.menuButtonLabel}
-                        >
-                          {values.difficulty}
-                        </Button>
-                      }
-                      contentStyle={styles.menuContent}
+                    <Pressable
+                      onPress={() => {
+                        setCategoryMenuVisible(false);
+                        setDifficultyMenuVisible((prev) => !prev);
+                      }}
+                      style={styles.dropdownButton}
                     >
-                      <View style={styles.menuScrollContainer}>
-                        <ScrollView>
+                      <Text style={styles.dropdownButtonText}>
+                        {values.difficulty}
+                      </Text>
+                      <Text style={styles.dropdownArrow}>
+                        {difficultyMenuVisible ? "▲" : "▼"}
+                      </Text>
+                    </Pressable>
+
+                    {difficultyMenuVisible && (
+                      <View style={styles.dropdownList}>
+                        <ScrollView
+                          nestedScrollEnabled
+                          keyboardShouldPersistTaps="handled"
+                          style={styles.dropdownScroll}
+                        >
                           {difficulties.map((level) => (
-                            <Menu.Item
+                            <Pressable
                               key={level}
                               onPress={() => {
-                                handleChange('difficulty')(level);
+                                handleChange("difficulty")(level);
                                 setDifficultyMenuVisible(false);
                               }}
-                              title={level}
-                              titleStyle={styles.menuItemTitle}
-                            />
+                              style={styles.dropdownItem}
+                            >
+                              <Text style={styles.dropdownItemText}>
+                                {level}
+                              </Text>
+                            </Pressable>
                           ))}
                         </ScrollView>
                       </View>
-                    </Menu>
+                    )}
                   </View>
 
                   {/* Submit Button */}
-                  <Pressable onPress={() => handleSubmit()} style={styles.exploreButton}>
-                    <Text style={styles.exploreButtonText}>🚀 Start Exploring</Text>
+                  <Pressable
+                    onPress={() => handleSubmit()}
+                    style={styles.exploreButton}
+                  >
+                    <Text style={styles.exploreButtonText}>
+                      🚀 Start Exploring
+                    </Text>
                   </Pressable>
                 </View>
               </ScrollView>
@@ -223,8 +257,8 @@ export default function ExploreDeckScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fffafc',
-    width: '100%',
+    backgroundColor: "#fffafc",
+    width: "100%",
   },
   keyboardView: {
     flex: 1,
@@ -235,13 +269,13 @@ const styles = StyleSheet.create({
   },
   heading: {
     fontSize: 30,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 20,
     marginTop: 30,
     marginHorizontal: 16,
-    color: '#5e2606',
+    color: "#5e2606",
     lineHeight: 36,
-    textAlign: 'center',
+    textAlign: "center",
   },
   scrollContent: {
     flexGrow: 1,
@@ -249,11 +283,11 @@ const styles = StyleSheet.create({
     paddingBottom: 100,
   },
   formContainer: {
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     borderRadius: 16,
     padding: 24,
     marginTop: 10,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: {
       width: 0,
       height: 2,
@@ -267,42 +301,54 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 16,
-    fontWeight: '600',
-    color: '#5e2606',
+    fontWeight: "600",
+    color: "#5e2606",
     marginBottom: 8,
   },
   input: {
-    backgroundColor: '#f9fafb',
+    backgroundColor: "#f9fafb",
     borderWidth: 1.5,
-    borderColor: '#e5e7eb',
+    borderColor: "#e5e7eb",
     borderRadius: 12,
     fontSize: 16,
     paddingVertical: 14,
     paddingHorizontal: 16,
-    color: '#374151',
+    color: "#374151",
   },
-  menuButton: {
-    backgroundColor: '#f9fafb',
+  dropdownButton: {
+    backgroundColor: "#f9fafb",
     borderWidth: 1.5,
-    borderColor: '#e5e7eb',
+    borderColor: "#e5e7eb",
     borderRadius: 12,
-    justifyContent: 'flex-start',
     minHeight: 50,
+    paddingVertical: 14,
+    paddingHorizontal: 16,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
   },
-  menuButtonLabel: {
-    color: '#374151',
+
+  dropdownButtonText: {
+    color: "#374151",
     fontSize: 16,
-    textAlign: 'left',
-    width: '100%',
-    paddingHorizontal: 0,
-    paddingLeft: 16,
-    marginHorizontal: 0,
+    flex: 1,
   },
-  menuContent: {
-    backgroundColor: '#fff',
+
+  dropdownArrow: {
+    color: "#6b7280",
+    fontSize: 12,
+    marginLeft: 8,
+  },
+
+  dropdownList: {
+    backgroundColor: "#fff",
+    borderWidth: 1,
+    borderColor: "#e5e7eb",
     borderRadius: 12,
     marginTop: 8,
-    shadowColor: '#000',
+    maxHeight: 250,
+    overflow: "hidden",
+    shadowColor: "#000",
     shadowOffset: {
       width: 0,
       height: 4,
@@ -311,35 +357,44 @@ const styles = StyleSheet.create({
     shadowRadius: 12,
     elevation: 8,
   },
-  menuScrollContainer: {
+
+  dropdownScroll: {
     maxHeight: 250,
   },
-  menuItemTitle: {
-    color: '#374151',
+
+  dropdownItem: {
+    paddingVertical: 14,
+    paddingHorizontal: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: "#f3f4f6",
+  },
+
+  dropdownItemText: {
+    color: "#374151",
     fontSize: 15,
   },
   error: {
-    color: '#dc2626',
+    color: "#dc2626",
     fontSize: 14,
     marginTop: 6,
-    fontWeight: '500',
+    fontWeight: "500",
   },
   exploreButton: {
-    backgroundColor: '#4f46e5',
+    backgroundColor: "#4f46e5",
     marginTop: 16,
     paddingVertical: 16,
     borderRadius: 12,
-    alignItems: 'center',
-    borderColor: '#4f46e5',
+    alignItems: "center",
+    borderColor: "#4f46e5",
     borderWidth: 1,
-    shadowColor: '#4f46e5',
+    shadowColor: "#4f46e5",
     shadowOpacity: 0.3,
     shadowRadius: 8,
     shadowOffset: { width: 0, height: 4 },
   },
   exploreButtonText: {
-    color: '#fff',
-    fontWeight: '700',
+    color: "#fff",
+    fontWeight: "700",
     fontSize: 18,
   },
 });
